@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
-import com.example.argame.Interfaces.FragmentCallback
+import com.example.argame.Interfaces.FragmentCallbackListener
 import com.example.argame.R
 import kotlinx.android.synthetic.main.profile.*
 
@@ -19,11 +19,11 @@ import kotlinx.android.synthetic.main.profile.*
 
 class ProfileFragment : Fragment() {
 
-    private var buttonCallback: FragmentCallback? = null
+    private var buttonCallbackListener: FragmentCallbackListener? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        buttonCallback = context as FragmentCallback
+        buttonCallbackListener = context as FragmentCallbackListener
     }
 
     override fun onCreateView(
@@ -41,7 +41,7 @@ class ProfileFragment : Fragment() {
 
     private fun setupButtonListeners() {
         profile_button_back.setOnClickListener {
-            buttonCallback!!.onButtonPressed(it as Button)
+            buttonCallbackListener!!.onButtonPressed(it as Button)
         }
     }
 }

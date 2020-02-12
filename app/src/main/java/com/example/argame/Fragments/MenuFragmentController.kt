@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
-import com.example.argame.Interfaces.FragmentCallback
+import com.example.argame.Interfaces.FragmentCallbackListener
 import com.example.argame.R
 
 /***
@@ -15,7 +15,7 @@ import com.example.argame.R
  *  Handles the logic for callbacks from menus attached to it.
  */
 
-class MenuFragmentController : Fragment(), FragmentCallback {
+class MenuFragmentController : Fragment(), FragmentCallbackListener {
 
     private val mainMenuFrag = MainMenuFragment()
     private val highscoresFrag = HighscoresFragment()
