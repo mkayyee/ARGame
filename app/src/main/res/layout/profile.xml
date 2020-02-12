@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:padding="16dp"
+    android:layout_marginStart="24dp"
+    android:layout_marginEnd="24dp"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/profile_layout_top_horizontal"
+        android:layout_width="match_parent"
+        android:padding="8dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/profile_imageView_avatar"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:background="@mipmap/ic_launcher_round"
+            android:contentDescription="@string/description_avatar"
+            app:srcCompat="@android:color/transparent"
+            tools:srcCompat="@android:drawable/sym_def_app_icon" />
+
+        <TextView
+            android:id="@+id/profile_textView_username"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:textSize="32sp"
+            android:gravity="end"
+            android:text="@string/default_username" />
+    </LinearLayout>
+
+    <TextView
+        android:padding="8dp"
+        android:id="@+id/profile_textView_games_played"
+        android:textSize="28sp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/games_played" />
+
+    <TextView
+        android:padding="8dp"
+        android:id="@+id/profile_textView_highest_score"
+        android:textSize="28sp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/highest_score" />
+
+    <com.google.android.material.button.MaterialButton
+        android:padding="8dp"
+        android:id="@+id/profile_button_back"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/back_button"/>
+
+</LinearLayout>
