@@ -32,22 +32,18 @@ abstract class CombatControllable(baseHealth: Int,
     }
 
     fun increaseMaxHealth(multiplier: Int) {
-        if (maxHealth * multiplier > 0) {
+        if (maxHealth * multiplier > maxHealth) {
             maxHealth *= multiplier
         } else {
-            wtf("CCERROR", "Negative value as increaseMaxHealth() input")
+            wtf("CCERROR", "Negative value, or value less than 1 as increaseMaxHealth() input")
         }
     }
 
     fun increaseAP(multiplier: Int) {
-        if (attackPower * multiplier > 0) {
-            if (attackPower * multiplier > attackPower) {
-                attackPower *= multiplier
-            } else {
-                wtf("CCERROR", "Value less than 1 as increaseAP() input")
-            }
+        if (attackPower * multiplier > attackPower) {
+            attackPower *= multiplier
         } else {
-             wtf("CCERROR", "Negative value as increaseAP() input")
+             wtf("CCERROR", "Negative value, or value less than 1 as increaseAP() input")
         }
     }
 
