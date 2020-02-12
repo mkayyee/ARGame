@@ -1,14 +1,12 @@
 package com.example.argame.Fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
-import com.example.argame.Interfaces.FragmentCallbackHandler
-import com.example.argame.Model.Menu
+import com.example.argame.Interfaces.FragmentCallback
 import com.example.argame.R
 
 /***
@@ -17,7 +15,7 @@ import com.example.argame.R
  *  Handles the logic for callbacks from menus attached to it.
  */
 
-class MenuFragmentController : Fragment(), FragmentCallbackHandler {
+class MenuFragmentController : Fragment(), FragmentCallback {
 
     private val mainMenuFrag = MainMenuFragment()
     private val highscoresFrag = HighscoresFragment()
@@ -34,17 +32,17 @@ class MenuFragmentController : Fragment(), FragmentCallbackHandler {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initMainMenu()
+        drawMainMenuFragment()
     }
 
-    private fun initFragment(fragment: Fragment) {
+    private fun drawFragment(fragment: Fragment) {
         fragmentManager!!.beginTransaction()
             .replace(R.id.main_menu_container, fragment)
             .addToBackStack(null)
             .commit()
     }
 
-    private fun initMainMenu() {
+    private fun drawMainMenuFragment() {
         fragmentManager!!.beginTransaction()
             .replace(R.id.main_menu_container, mainMenuFrag)
             .addToBackStack(null)
@@ -53,12 +51,12 @@ class MenuFragmentController : Fragment(), FragmentCallbackHandler {
 
     override fun onButtonPressed(btn: Button) {
         when (btn.id) {
-            R.id.settings_button_back -> initMainMenu()
-            R.id.high_scores_button_back -> initMainMenu()
-            R.id.profile_button_back -> initMainMenu()
-            R.id.button_profile -> initFragment(profileFrag)
-            R.id.button_high_scores -> initFragment(highscoresFrag)
-            R.id.button_game_settings -> initFragment(settingsFrag)
+            R.id.settings_button_back -> drawMainMenuFragment()
+            R.id.high_scores_button_back -> drawMainMenuFragment()
+            R.id.profile_button_back -> drawMainMenuFragment()
+            R.id.button_profile -> drawFragment(profileFrag)
+            R.id.button_high_scores -> drawFragment(highscoresFrag)
+            R.id.button_game_settings -> drawFragment(settingsFrag)
         }
     }
 }

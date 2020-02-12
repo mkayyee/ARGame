@@ -7,17 +7,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
-import com.example.argame.Interfaces.FragmentCallbackHandler
+import com.example.argame.Interfaces.FragmentCallback
 import com.example.argame.R
 import kotlinx.android.synthetic.main.menu_settings.*
 
 class GameSettingsFragment : Fragment() {
 
-    private var buttonCallback: FragmentCallbackHandler? = null
+    private var buttonCallback: FragmentCallback? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        buttonCallback = context as FragmentCallbackHandler
+        buttonCallback = context as FragmentCallback
     }
 
     override fun onCreateView(
