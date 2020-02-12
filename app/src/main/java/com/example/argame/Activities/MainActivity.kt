@@ -24,6 +24,8 @@ class MainActivity : AppCompatActivity(), FragmentCallbackListener {
             .commit()
     }
 
+
+
     // This is a callback fired from every menu's buttons
     override fun onButtonPressed(btn: Button) {
         // The callback's are forwarded to MenuFragmentController,
