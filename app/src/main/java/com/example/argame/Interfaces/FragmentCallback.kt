@@ -2,7 +2,6 @@ package com.example.argame.Interfaces
 
 import android.widget.Button
 
-interface FragmentCallbackHandler {
-
+interface FragmentCallback {
     fun onButtonPressed(btn: Button)
 }

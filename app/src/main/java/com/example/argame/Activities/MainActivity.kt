@@ -4,10 +4,10 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import com.example.argame.Fragments.MenuFragmentController
-import com.example.argame.Interfaces.FragmentCallbackHandler
+import com.example.argame.Interfaces.FragmentCallback
 import com.example.argame.R
 
-class MainActivity : AppCompatActivity(), FragmentCallbackHandler {
+class MainActivity : AppCompatActivity(), FragmentCallback {
 
     private val menuFragController = MenuFragmentController()
 
