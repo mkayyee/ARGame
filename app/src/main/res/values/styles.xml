@@ -8,4 +8,10 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="AppTheme.Button" parent="Widget.AppCompat.Button.Colored">
+        <item name="colorButtonNormal">@color/colorButtonBackground</item>
+        <item name="android:backgroundTint">@color/colorButtonBackground</item>
+        <item name="android:textColor">@color/colorButtonText</item>
+    </style>
+
 </resources>
