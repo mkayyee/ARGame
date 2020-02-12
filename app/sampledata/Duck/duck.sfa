@@ -1,0 +1,207 @@
+{
+  materials: [
+    {
+      name: 'Material__133',
+      parameters: [
+        {
+          baseColor: 'body',
+        },
+        {
+          baseColorTint: [
+            0.58799999999999997,
+            0.58799999999999997,
+            0.58799999999999997,
+            1,
+          ],
+        },
+        {
+          metallic: 1,
+        },
+        {
+          roughness: 0.408248,
+        },
+        {
+          opacity: null,
+        },
+      ],
+      source: 'build/sceneform_sdk/default_materials/obj_material.sfm',
+    },
+    {
+      name: 'Material__134',
+      parameters: [
+        {
+          baseColor: 'lip',
+        },
+        {
+          baseColorTint: [
+            0.58799999999999997,
+            0.58799999999999997,
+            0.58799999999999997,
+            1,
+          ],
+        },
+        {
+          metallic: 1,
+        },
+        {
+          roughness: 0.408248,
+        },
+        {
+          opacity: null,
+        },
+      ],
+      source: 'build/sceneform_sdk/default_materials/obj_material.sfm',
+    },
+    {
+      name: 'Material__146',
+      parameters: [
+        {
+          baseColor: 'foot',
+        },
+        {
+          baseColorTint: [
+            0.58799999999999997,
+            0.58799999999999997,
+            0.58799999999999997,
+            1,
+          ],
+        },
+        {
+          metallic: 1,
+        },
+        {
+          roughness: 0.408248,
+        },
+        {
+          opacity: null,
+        },
+      ],
+      source: 'build/sceneform_sdk/default_materials/obj_material.sfm',
+    },
+    {
+      name: 'Material__27',
+      parameters: [
+        {
+          baseColor: null,
+        },
+        {
+          baseColorTint: [
+            1,
+            0.61180000000000001,
+            0.61180000000000001,
+            1,
+          ],
+        },
+        {
+          metallic: 1,
+        },
+        {
+          roughness: 0.25,
+        },
+        {
+          opacity: null,
+        },
+      ],
+      source: 'build/sceneform_sdk/default_materials/obj_material.sfm',
+    },
+    {
+      name: 'Material__28',
+      parameters: [
+        {
+          baseColor: 'eye',
+        },
+        {
+          baseColorTint: [
+            0.87450000000000006,
+            0.87450000000000006,
+            0.87450000000000006,
+            1,
+          ],
+        },
+        {
+          metallic: 1,
+        },
+        {
+          roughness: 0.25,
+        },
+        {
+          opacity: null,
+        },
+      ],
+      source: 'build/sceneform_sdk/default_materials/obj_material.sfm',
+    },
+    {
+      name: 'Material__75',
+      parameters: [
+        {
+          baseColor: null,
+        },
+        {
+          baseColorTint: [
+            0.1961,
+            0.10589999999999999,
+            0.0275,
+            1,
+          ],
+        },
+        {
+          metallic: 1,
+        },
+        {
+          roughness: 0.25,
+        },
+        {
+          opacity: null,
+        },
+      ],
+      source: 'build/sceneform_sdk/default_materials/obj_material.sfm',
+    },
+  ],
+  model: {
+    attributes: [
+      'Position',
+      'TexCoord',
+      'Orientation',
+    ],
+    collision: {},
+    file: 'sampledata/Duck/duck.obj',
+    name: 'duck',
+    recenter: 'root',
+    scale: 0.025961999999999999,
+  },
+  samplers: [
+    {
+      file: 'sampledata/Duck/eye.jpg',
+      name: 'eye',
+      params: {
+        usage_type: 'Data',
+      },
+      pipeline_name: 'eye.jpg',
+    },
+    {
+      file: 'sampledata/Duck/foot.jpg',
+      name: 'foot',
+      params: {
+        usage_type: 'Data',
+      },
+      pipeline_name: 'foot.jpg',
+    },
+    {
+      file: 'sampledata/Duck/lip.jpg',
+      name: 'lip',
+      params: {
+        usage_type: 'Data',
+      },
+      pipeline_name: 'lip.jpg',
+    },
+    {
+      file: 'sampledata/Duck/body.jpg',
+      name: 'body',
+      params: {
+        usage_type: 'Data',
+      },
+      pipeline_name: 'body.jpg',
+    },
+  ],
+  version: '0.54:2',
+}

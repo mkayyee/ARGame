@@ -44,3 +44,14 @@ dependencies {
     implementation "com.google.ar.sceneform:animation:1.15.0"
     implementation "org.jetbrains.anko:anko:0.10.8"
 }
+
+
+sceneform.asset('sampledata/Duck/duck.obj',
+        'default',
+        'sampledata/Duck/duck.sfa',
+        'src/main/assets/duck')
+
+sceneform.asset('sampledata/Tposeman/Character.obj',
+        'default',
+        'sampledata/Tposeman/Character.sfa',
+        'src/main/assets/Character')
