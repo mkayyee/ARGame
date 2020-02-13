@@ -73,6 +73,7 @@ abstract class CombatControllable(
         }
     }
 
+<<<<<<< HEAD
     fun increaseMaxHealth(multiplier: Double) {
         val newMax = maxHealth * multiplier
         // do something only if the multiplier is greater than 1
@@ -90,6 +91,21 @@ abstract class CombatControllable(
             attackPower = newMax
         } else {
              wtf("CCERROR", "Negative value or value less than 1 as increaseAP() input")
+=======
+    fun increaseMaxHealth(multiplier: Int) {
+        if (maxHealth * multiplier > maxHealth) {
+            maxHealth *= multiplier
+        } else {
+            wtf("CCERROR", "Negative value, or value less than 1 as increaseMaxHealth() input")
+        }
+    }
+
+    fun increaseAP(multiplier: Int) {
+        if (attackPower * multiplier > attackPower) {
+            attackPower *= multiplier
+        } else {
+             wtf("CCERROR", "Negative value, or value less than 1 as increaseAP() input")
+>>>>>>> 27d728f3ae9afaa736835d673db000214397fbfe
         }
     }
 
