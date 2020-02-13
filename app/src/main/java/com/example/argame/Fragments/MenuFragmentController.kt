@@ -1,11 +1,13 @@
 package com.example.argame.Fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
+import com.example.argame.Activities.GameActivity
 import com.example.argame.Interfaces.FragmentCallbackListener
 import com.example.argame.R
 
@@ -49,6 +51,12 @@ class MenuFragmentController : Fragment(), FragmentCallbackListener {
             .commit()
     }
 
+    private fun launchGameActivity() {
+        val intent = Intent(activity, GameActivity::class.java)
+        startActivity(intent)
+
+    }
+
     override fun onButtonPressed(btn: Button) {
         when (btn.id) {
             R.id.settings_button_back -> drawMainMenuFragment()
@@ -57,6 +65,7 @@ class MenuFragmentController : Fragment(), FragmentCallbackListener {
             R.id.button_profile -> drawFragment(profileFrag)
             R.id.button_high_scores -> drawFragment(highscoresFrag)
             R.id.button_game_settings -> drawFragment(settingsFrag)
+            R.id.button_new_game -> launchGameActivity()
         }
     }
 }
