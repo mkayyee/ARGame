@@ -22,7 +22,7 @@ interface AbilityUser {
     fun useAbility(caster: CombatControllable, target: CombatControllable,
                    ability: Ability, projectileData: ProjectileAnimationData) {
         val animator: ModelAnimator?
-        val animationData = caster.model.getAnimationData(ability.animationName)
+        val animationData = caster.model?.getAnimationData(ability.animationName)
         if (target.getStatus().isAlive) {
             if (animationData != null) {
                 // TODO(?) A completion callback parameter to end the animation, or make some completion animation.

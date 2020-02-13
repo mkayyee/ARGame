@@ -18,7 +18,7 @@ abstract class CombatControllable(
     baseHealth: Double,
     val name: String,
     private var attackPower: Double,
-    val model: ModelRenderable
+    val model: ModelRenderable? = null
 ) : ProjectileAnimator {
     private var health: Double
     private var maxHealth = baseHealth

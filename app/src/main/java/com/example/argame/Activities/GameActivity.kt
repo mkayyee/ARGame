@@ -7,17 +7,26 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import androidx.core.graphics.drawable.toDrawable
+import androidx.core.graphics.toColor
 import com.example.argame.Fragments.CustomArFragment
 import com.example.argame.Fragments.MainMenuFragment
 import com.example.argame.Fragments.MenuFragmentController
 import com.example.argame.Interfaces.FragmentCallbackListener
+import com.example.argame.Model.CombatControllable
+import com.example.argame.Model.NPC
+import com.example.argame.Model.Player
 import com.example.argame.R
 import com.google.ar.core.HitResult
 import com.google.ar.core.Plane
 import com.google.ar.sceneform.AnchorNode
+import com.google.ar.sceneform.Node
 import com.google.ar.sceneform.math.Vector3
 import com.google.ar.sceneform.rendering.ModelRenderable
+import com.google.ar.sceneform.rendering.ViewRenderable
 import com.google.ar.sceneform.ux.TransformableNode
+import kotlinx.android.synthetic.main.activity_game.*
+import kotlinx.android.synthetic.main.healthbar.view.*
 
 class GameActivity : AppCompatActivity(), FragmentCallbackListener {
 
@@ -27,16 +36,27 @@ class GameActivity : AppCompatActivity(), FragmentCallbackListener {
     private lateinit var tposeUri: Uri
     private var renderedDuck: ModelRenderable? = null
     private var renderedTpose: ModelRenderable? = null
-    private lateinit var protoAnchor: AnchorNode
-    private lateinit var protoTargetNode: TransformableNode
+    private var protoAnchor: AnchorNode? = null
+    private var protoTargetNode: TransformableNode? = null
+    private var anchorList = ArrayList<AnchorNode>()
+
+    // MARK: Testing-abilities-related stuff
+    private var hpRenderableDuck: ViewRenderable? = null
+    private var hpRenderableTpose: ViewRenderable? = null
+    private var duckNPC = NPC(1.0, "duck", 5000.0)
+    private var tposeNPC = NPC(1.0, "tposer", 5000.0)
+    private var player = Player(5.0, "player", 5000.0)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game)
         fragment = supportFragmentManager.findFragmentById(R.id.sceneform_fragment) as CustomArFragment
 
+        // MARK: Testing-abilities-related stuff
+        initHPRenderables()
+
         val healthTxt = findViewById<TextView>(R.id.healthTxt)
-        healthTxt.text = "Health: 100"
+        healthTxt.text = "Health ${player.getStatus().currentHealth}"
 
         val menuBtn = findViewById<Button>(R.id.menuBtn)
         menuBtn.setOnClickListener {
@@ -48,9 +68,16 @@ class GameActivity : AppCompatActivity(), FragmentCallbackListener {
             spawnObjects()
         }
 
+        // MARK: Testing-abilities-related stuff
+        attackDuckBtn.setOnClickListener {
+            attackDuck()
+        }
+
         val destroyBtn = findViewById<Button>(R.id.destroyBtn)
         destroyBtn.setOnClickListener {
-            destroyTpose(protoAnchor, protoTargetNode)
+//            if (protoAnchor != null && protoTargetNode != null)
+//            destroyTpose(protoAnchor!!, protoTargetNode!!)
+            clearModels()
         }
         // v Turn this mess into a to a proper function!!! v
 
@@ -86,9 +113,53 @@ class GameActivity : AppCompatActivity(), FragmentCallbackListener {
         }
     }
 
+    // MARK: Testing-abilities-related stuff
+    private fun initHPRenderables() {
+        val renderableFuture = ViewRenderable.builder()
+            .setView(this, R.layout.healthbar)
+            .build()
+        renderableFuture.thenAccept { hpRenderableDuck = it }
+        hpRenderableDuck?.view?.textView_healthbar?.text = duckNPC.getStatus().currentHealth.toString()
+
+        val renderableFuture2 = ViewRenderable.builder()
+            .setView(this, R.layout.healthbar)
+            .build()
+        renderableFuture2.thenAccept { hpRenderableTpose = it }
+        hpRenderableTpose?.view?.textView_healthbar?.text = tposeNPC.getStatus().currentHealth.toString()
+    }
+
+    // MARK: Testing-abilities-related stuff
+    private fun attackDuck() {
+        // player deals damage to the fuck when tapping it
+        hpRenderableDuck?.view?.textView_healthbar?.text = duckNPC.getStatus().currentHealth.toString()
+        player.dealDamage(5.0, duckNPC)
+    }
+
+    // MARK: Testing-abilities-related stuff
+    private fun createHPBar(child: Node, anchor: AnchorNode, damageTaker: CombatControllable, renderable: ViewRenderable?) {
+        val hpNode = Node()
+        hpNode.setParent(anchor)
+        hpNode.renderable = renderable
+        hpNode.localPosition = Vector3(0f,0.5f,0f)
+        child.setOnTapListener {_, _ ->
+            // player deals damage to the fuck when tapping it
+            renderable?.view?.textView_healthbar?.text = duckNPC.getStatus().currentHealth.toString()
+            player.dealDamage(5.0, damageTaker)
+        }
+    }
+
+
     private fun destroyTpose(anchor: AnchorNode, target: TransformableNode) {
-        Log.d("DESTROY", "Function called with node: " + target.toString())
-        anchor.removeChild(target)
+        if (anchorList.isNotEmpty()) { // voi myös pitää listaa vaikka specifeistä anchornodeista scenessä
+            Log.d("DESTROY", "Function called with node: " + target.toString())
+            removeAnchorNode(anchor)
+        }
+    }
+
+    private fun clearModels() {
+        for (anchor in anchorList) {
+            removeAnchorNode(anchor)
+        }
     }
 
     private fun spawnObjects() {
@@ -103,8 +174,10 @@ class GameActivity : AppCompatActivity(), FragmentCallbackListener {
                 if (trackable is Plane) {
                     val duckAnchor = hit!!.createAnchor()
                     val duckAnchorNode = AnchorNode(duckAnchor)
+                    anchorList.add(duckAnchorNode)
                     val tposeAnchor = (frame.hitTest((pt.x.toFloat()-450.0f), (pt.y.toFloat()-300.0f)))[0].createAnchor()
                     val tposeAnchorNode = AnchorNode(tposeAnchor)
+                    anchorList.add(tposeAnchorNode)
                     protoAnchor = tposeAnchorNode
                     duckAnchorNode.setParent(fragment.arSceneView.scene)
                     tposeAnchorNode.setParent(fragment.arSceneView.scene)
@@ -118,6 +191,11 @@ class GameActivity : AppCompatActivity(), FragmentCallbackListener {
                     tposeNode.localScale = Vector3(0.1f,0.1f,0.1f)
                     duckNode.setParent(duckAnchorNode)
                     tposeNode.setParent(tposeAnchorNode)
+
+                    // MARK: Testing-abilities-related stuff
+                    createHPBar(duckNode, duckAnchorNode, duckNPC, hpRenderableDuck)
+                    createHPBar(tposeNode, tposeAnchorNode, tposeNPC, hpRenderableTpose)
+
                     duckNode.renderable = renderedDuck
                     duckNode.setLookDirection(Vector3.right())
                     duckNode.select()
@@ -132,4 +210,12 @@ class GameActivity : AppCompatActivity(), FragmentCallbackListener {
         val vw = findViewById<View>(android.R.id.content)
         return android.graphics.Point(vw.width / 2, vw.height / 2)
     }
+    private fun removeAnchorNode(nodeToremove: AnchorNode?) { //Remove an anchor node
+        if (nodeToremove != null) {
+            fragment.arSceneView.scene.removeChild(nodeToremove)
+            nodeToremove.anchor!!.detach()
+            nodeToremove.setParent(null)
+        }
+    }
+
 }
