@@ -12,6 +12,9 @@ android {
         sourceCompatibility 1.8
         targetCompatibility 1.8
     }
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
     buildToolsVersion "29.0.2"
     defaultConfig {
         applicationId "com.example.argame"
