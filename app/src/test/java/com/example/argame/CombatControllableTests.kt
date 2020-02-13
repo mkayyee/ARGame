@@ -7,14 +7,12 @@ import com.example.argame.Model.minimumMaxHealth
 import org.junit.Test
 import org.junit.Assert.*
 
-
 const val positiveAP = 5.0
 const val negativeAP = positiveAP * -1.0
 const val positiveHP = 200.0
 const val negativeHP = positiveHP * -1.0
 const val npcName = "NPC 1"
 const val playerName = "Player 1"
-
 
 class CombatControllableTests {
 
