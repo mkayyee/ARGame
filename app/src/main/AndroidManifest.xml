@@ -22,7 +22,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activities.GameActivity" />
+        <activity android:name=".Activities.GameActivity" android:configChanges="orientation|screenSize" />
 
         <meta-data
             android:name="com.google.ar.core"

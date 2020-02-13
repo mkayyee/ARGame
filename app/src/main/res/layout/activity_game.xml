@@ -25,7 +25,6 @@
             android:text="Spawn/Reset models"
             android:layout_marginBottom="20dp"/>
 
-
     </LinearLayout>
 
     <LinearLayout
@@ -33,19 +32,52 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="top|right">
+
     <Button
         android:id="@+id/menuBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Menu"
         android:layout_marginBottom="20dp"/>
+
     </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center|right">
+
+        <Button
+            android:id="@+id/destroyBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Destroy"
+            android:layout_marginBottom="20dp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center|top">
+
+        <TextView
+            android:id="@+id/healthTxt"
+            android:textSize="30sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"/>
+
+    </LinearLayout>
+
     <LinearLayout
         android:orientation="vertical"
         android:id="@+id/main_menu_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center_vertical" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center" />
 
 
 </FrameLayout>

@@ -45,6 +45,7 @@ class MenuFragmentController : Fragment(), FragmentCallbackListener {
     }
 
     private fun drawMainMenuFragment() {
+        // Add a check for a existing main menu in order to keep track of resume game
         fragmentManager!!.beginTransaction()
             .replace(R.id.main_menu_container, mainMenuFrag)
             .addToBackStack(null)
@@ -54,7 +55,16 @@ class MenuFragmentController : Fragment(), FragmentCallbackListener {
     private fun launchGameActivity() {
         val intent = Intent(activity, GameActivity::class.java)
         startActivity(intent)
+        enableResume()
+    }
 
+    private fun resumeGame() {
+        fragmentManager!!.beginTransaction().remove(this).commit()
+        onResume()
+    }
+
+    private fun enableResume() {
+        activity?.findViewById<Button>(R.id.button_resume_game)?.isEnabled = true
     }
 
     override fun onButtonPressed(btn: Button) {
@@ -66,6 +76,7 @@ class MenuFragmentController : Fragment(), FragmentCallbackListener {
             R.id.button_high_scores -> drawFragment(highscoresFrag)
             R.id.button_game_settings -> drawFragment(settingsFrag)
             R.id.button_new_game -> launchGameActivity()
+            R.id.button_resume_game -> resumeGame()
         }
     }
 }
