@@ -1,6 +1,8 @@
 package com.example.argame.Model
 
 import android.util.Log.wtf
+import com.example.argame.Interfaces.ProjectileAnimator
+import com.google.ar.sceneform.rendering.ModelRenderable
 import kotlin.math.sign
 
 /***
@@ -13,8 +15,11 @@ const val minimumMaxHealth = 1.0
 
 
 abstract class CombatControllable(
-    baseHealth: Double, private val name: String, private var attackPower: Double) {
-
+    baseHealth: Double,
+    val name: String,
+    private var attackPower: Double,
+    val model: ModelRenderable
+) : ProjectileAnimator {
     private var health: Double
     private var maxHealth = baseHealth
     private var isAlive: Boolean = true
