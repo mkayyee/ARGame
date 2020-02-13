@@ -1,3 +1,3 @@
 package com.example.argame.Model
 
-class NPC(ap: Int, startHealth: Int, name: String) : CombatControllable(startHealth, name, ap)
+class NPC(ap: Double, name: String, startHealth: Double) : CombatControllable(startHealth, name, ap)
