@@ -1,16 +1,15 @@
 package com.example.argame.Activities
 
+import android.animation.ObjectAnimator
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.animation.LinearInterpolator
 import android.widget.Button
 import android.widget.TextView
-import androidx.core.graphics.drawable.toDrawable
-import androidx.core.graphics.toColor
+import androidx.appcompat.app.AppCompatActivity
 import com.example.argame.Fragments.CustomArFragment
-import com.example.argame.Fragments.MainMenuFragment
 import com.example.argame.Fragments.MenuFragmentController
 import com.example.argame.Interfaces.FragmentCallbackListener
 import com.example.argame.Model.CombatControllable
@@ -22,11 +21,13 @@ import com.google.ar.core.Plane
 import com.google.ar.sceneform.AnchorNode
 import com.google.ar.sceneform.Node
 import com.google.ar.sceneform.math.Vector3
+import com.google.ar.sceneform.math.Vector3Evaluator
 import com.google.ar.sceneform.rendering.ModelRenderable
 import com.google.ar.sceneform.rendering.ViewRenderable
 import com.google.ar.sceneform.ux.TransformableNode
 import kotlinx.android.synthetic.main.activity_game.*
 import kotlinx.android.synthetic.main.healthbar.view.*
+
 
 class GameActivity : AppCompatActivity(), FragmentCallbackListener {
 
@@ -36,7 +37,6 @@ class GameActivity : AppCompatActivity(), FragmentCallbackListener {
     private lateinit var tposeUri: Uri
     private var renderedDuck: ModelRenderable? = null
     private var renderedTpose: ModelRenderable? = null
-    private var protoAnchor: AnchorNode? = null
     private var protoTargetNode: TransformableNode? = null
     private var anchorList = ArrayList<AnchorNode>()
 
@@ -51,49 +51,13 @@ class GameActivity : AppCompatActivity(), FragmentCallbackListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game)
         fragment = supportFragmentManager.findFragmentById(R.id.sceneform_fragment) as CustomArFragment
-
+        initButtons()
+        prepareModels()
         // MARK: Testing-abilities-related stuff
         initHPRenderables()
-
         val healthTxt = findViewById<TextView>(R.id.healthTxt)
         healthTxt.text = "Health ${player.getStatus().currentHealth}"
-
-        val menuBtn = findViewById<Button>(R.id.menuBtn)
-        menuBtn.setOnClickListener {
-            callMenuFragment()
-        }
-
-        val spawnBtn = findViewById<Button>(R.id.spawnBtn)
-        spawnBtn.setOnClickListener {
-            spawnObjects()
-        }
-
-        // MARK: Testing-abilities-related stuff
-        attackDuckBtn.setOnClickListener {
-            attackDuck()
-        }
-
-        val destroyBtn = findViewById<Button>(R.id.destroyBtn)
-        destroyBtn.setOnClickListener {
-//            if (protoAnchor != null && protoTargetNode != null)
-//            destroyTpose(protoAnchor!!, protoTargetNode!!)
-            clearModels()
-        }
-        // v Turn this mess into a to a proper function!!! v
-
-        duckUri = Uri.parse("duck.sfb")
-        tposeUri = Uri.parse("Character.sfb")
-        val renderableFuture = ModelRenderable.builder()
-            .setSource(this, duckUri)
-            .build()
-        renderableFuture.thenAccept{renderedDuck = it}
-
-        val renderableFuture2 = ModelRenderable.builder()
-            .setSource(this, tposeUri)
-            .build()
-        renderableFuture2.thenAccept{renderedTpose = it}
-
-            }
+    }
 
     override fun onButtonPressed(btn: Button) {
         // The callback's are forwarded to MenuFragmentController,
@@ -101,16 +65,51 @@ class GameActivity : AppCompatActivity(), FragmentCallbackListener {
         menuFragController.onButtonPressed(btn)
     }
 
+    private fun prepareModels() {
+
+        duckUri = Uri.parse("duck.sfb")
+        tposeUri = Uri.parse("Character.sfb")
+        val renderableFuture = ModelRenderable.builder()
+            .setSource(this, duckUri)
+            .build()
+        renderableFuture.thenAccept{renderedDuck = it}
+        val renderableFuture2 = ModelRenderable.builder()
+            .setSource(this, tposeUri)
+            .build()
+        renderableFuture2.thenAccept{renderedTpose = it}
+    }
+
+    private fun initButtons() {
+
+        val menuBtn = findViewById<Button>(R.id.menuBtn)
+        menuBtn.setOnClickListener {
+            callMenuFragment()
+        }
+        val spawnBtn = findViewById<Button>(R.id.spawnBtn)
+        spawnBtn.setOnClickListener {
+            spawnObjects()
+        }
+        // MARK: Testing-abilities-related stuff
+        attackDuckBtn.setOnClickListener {
+            attackDuck()
+        }
+        val destroyBtn = findViewById<Button>(R.id.destroyBtn)
+        destroyBtn.setOnClickListener {
+            clearModels()
+        }
+    }
+
     private fun callMenuFragment() {
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.main_menu_container, MainMenuFragment())
+            .replace(R.id.main_menu_container, MenuFragmentController())
+            .addToBackStack(null)
             .commit()
 
-        val resume = this.findViewById<Button>(R.id.button_resume_game)
+        /*val resume = this.findViewById<Button>(R.id.button_resume_game)
         if (resume != null) {
             resume.isEnabled = true
-        }
+        }*/
     }
 
     // MARK: Testing-abilities-related stuff
@@ -148,7 +147,6 @@ class GameActivity : AppCompatActivity(), FragmentCallbackListener {
         }
     }
 
-
     private fun destroyTpose(anchor: AnchorNode, target: TransformableNode) {
         if (anchorList.isNotEmpty()) { // voi myös pitää listaa vaikka specifeistä anchornodeista scenessä
             Log.d("DESTROY", "Function called with node: " + target.toString())
@@ -160,6 +158,18 @@ class GameActivity : AppCompatActivity(), FragmentCallbackListener {
         for (anchor in anchorList) {
             removeAnchorNode(anchor)
         }
+    }
+
+    private fun moveToTarget(model: TransformableNode, targetModel: TransformableNode) {
+        val objectAnimation = ObjectAnimator()
+        objectAnimation.setAutoCancel(true)
+        objectAnimation.setTarget(model)
+        objectAnimation.setObjectValues(model.getWorldPosition(), targetModel.getWorldPosition())
+        objectAnimation.setPropertyName("worldPosition")
+        objectAnimation.setEvaluator(Vector3Evaluator())
+        objectAnimation.setInterpolator(LinearInterpolator())
+        objectAnimation.setDuration(5000)
+        objectAnimation.start()
     }
 
     private fun spawnObjects() {
@@ -175,18 +185,15 @@ class GameActivity : AppCompatActivity(), FragmentCallbackListener {
                     val duckAnchor = hit!!.createAnchor()
                     val duckAnchorNode = AnchorNode(duckAnchor)
                     anchorList.add(duckAnchorNode)
-                    val tposeAnchor = (frame.hitTest((pt.x.toFloat()-450.0f), (pt.y.toFloat()-300.0f)))[0].createAnchor()
+                    val tposeAnchor = (frame.hitTest((pt.x.toFloat()-1450.0f), (pt.y.toFloat()+1300.0f)))[0].createAnchor()
                     val tposeAnchorNode = AnchorNode(tposeAnchor)
                     anchorList.add(tposeAnchorNode)
-                    protoAnchor = tposeAnchorNode
                     duckAnchorNode.setParent(fragment.arSceneView.scene)
                     tposeAnchorNode.setParent(fragment.arSceneView.scene)
                     val duckNode = TransformableNode(fragment.transformationSystem)
                     val tposeNode = TransformableNode(fragment.transformationSystem)
-                    duckNode.scaleController.minScale = 0.1f
-                    duckNode.scaleController.maxScale = 0.2f
-                    tposeNode.scaleController.minScale = 0.04f
-                    tposeNode.scaleController.maxScale = 0.1f
+                    duckNode.scaleController.isEnabled = false
+                    tposeNode.scaleController.isEnabled = false
                     duckNode.localScale = Vector3(0.1f,0.1f,0.1f)
                     tposeNode.localScale = Vector3(0.1f,0.1f,0.1f)
                     duckNode.setParent(duckAnchorNode)
@@ -201,8 +208,9 @@ class GameActivity : AppCompatActivity(), FragmentCallbackListener {
                     duckNode.select()
                     tposeNode.renderable = renderedTpose
                     protoTargetNode = tposeNode
-/*                    mNode.setOnTapListener { hitTestRes: HitTestResult?, motionEv: MotionEvent? ->
-                    }*/
+
+                    // Move Tposeman towards Duck right after spawn
+                    moveToTarget(tposeNode, duckNode)
                     break
                 }}}}
 

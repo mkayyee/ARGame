@@ -36,10 +36,10 @@ class MainMenuFragment : Fragment() {
 
     private fun setupButtonListeners() {
         val buttonContainer = main_menu_button_container
-        buttonContainer.children.forEach {
+        buttonContainer?.children?.forEach {
             if (it is Button) {
                 it.setOnClickListener {
-                    buttonCallbackListener!!.onButtonPressed(it as Button)
+                    buttonCallbackListener?.onButtonPressed(it as Button)
                 }
             }
         }
