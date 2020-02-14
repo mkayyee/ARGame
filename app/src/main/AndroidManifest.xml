@@ -4,7 +4,6 @@
 
     <uses-permission android:name="android.permission.CAMERA" />
 
-
     <uses-feature
         android:name="android.hardware.camera.ar"
         android:required="true" />
@@ -16,13 +15,17 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MaterialComponents.Light.DarkActionBar">
+        <activity android:name=".Activities.MenuActivity"></activity>
         <activity android:name=".Activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activities.GameActivity" android:configChanges="orientation|screenSize" />
+        <activity
+            android:name=".Activities.GameActivity"
+            android:configChanges="orientation|screenSize" />
 
         <meta-data
             android:name="com.google.ar.core"
