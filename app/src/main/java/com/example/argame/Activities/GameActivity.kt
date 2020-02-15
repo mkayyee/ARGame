@@ -18,6 +18,7 @@ import com.example.argame.Model.Player
 import com.example.argame.R
 import com.google.ar.core.HitResult
 import com.google.ar.core.Plane
+import com.google.ar.core.Pose
 import com.google.ar.sceneform.AnchorNode
 import com.google.ar.sceneform.Node
 import com.google.ar.sceneform.math.Vector3
@@ -132,6 +133,8 @@ class GameActivity : AppCompatActivity(), FragmentCallbackListener {
         // player deals damage to the fuck when tapping it
         hpRenderableDuck?.view?.textView_healthbar?.text = duckNPC.getStatus().currentHealth.toString()
         player.dealDamage(5.0, duckNPC)
+
+
     }
 
     // MARK: Testing-abilities-related stuff
@@ -142,7 +145,7 @@ class GameActivity : AppCompatActivity(), FragmentCallbackListener {
         hpNode.localPosition = Vector3(0f,0.5f,0f)
         child.setOnTapListener {_, _ ->
             // player deals damage to the fuck when tapping it
-            renderable?.view?.textView_healthbar?.text = duckNPC.getStatus().currentHealth.toString()
+            renderable?.view?.textView_healthbar?.text = damageTaker.getStatus().currentHealth.toString()
             player.dealDamage(5.0, damageTaker)
         }
     }
