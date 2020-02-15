@@ -6,30 +6,16 @@ import com.google.ar.sceneform.math.Vector3
 import com.google.ar.sceneform.math.Vector3Evaluator
 import com.google.ar.sceneform.ux.TransformableNode
 
+/***
+ *  This is a helper singleton, that contains static methods
+ *  for general animations used in different context's,
+ *  so we don't have to re-write everything.
+ */
+
+// TODO make enum or something for different abilities
+const val ABILITY_PROJECTILE_SPEED: Long = 500
+
 object AnimationAPI {
-
-//// Ability testiä /////////
-//    tposeNode.setOnTapListener {_, _ ->
-//        val animationData = ProjectileAnimationData(
-//            tposeAnchorNode.worldPosition,
-//            duckAnchorNode.worldPosition,
-//            tposeAnchor,
-//            this,
-//            fragment.arSceneView.scene,
-//            fragment
-//        )
-//        tposeNPC.useAbility(
-//            Ability("sphere", 20.0, "XD"),
-//            tposeNPC,
-//            animationData,
-//            this
-//        ) {
-//            hpRenderableDuck?.view?.textView_healthbar?.text = duckNPC.getStatus().currentHealth.toString()
-//        }
-//    }
-//    //////////////////
-
-    // helper singleton for animations
 
     fun fireProjectile(model: TransformableNode, startPos: Vector3, endPos: Vector3, callback: () -> Unit) {
         val objectAnimation = ObjectAnimator()
@@ -39,7 +25,7 @@ object AnimationAPI {
         objectAnimation.setPropertyName("worldPosition")
         objectAnimation.setEvaluator(Vector3Evaluator())
         objectAnimation.setInterpolator(LinearInterpolator())
-        objectAnimation.setDuration(2000)
+        objectAnimation.setDuration(ABILITY_PROJECTILE_SPEED)
         objectAnimation.start()
         // currently executed immediately --
         // could implement some logic to see if it reached the target
