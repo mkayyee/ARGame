@@ -147,6 +147,8 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener {
                 if (playerTarget!!.healthBar != null) {
                     updateHPBar(playerTarget!!.healthBar, playerTarget!!.model)
                 }
+                //beamTarget(playerTarget!!)
+
                 // enable attack button after in callback
                 playground_attackDuckBtn.isEnabled = true
                 if (!playerTarget!!.model.getStatus().isAlive) {
@@ -156,6 +158,17 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener {
         } else {
             Toast.makeText(this, "You don't have a target", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun beamTarget(playerTarget: PlayerTargetData) {
+        anchorList.forEach() {
+            // TODO: Calculate a good offset for worldposition difference. 0.1f is just a placeholder.
+            if (it.worldPosition.x - playerTarget.node.worldPosition.x < 0.1f && it.worldPosition.y - playerTarget.node.worldPosition.y < 0.1f) {
+                // TODO: Needs a collection from where to look for other targets
+            }
+        }
+
+
     }
 
     private fun clearPlayerTarget() {

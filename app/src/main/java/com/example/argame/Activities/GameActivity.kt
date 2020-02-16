@@ -3,7 +3,6 @@ package com.example.argame.Activities
 import android.animation.ObjectAnimator
 import android.net.Uri
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.util.Log
 import android.view.View
 import android.view.animation.LinearInterpolator
@@ -19,7 +18,6 @@ import com.example.argame.Model.Player
 import com.example.argame.R
 import com.google.ar.core.HitResult
 import com.google.ar.core.Plane
-import com.google.ar.core.Pose
 import com.google.ar.sceneform.AnchorNode
 import com.google.ar.sceneform.Node
 import com.google.ar.sceneform.math.Vector3
@@ -63,7 +61,6 @@ class GameActivity : AppCompatActivity(), FragmentCallbackListener {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putParcelableArrayList(anchorList)
 
     }
 
