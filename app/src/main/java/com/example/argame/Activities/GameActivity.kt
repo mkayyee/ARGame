@@ -3,6 +3,7 @@ package com.example.argame.Activities
 import android.animation.ObjectAnimator
 import android.net.Uri
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.util.Log
 import android.view.View
 import android.view.animation.LinearInterpolator
@@ -58,6 +59,12 @@ class GameActivity : AppCompatActivity(), FragmentCallbackListener {
         initHPRenderables()
         val healthTxt = findViewById<TextView>(R.id.healthTxt)
         healthTxt.text = "Health ${player.getStatus().currentHealth}"
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putParcelableArrayList(anchorList)
+
     }
 
     override fun onButtonPressed(btn: Button) {
