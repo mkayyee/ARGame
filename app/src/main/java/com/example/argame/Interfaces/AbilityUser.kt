@@ -21,10 +21,10 @@ interface AbilityUser {
      *                      the animated projectiles trajectory.
      */
     fun useAbility(caster: CombatControllable, target: CombatControllable,
-                   ability: Ability, projectileData: ProjectileAnimationData, context: Context, cb: () -> Unit) {
+                   ability: Ability, projectileData: ProjectileAnimationData, cb: () -> Unit) {
         val animator: ModelAnimator?
         val animationData = caster.model?.getAnimationData(ability.animationName)
-        if (target.getStatus().isAlive) {
+        if (target.getStatus().isAlive && caster.getStatus().isAlive) {
             if (animationData != null) {
                 // TODO(?) A completion callback parameter to end the animation, or make some completion animation.
                 // The cast animation - should be included in caster's model's ModelRenderable
@@ -45,6 +45,8 @@ interface AbilityUser {
                             "for ${caster.getStatus().attackPower * ability.damage} damage."
                 )
             }
+        } else {
+            cb()
         }
     }
 }

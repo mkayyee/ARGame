@@ -1,6 +1,8 @@
 package com.example.argame.Model
 
+import android.content.Context
 import android.util.Log.wtf
+import com.example.argame.Interfaces.AbilityUser
 import com.example.argame.Interfaces.ProjectileAnimator
 import com.google.ar.sceneform.rendering.ModelRenderable
 import kotlin.math.sign
@@ -19,7 +21,7 @@ abstract class CombatControllable(
     val name: String,
     private var attackPower: Double,
     val model: ModelRenderable? = null
-) : ProjectileAnimator {
+) : ProjectileAnimator, AbilityUser {
     private var health: Double
     private var maxHealth = baseHealth
     private var isAlive: Boolean = true
@@ -134,5 +136,12 @@ abstract class CombatControllable(
     fun getStatus() : CombatControllableStatus {
         status = CombatControllableStatus(isAlive, health, attackPower, name, maxHealth)
         return status
+    }
+
+    fun useAbility(
+        ability: Ability, target: CombatControllable, projectileData: ProjectileAnimationData, callback: () -> Unit) {
+        super.useAbility(this, target, ability, projectileData) {
+            callback()
+        }
     }
 }
