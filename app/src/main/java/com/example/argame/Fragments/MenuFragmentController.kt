@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
 import com.example.argame.Activities.GameActivity
+import com.example.argame.Activities.GameActivityPlayground
 import com.example.argame.Interfaces.FragmentCallbackListener
 import com.example.argame.R
 
@@ -53,7 +54,8 @@ class MenuFragmentController : Fragment(), FragmentCallbackListener {
     }
 
     private fun launchGameActivity() {
-        val intent = Intent(activity, GameActivity::class.java)
+        //val intent = Intent(activity, GameActivity::class.java)
+        val intent = Intent(activity, GameActivityPlayground::class.java)  // HUOMIO !!!!
         startActivity(intent)
         enableResume()
     }
