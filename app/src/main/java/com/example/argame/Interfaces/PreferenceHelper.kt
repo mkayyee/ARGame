@@ -9,12 +9,19 @@ object PreferenceHelper {
 
     val GSON = "GSON"
 
-    fun defaultPreference(context: Context): SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-    fun customPreference(context: Context, name: String): SharedPreferences = context.getSharedPreferences(name, Context. MODE_PRIVATE)
-    inline fun SharedPreferences.editMe(operation: (SharedPreferences.Editor) -> Unit) { val editMe = edit()
+    fun defaultPreference(context: Context): SharedPreferences =
+        PreferenceManager.getDefaultSharedPreferences(context)
+
+    fun customPreference(context: Context, name: String): SharedPreferences =
+        context.getSharedPreferences(name, Context.MODE_PRIVATE)
+
+    inline fun SharedPreferences.editMe(operation: (SharedPreferences.Editor) -> Unit) {
+        val editMe = edit()
         operation(editMe)
-        editMe.apply() }
-    inline fun SharedPreferences.Editor.put(pair: Pair<String, Any>) {
+        editMe.apply()
+    }
+
+    inline fun SharedPreferences.Editor.put(pair: Pair<String, Any?>) {
         val key = pair.first
         val value = pair.second
         when (value) {
@@ -27,5 +34,21 @@ object PreferenceHelper {
         }
     }
 
+    var SharedPreferences.setGson
+        get() = getString(GSON, "")
+        set(value) {
+            editMe {
+                it.put(GSON to value) //it.putString(USER_PASSWORD, value)
+            }
+        }
+
+    var SharedPreferences.clearValues
+        get() = { }
+        set(value) {
+            editMe {
+                it.remove(GSON)
+                //it.clear()
+            }
+        }
 
 }

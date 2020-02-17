@@ -1,6 +1,7 @@
 package com.example.argame.Activities
 
 import android.animation.ObjectAnimator
+import android.content.SharedPreferences
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -11,9 +12,14 @@ import android.view.animation.LinearInterpolator
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.edit
 import com.example.argame.Fragments.CustomArFragment
 import com.example.argame.Fragments.MenuFragmentController
 import com.example.argame.Interfaces.FragmentCallbackListener
+import com.example.argame.Interfaces.PreferenceHelper
+import com.example.argame.Interfaces.PreferenceHelper.customPreference
+import com.example.argame.Interfaces.PreferenceHelper.defaultPreference
+import com.example.argame.Interfaces.PreferenceHelper.setGson
 import com.example.argame.Model.*
 import com.example.argame.R
 import com.google.ar.core.Anchor
@@ -27,6 +33,7 @@ import com.google.ar.sceneform.math.Vector3Evaluator
 import com.google.ar.sceneform.rendering.ModelRenderable
 import com.google.ar.sceneform.rendering.ViewRenderable
 import com.google.ar.sceneform.ux.TransformableNode
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_game_playground.*
 import kotlinx.android.synthetic.main.healthbar.view.*
 
@@ -48,18 +55,45 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener {
     private var duckNPC = NPC(1.0, "duck", 5000.0)
     private var tposeNPC = NPC(1.0, "duck 2", 5000.0)
     private var player = Player(5.0, "player", 5000.0)
-
     var ducksInScene = false
+
+    // GSON and SHAREDPREFERENCE
+
+    private lateinit var saver: SharedPreferences
+    private val gson = Gson()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game_playground)
         fragment = supportFragmentManager.findFragmentById(R.id.playground_sceneform_fragment) as CustomArFragment
+        saver = defaultPreference(this)
         initButtons()
         prepareModels()
         // MARK: Testing-abilities-related stuff
         initHPRenderables()
         playground_targetTxt.text = "No target"
+    }
+
+    override fun onPause() {
+        super.onPause()
+        val positionList = ArrayList<Vector3>()
+        anchorList.forEach {
+            positionList.add(it.worldPosition)
+        }
+        val saveGame = GameVault(positionList)
+        val saveToGson = gson.toJson(saveGame)
+
+        saver.setGson = saveToGson
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (saver.setGson != null) {
+            Log.d("JATKUU", saver.setGson)
+            // TODO: Put everything back to their places. Redo spawn functions to work with onPause and onResume
+        }
     }
 
     override fun onButtonPressed(btn: Button) {
