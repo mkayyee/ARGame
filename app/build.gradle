@@ -63,3 +63,19 @@ sceneform.asset('sampledata/Tposeman/Character.obj',
         'default',
         'sampledata/Tposeman/Character.sfa',
         'src/main/assets/Character')
+
+
+sceneform.asset('sampledata/untitledv2.fbx',
+        'default',
+        'sampledata/untitledv2.sfa',
+        'src/main/assets/untitledv2')
+
+sceneform.asset('sampledata/untitledv3.fbx',
+        'default',
+        'sampledata/untitledv3.sfa',
+        'src/main/assets/untitledv3')
+
+sceneform.asset('sampledata/untitledv4.fbx',
+        'default',
+        'sampledata/untitledv4.sfa',
+        'src/main/assets/untitledv4')

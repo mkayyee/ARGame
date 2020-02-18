@@ -13,7 +13,7 @@ import com.google.ar.sceneform.ux.TransformableNode
  */
 
 // TODO make enum or something for different abilities
-const val ABILITY_PROJECTILE_SPEED: Long = 500
+const val ABILITY_PROJECTILE_SPEED: Long = 2000
 
 object AnimationAPI {
 
