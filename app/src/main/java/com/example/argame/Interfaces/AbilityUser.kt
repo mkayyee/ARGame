@@ -1,18 +1,16 @@
 package com.example.argame.Interfaces
 
 import android.content.Context
+import android.net.Uri
 import android.util.Log
 import com.example.argame.Model.Ability
 import com.example.argame.Model.CombatControllable
 import com.example.argame.Model.ProjectileAnimationData
-import com.google.ar.core.Pose
 import com.google.ar.sceneform.animation.ModelAnimator
-
 /***
  *  An Interface for casting abilities, that both, the NPC and the Player implement.
  */
 interface AbilityUser {
-
     /***
      *  useAbility() Parameters explained:
      *      -caster & target: The casting GameControllable and the receiving GameControllable

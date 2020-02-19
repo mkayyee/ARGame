@@ -172,10 +172,12 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener {
             player.dealDamage(5.0, playerTarget!!.model)
             val ability = Ability("Sphere", 100.0, "I have no cast animation")
             val animData = ProjectileAnimationData(
-                Vector3(0.5f, 0f, 0f),
+                // TODO make start position relative to screen position
+                Vector3(0f, 0f, 0.1f),
                 playerTarget!!.node.worldPosition,
                 this,
-                fragment
+                fragment,
+                AbilityModelUri.TEST.uri()
             )
             player.useAbility(ability, playerTarget!!.model, animData) {
                 if (playerTarget!!.healthBar != null) {
