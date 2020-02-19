@@ -64,12 +64,12 @@
     recenter: 'root',
     scale: 1.495215,
   },
-  samplers: [
-    {
-      file: 'C:\\Users\\mikae\\Pictures\\maxresdefault.jpg',
-      name: 'maxresdefault',
-      pipeline_name: 'C:\\Users\\mikae\\Pictures\\maxresdefault.jpg',
-    },
-  ],
+//  samplers: [
+  //  {
+      //file: 'C:\\Users\\mikae\\Pictures\\maxresdefault.jpg',
+      //name: 'maxresdefault',
+      //pipeline_name: 'C:\\Users\\mikae\\Pictures\\maxresdefault.jpg',
+    //},
+ // ],
   version: '0.54:2',
 }
