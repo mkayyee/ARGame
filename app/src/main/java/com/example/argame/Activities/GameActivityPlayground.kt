@@ -5,24 +5,20 @@ import android.content.SharedPreferences
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import android.view.View
 import android.view.animation.LinearInterpolator
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
-import androidx.core.content.edit
 import com.example.argame.Fragments.CustomArFragment
 import com.example.argame.Fragments.MenuFragmentController
 import com.example.argame.Interfaces.FragmentCallbackListener
-import com.example.argame.Interfaces.PreferenceHelper
-import com.example.argame.Interfaces.PreferenceHelper.customPreference
 import com.example.argame.Interfaces.PreferenceHelper.defaultPreference
 import com.example.argame.Interfaces.PreferenceHelper.setGson
+import com.example.argame.Interfaces.PreferenceHelper.clearValues
 import com.example.argame.Model.*
 import com.example.argame.R
-import com.google.ar.core.Anchor
 import com.google.ar.core.HitResult
 import com.google.ar.core.Plane
 import com.google.ar.sceneform.AnchorNode
@@ -34,6 +30,7 @@ import com.google.ar.sceneform.rendering.ModelRenderable
 import com.google.ar.sceneform.rendering.ViewRenderable
 import com.google.ar.sceneform.ux.TransformableNode
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_game_playground.*
 import kotlinx.android.synthetic.main.healthbar.view.*
 
@@ -47,6 +44,8 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener {
     private var renderedTpose: ModelRenderable? = null
     private var protoTargetNode: TransformableNode? = null
     private var anchorList = ArrayList<AnchorNode>()
+    private var builderList = ArrayList<ObjectBuilder>()
+    private lateinit var firstAnchorPos: HitResult
 
     // MARK: Testing-abilities-related stuff
     private var playerTarget: PlayerTargetData? = null
@@ -73,6 +72,9 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener {
         // MARK: Testing-abilities-related stuff
         initHPRenderables()
         playground_targetTxt.text = "No target"
+
+
+        saver.clearValues
     }
 
     override fun onPause() {
@@ -81,7 +83,9 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener {
         anchorList.forEach {
             positionList.add(it.worldPosition)
         }
-        val saveGame = GameVault(positionList)
+        val classified = ObjectLister(builderList)
+        Log.d("Builderlist", builderList.size.toString())
+        val saveGame = GameVault(classified)
         val saveToGson = gson.toJson(saveGame)
 
         saver.setGson = saveToGson
@@ -90,8 +94,21 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener {
 
     override fun onResume() {
         super.onResume()
-        if (saver.setGson != null) {
+        if (saver.setGson != null && builderList.size > 0) {
             Log.d("JATKUU", saver.setGson)
+            //val collectionType = object : TypeToken<ArrayList<ObjectBuilder>>(){}.type
+
+            val parsedVault = gson.fromJson(saver.setGson, GameVault::class.java)
+            val parsedLister = parsedVault.classifiedBuilder
+            val parsedBuilder = parsedLister.builderList
+            val firstItem = parsedBuilder[0]
+            Log.d("JATKUU2", firstItem.toString())
+
+            // TODO: Joku kaataa apin palautuksen jälkeen. Akkurilista? Hitresults? -> Nollaa kaikki onPausessa jo.
+
+
+
+            //spawnObjectsMarkThree(builderList)
             // TODO: Put everything back to their places. Redo spawn functions to work with onPause and onResume
         }
     }
@@ -124,7 +141,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener {
         }
         val spawnBtn = findViewById<Button>(R.id.playground_spawnBtn)
         spawnBtn.setOnClickListener {
-            spawnObjects()
+            spawnObjectsMarkTwo()
         }
         // MARK: Testing-abilities-related stuff
         playground_attackDuckBtn.setOnClickListener {
@@ -212,13 +229,74 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener {
     }
 
     // MARK: Testing-abilities-related stuff
-    private fun createHPBar(anchor: AnchorNode, renderable: ViewRenderable?) {
+    private fun createHPBar(anchor: AnchorNode, renderable: ViewRenderable?, builder: ObjectBuilder) {
         val hpNode = Node()
         hpNode.setParent(anchor)
         hpNode.renderable = renderable
         hpNode.localPosition = Vector3(0f,0.5f,0f)
         hpNode.localScale = Vector3(0.5f, 0.5f, 0.5f)
+        //builder.hpNode = hpNode
+        builderList.add(builder)
     }
+
+/*    private fun spawnObjectsMarkThree(builderList: ArrayList<ObjectBuilder>) {
+        val builderList = builderList
+        for (builder in builderList) {
+            val frame = fragment.arSceneView.arFrame
+            val pt = getScreenCenter()
+            // val hits: List<HitResult>
+            if (frame != null) {
+                hits = frame.hitTest(pt.x.toFloat(), pt.y.toFloat())
+                for (hit in hits) {
+                    val trackable = hit.trackable
+                    if (trackable is Plane) {
+                        // firstAnchorPos is for setting the base for the initial anchor
+                        val duckAnchor = hit!!.createAnchor()
+                        val duckAnchorNode = AnchorNode(duckAnchor)
+                        anchorList.add(duckAnchorNode)
+                        duckAnchorNode.setParent(fragment.arSceneView.scene)
+                        val duckNode = TransformableNode(fragment.transformationSystem)
+                        duckNode.scaleController.isEnabled = false
+                        duckNode.localScale = Vector3(0.1f, 0.1f, 0.1f)
+                        duckNode.setParent(duckAnchorNode)
+                        duckNode.renderable = renderedDuck
+                        val builder =
+                            ObjectBuilder(hit!!, duckNode.worldPosition, duckNode.localScale)
+                        //duckNode.setLookDirection(tposeNode.worldPosition)
+                        duckNode.select()
+
+                        // MARK: Testing-abilities-related stuff
+                        createHPBar(duckAnchorNode, hpRenderableDuck, builder)
+
+                        // tap listeners for ability usage
+                        // TODO -> move hpRenderable out of this function. Could be stored inside every model..?
+*//*                    createOnTapListenerForAttack(
+                        // TODO -> create separate functions for acquiring player target, and for setting up tap listeners
+                        tposeNode,
+                        tposeAnchorNode,
+                        duckAnchorNode,
+                        tposeNPC,
+                        hpRenderableDuck,
+                        duckNPC,
+                        hpRenderableTpose
+                    )
+                    createOnTapListenerForAttack(
+                        duckNode,
+                        duckAnchorNode,
+                        tposeAnchorNode,
+                        duckNPC,
+                        hpRenderableTpose,
+                        tposeNPC,
+                        hpRenderableDuck
+                    )*//*
+                        ducksInScene = true
+                        break
+                    }
+                }
+            }
+
+        }
+    }*/
 
     private fun destroyTpose(anchor: AnchorNode, target: TransformableNode) {
         if (anchorList.isNotEmpty()) { // voi myös pitää listaa vaikka specifeistä anchornodeista scenessä
@@ -247,6 +325,61 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener {
         objectAnimation.start()
     }
 
+    private fun spawnObjectsMarkTwo() {
+        val frame = fragment.arSceneView.arFrame
+        val pt = getScreenCenter()
+        val hits: List<HitResult>
+        if (frame != null && renderedDuck != null) {
+            hits = frame.hitTest(pt.x.toFloat(), pt.y.toFloat())
+            for (hit in hits) {
+                val trackable = hit.trackable
+                if (trackable is Plane) {
+                    // firstAnchorPos is for setting the base for the initial anchor
+                    val duckAnchor = hit!!.createAnchor()
+                    val duckAnchorNode = AnchorNode(duckAnchor)
+                    anchorList.add(duckAnchorNode)
+                    duckAnchorNode.setParent(fragment.arSceneView.scene)
+                    val duckNode = TransformableNode(fragment.transformationSystem)
+                    duckNode.scaleController.isEnabled = false
+                    duckNode.localScale = Vector3(0.1f, 0.1f, 0.1f)
+                    duckNode.setParent(duckAnchorNode)
+                    duckNode.renderable = renderedDuck
+                    val builder = ObjectBuilder(hit!!, duckNode.worldPosition, duckNode.localScale)
+                    //duckNode.setLookDirection(tposeNode.worldPosition)
+                    duckNode.select()
+
+                    // MARK: Testing-abilities-related stuff
+                    createHPBar(duckAnchorNode, hpRenderableDuck, builder)
+
+                    // tap listeners for ability usage
+                    // TODO -> move hpRenderable out of this function. Could be stored inside every model..?
+/*                    createOnTapListenerForAttack(
+                        // TODO -> create separate functions for acquiring player target, and for setting up tap listeners
+                        tposeNode,
+                        tposeAnchorNode,
+                        duckAnchorNode,
+                        tposeNPC,
+                        hpRenderableDuck,
+                        duckNPC,
+                        hpRenderableTpose
+                    )
+                    createOnTapListenerForAttack(
+                        duckNode,
+                        duckAnchorNode,
+                        tposeAnchorNode,
+                        duckNPC,
+                        hpRenderableTpose,
+                        tposeNPC,
+                        hpRenderableDuck
+                    )*/
+                    ducksInScene = true
+                    break
+                }
+            }
+        }
+
+    }
+
     private fun spawnObjects() {
         if (!ducksInScene) {
             duckNPC = NPC(1.0, "duck", 5000.0)
@@ -260,6 +393,8 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener {
                 for (hit in hits) {
                     val trackable = hit.trackable
                     if (trackable is Plane) {
+                        // firstAnchorPos is for setting the base for the initial anchor
+                        firstAnchorPos = hit!!
                         val duckAnchor = hit!!.createAnchor()
                         val duckAnchorNode = AnchorNode(duckAnchor)
                         anchorList.add(duckAnchorNode)
@@ -288,8 +423,8 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener {
                         protoTargetNode = tposeNode
 
                         // MARK: Testing-abilities-related stuff
-                        createHPBar(duckAnchorNode, hpRenderableDuck)
-                        createHPBar(tposeAnchorNode, hpRenderableTpose)
+                        //createHPBar(duckAnchorNode, hpRenderableDuck)
+                        //createHPBar(tposeAnchorNode, hpRenderableTpose)
 
                         // tap listeners for ability usage
                         // TODO -> move hpRenderable out of this function. Could be stored inside every model..?
