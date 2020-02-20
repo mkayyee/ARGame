@@ -69,3 +69,9 @@ sceneform.asset('sampledata/untitledv4.fbx',
         'default',
         'sampledata/untitledv4.sfa',
         'src/main/assets/untitledv4')
+
+
+sceneform.asset('sampledata/blenderlovestocrash2.fbx',
+        'default',
+        'sampledata/blenderlovestocrash2.sfa',
+        'src/main/assets/blenderlovestocrash2')

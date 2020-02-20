@@ -5,4 +5,7 @@ data class CombatControllableStatus(
     val currentHealth: Double,
     val attackPower: Double,
     val name: String,
-    val maxHealth: Double)
+    val maxHealth: Double,
+    val level: Int,
+    val experience: Double,
+    val xpRequired: Double)

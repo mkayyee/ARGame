@@ -47,7 +47,7 @@ interface ProjectileAnimator {
                 .setSource(projAnimData.context, uri)
                 .build()
             renderableFuture.thenAccept {
-                val animData = it.getAnimationData("Sphere|SphereAction.001") // 0 should be the index where cast animation is
+                val animData = it.getAnimationData(0) // 0 should be the index where cast animation is
                 if (animData != null) { // Null check. By default the ability should have at least 1 animation but never know
                     instantiateNodeInScene(projAnimData, it, cb)
                     val animator = ModelAnimator(animData, it)

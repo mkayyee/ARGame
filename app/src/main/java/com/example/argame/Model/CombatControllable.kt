@@ -14,6 +14,9 @@ import kotlin.math.sign
 
 const val minimumAP = 1.0
 const val minimumMaxHealth = 1.0
+const val apGrowModifier = 1.25
+const val hpGrowModifier = 1.25
+const val xpGrowModifier = 1.25
 
 
 abstract class CombatControllable(
@@ -26,6 +29,9 @@ abstract class CombatControllable(
     private var maxHealth = baseHealth
     private var isAlive: Boolean = true
     private var status: CombatControllableStatus
+    private var level = 1
+    private var xp = 0.0
+    private var xpRequiredForLevel = 1000.0
 
     init {
         var notifyInputError = false
@@ -55,7 +61,7 @@ abstract class CombatControllable(
                     "Use positive values in the future. CC Name: $name")
         }
         health = maxHealth
-        status = CombatControllableStatus(isAlive, health, attackPower, name, maxHealth)
+        status = CombatControllableStatus(isAlive, health, attackPower, name, maxHealth, level, xp, xpRequiredForLevel)
     }
 
     fun restoreFullHealth() {
@@ -90,6 +96,29 @@ abstract class CombatControllable(
         }
     }
 
+    fun increaseXP(amount: Double) {
+        if (amount.sign != -1.0) {
+            if (xp + amount >= xpRequiredForLevel) {
+                levelUp()
+                val newAmount = xp + amount - xpRequiredForLevel
+                // recursive call on level up, so the excess xp gets added
+                increaseXP(newAmount)
+            } else {
+                xp += amount
+            }
+        } else {
+            wtf("CCERROR", "Increasing xp with negative values is not increasing it...")
+        }
+    }
+
+    private fun levelUp() {
+        level ++
+        xpRequiredForLevel *= xpGrowModifier
+        increaseMaxHealth(hpGrowModifier)
+        increaseAP(apGrowModifier)
+        restoreFullHealth()
+    }
+
     fun increaseAP(multiplier: Double) {
         val newMax = multiplier * attackPower
         // do something only if the multiplier is greater than 1
@@ -122,7 +151,7 @@ abstract class CombatControllable(
         if (isAlive) {
             when {
                 // Not allowing negative input values
-                damage > 0 -> target.takeDamage(damage * attackPower)
+                damage > 0 -> target.takeDamage(damage)
                 else -> {
                     wtf("CCERROR", "Negative value or 0 as dealDamage() input")
                 }
@@ -134,7 +163,7 @@ abstract class CombatControllable(
     }
 
     fun getStatus() : CombatControllableStatus {
-        status = CombatControllableStatus(isAlive, health, attackPower, name, maxHealth)
+        status = CombatControllableStatus(isAlive, health, attackPower, name, maxHealth, level, xp, xpRequiredForLevel)
         return status
     }
 
