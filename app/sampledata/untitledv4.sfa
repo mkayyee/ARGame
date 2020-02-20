@@ -66,9 +66,9 @@
   },
   samplers: [
     {
-      file: 'C:\\Users\\mikae\\Pictures\\maxresdefault.jpg',
+      file: 'sampledata/maxresdefault.jpg',
       name: 'maxresdefault',
-      pipeline_name: 'C:\\Users\\mikae\\Pictures\\maxresdefault.jpg',
+      pipeline_name: 'sampledata/maxresdefault.jpg',
     },
   ],
   version: '0.54:2',
