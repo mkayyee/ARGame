@@ -20,27 +20,26 @@ interface AbilityUser {
      */
     fun useAbility(caster: CombatControllable, target: CombatControllable,
                    ability: Ability, projectileData: ProjectileAnimationData, cb: () -> Unit) {
+        val casterStatus = caster.getStatus()
+        val targetStatus = target.getStatus()
         val animator: ModelAnimator?
-        val animationData = caster.model?.getAnimationData(ability.animationName)
-        if (target.getStatus().isAlive && caster.getStatus().isAlive) {
+
+        // the cast animation data (related to the caster's 3d model, not the projectile)
+        val animationData = caster.model?.getAnimationData(ability.getCastAnimationString())
+        if (targetStatus.isAlive && casterStatus.isAlive) {
             if (animationData != null) {
                 // TODO(?) A completion callback parameter to end the animation, or make some completion animation.
-                // The cast animation - should be included in caster's model's ModelRenderable
                 animator = ModelAnimator(animationData, caster.model)
                 animator.start()
             }
-            // The projectile animation - some animation from the caster's pose all the way to the target's pose
-            // TODO implement and trigger a projectile animation
-            // currently does nothing
             caster.instantiateProjectile(projectileData) {
                 // retrieved callback that the projectile was fired, so probably safe to deal damage
-                caster.dealDamage(ability.damage, target)
-                // 1 last callback xD
+                caster.dealDamage(ability.getDamage(casterStatus), target)
                 cb()
                 Log.d(
-                    "COMBAT", "${caster.getStatus().name} used" +
-                            " ability: ${ability.name} on ${target.getStatus().name} " +
-                            "for ${caster.getStatus().attackPower * ability.damage} damage."
+                    "COMBAT", "${casterStatus.name} used" +
+                            " ability: ${ability.name} on ${targetStatus.name} " +
+                            "for ${ability.getDamage(casterStatus)} damage."
                 )
             }
         } else {

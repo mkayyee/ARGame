@@ -1,9 +1,6 @@
 package com.example.argame
 
-import com.example.argame.Model.NPC
-import com.example.argame.Model.Player
-import com.example.argame.Model.minimumAP
-import com.example.argame.Model.minimumMaxHealth
+import com.example.argame.Model.*
 import org.junit.Test
 import org.junit.Assert.*
 
@@ -23,16 +20,15 @@ class CombatControllableTests {
         // dealDamage() should deal damage equal to the input --
         // multiplied by the damage dealer's attackPower
         val npcStartHealth = npc.getStatus().currentHealth
-        val playerAP = player.getStatus().attackPower
         val damage = 2.0
-        val expectedNPCHealth = npcStartHealth - playerAP * damage
+        val expectedNPCHealth = npcStartHealth - damage
         player.dealDamage(damage, npc)
         // Verifying that a correct amount of health was removed from the target
         assertEquals(expectedNPCHealth, npc.getStatus().currentHealth, 0.0)
 
         // A dead CombatControllable should not be able to do damage
         // kill player
-        npc.dealDamage(player.getStatus().maxHealth, player)
+        npc.dealDamage(player.getStatus().maxHealth + 1, player)
         // verify that the player is dead
         assertEquals(false, player.getStatus().isAlive)
         // get npc health before damage attempt
@@ -95,7 +91,7 @@ class CombatControllableTests {
         val player = Player(positiveAP, playerName, positiveHP)
         val npc = NPC(negativeAP, npcName, negativeHP)
         // overkill (this will get multiplied by ap as well)
-        val damage = npc.getStatus().maxHealth
+        val damage = npc.getStatus().maxHealth + 1
         player.dealDamage(damage, npc)
         // confirm that NPC health is at 0
         assertEquals(0.0, npc.getStatus().currentHealth, 0.0)
@@ -129,15 +125,15 @@ class CombatControllableTests {
         val player = Player(positiveAP, playerName, positiveHP)
         val npc = NPC(negativeAP, npcName, negativeHP)
         npc.dealDamage(2.0, player)
-        val damageDone = 2.0 * positiveAP
+        val damageDone = 2.0
         // do damage and confirm the right amount of damage taken
         val tempHealth = player.getStatus().currentHealth
         assertEquals(tempHealth, positiveHP - damageDone, 0.0)
 
         // restore half of the damage done
-        player.restoreHealth(positiveAP)
+        player.restoreHealth(damageDone / 2)
         // check that the right amount of health was restored
-        assertEquals(player.getStatus().currentHealth, tempHealth + positiveAP, 0.0)
+        assertEquals(player.getStatus().currentHealth, tempHealth + damageDone / 2, 0.0)
         // the player should not be full health at this point
         assertNotEquals(player.getStatus().currentHealth, player.getStatus().maxHealth, 0.0)
 
@@ -216,5 +212,44 @@ class CombatControllableTests {
         player.increaseAP(0.0)
         // confirm that it didn't change
         assertEquals(tempAP, player.getStatus().attackPower, 0.0)
+    }
+
+    @Test
+    fun testLeveulUp() {
+        val player = Player(20.0, "player 1", 300.0, null)
+        // verifying that the player starts at 0 xp and at level 1
+        var status = player.getStatus()
+        val level = status.level
+        assertEquals(level, 1)
+        assertEquals(status.experience, 0.0, 0.0)
+        val xpReq = status.xpRequired
+        // level up
+        player.increaseXP(xpReq)
+        status = player.getStatus()
+        // verify similiar as above
+        assertEquals(status.experience, 0.0, 0.0)
+        // level was defined by previous status, so new level should be level + 1
+        assertEquals(level + 1, status.level)
+        // test illegal values
+        player.increaseXP(-500.0)
+        // xp should have not been changed
+        assertEquals(status.experience, player.getStatus().experience, 0.0)
+        // other stats should grow upon leveling up and health should be restored to full
+        // deal damage to player... done by... player..?
+        player.dealDamage(20.0, player)
+        // verify that the player isn't full health
+        assertNotEquals(player.getStatus().currentHealth, player.getStatus().maxHealth, 0.0)
+        player.increaseXP(status.xpRequired)
+        val statsAfter = player.getStatus()
+        val ap = statsAfter.attackPower
+        val maxHP = statsAfter.maxHealth
+        val xpRequired = statsAfter.xpRequired
+        // note "status" is referencing to the getStatus() from before the level up
+        assertEquals(status.xpRequired * xpGrowModifier, statsAfter.xpRequired, 0.0)
+        assertEquals(status.attackPower * apGrowModifier, statsAfter.attackPower, 0.0)
+        assertEquals(status.maxHealth * hpGrowModifier, statsAfter.maxHealth, 0.0)
+        // check that the health was restored to full
+        assertEquals(statsAfter.currentHealth, statsAfter.maxHealth, 0.0)
+
     }
 }

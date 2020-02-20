@@ -170,14 +170,14 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener {
         if (playerTarget != null) {
             playground_attackDuckBtn.isEnabled = false
             player.dealDamage(5.0, playerTarget!!.model)
-            val ability = Ability("Sphere", 100.0, "I have no cast animation")
+            val ability = Ability.TEST
             val animData = ProjectileAnimationData(
                 // TODO make start position relative to screen position
                 Vector3(0f, 0f, 0.1f),
                 playerTarget!!.node.worldPosition,
                 this,
                 fragment,
-                AbilityModelUri.TEST.uri()
+                ability.uri()
             )
             player.useAbility(ability, playerTarget!!.model, animData) {
                 if (playerTarget!!.healthBar != null) {
