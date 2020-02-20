@@ -11,7 +11,7 @@ enum class Ability {
 
     fun uri() : Uri {
         when (this) {
-            TEST-> return Uri.parse("blenderlovestocrash.sfb")
+            TEST-> return Uri.parse("blenderlovestocrash2.sfb")
         }
     }
 
