@@ -36,6 +36,8 @@ import kotlinx.android.synthetic.main.healthbar.view.*
 import org.jetbrains.anko.doAsyncResult
 import org.jetbrains.anko.onComplete
 import org.jetbrains.anko.uiThread
+import kotlin.math.atan
+import kotlin.math.atan2
 
 class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener {
 
@@ -309,6 +311,7 @@ fragment.arSceneView.session!!.pause()
         }
         anchorList.clear()
         ducksInScene = false
+        playerInScene = false
     }
 
     private fun moveToTarget(model: TransformableNode, targetModel: TransformableNode) {
@@ -380,7 +383,19 @@ fragment.arSceneView.session!!.pause()
 
     private fun updatePlayerRotation() {
         if (playerTarget != null) {
-            playerNode.setLookDirection(playerTarget!!.node.worldPosition)
+            val playerPos = playerNode.worldPosition
+            val targetPos = playerTarget!!.node.worldPosition
+            // get the angle between the two nodes
+            val x = targetPos.x - playerPos.x
+            val y = targetPos.z - playerPos.z
+            val tan = x/y
+            val arctan = atan(tan).toDouble()
+            val degrees = Math.toDegrees(arctan).toFloat()
+            Log.d("dbg", "Player x: ${playerPos.x} Player y: ${playerPos.y} Player z: ${playerPos.z}" +
+                    "Target x: ${targetPos.x} Target y: ${targetPos.y} Target z: ${targetPos.z}")
+            Log.d("DBG", "tan.... : $tan")
+            Log.d("DBG", "arctan: $arctan")
+            playerNode.localRotation = Quaternion.axisAngle(Vector3(0f, 1f, 0f), degrees)
             Log.d("DBG", "Player look direction changed.")
         }
     }
@@ -398,6 +413,8 @@ fragment.arSceneView.session!!.pause()
                         playerAnchorPos = hit!!
                         val playerAnchor = hit.createAnchor()
                         playerAnchorNode = AnchorNode(playerAnchor)
+                        playerAnchorNode.localRotation = Quaternion.axisAngle(Vector3(1f, 0f, 0f), 180f)
+                        anchorList.add(playerAnchorNode)
                         playerAnchorNode.setParent(fragment.arSceneView.scene)
                         playerNode = TransformableNode(fragment.transformationSystem)
                         val forward = fragment.arSceneView.scene.camera.forward
@@ -512,32 +529,19 @@ fragment.arSceneView.session!!.pause()
         target: CombatControllable,
         playerTargetHpRend: ViewRenderable?) {
 
-            node.setOnTapListener {_, _ ->
-//                val animationData = ProjectileAnimationData(
-//                    casterAnchor.worldPosition,
-//                    targetAnchor.worldPosition,
-//                this,
-//                fragment)
-//                casterModel.useAbility(
-//                Ability("sphere", 20.0, "XD"),
-//                target,
-//                animationData) {
-//                    updateHPBar(hpRend?.view?.textView_healthbar, target)
-//                }
-                // changing player target to the tapped model
-                if (playerTarget != null) {
-                    if (playerTarget!!.healthBar != null) {
-                        playerTarget!!.healthBar!!.text = ""
-                    }
+        node.setOnTouchListener {_, _ ->
+            if (playerTarget != null && playerTarget?.node != node) {
+                if (playerTarget!!.healthBar != null) {
+                    playerTarget!!.healthBar!!.text = ""
                 }
-                playerTarget = PlayerTargetData(node, casterModel as NPC,
-                    playerTargetHpRend?.view?.textView_healthbar)
-                playground_targetTxt.text = "Target: ${target.name}"
-                playerTargetHpRend?.view?.textView_healthbar?.text = casterModel.getStatus()
-                    .currentHealth.toString()
-
-                // updates the player to "look" at the target's direction
-                updatePlayerRotation()
+            }
+            updatePlayerRotation()
+            playerTarget = PlayerTargetData(node, casterModel as NPC,
+                playerTargetHpRend?.view?.textView_healthbar)
+            playground_targetTxt.text = "Target: ${target.name}"
+            playerTargetHpRend?.view?.textView_healthbar?.text = casterModel.getStatus()
+                .currentHealth.toString()
+            true
         }
     }
 
