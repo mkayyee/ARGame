@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.View
 import android.view.animation.LinearInterpolator
@@ -34,6 +35,7 @@ import kotlinx.android.synthetic.main.activity_game_playground.*
 import kotlinx.android.synthetic.main.healthbar.view.*
 import org.jetbrains.anko.doAsyncResult
 import org.jetbrains.anko.onComplete
+import org.jetbrains.anko.uiThread
 
 class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener {
 
@@ -41,21 +43,28 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener {
     private lateinit var fragment: CustomArFragment
     private lateinit var duckUri: Uri
     private lateinit var tposeUri: Uri
+    private lateinit var playerUri: Uri
     private var renderedDuck: ModelRenderable? = null
     private var renderedTpose: ModelRenderable? = null
+    private var renderedPlayer: ModelRenderable? = null
     private var protoTargetNode: TransformableNode? = null
     private var anchorList = ArrayList<AnchorNode>()
     private var builderList = ArrayList<ObjectBuilder>()
     private lateinit var firstAnchorPos: HitResult
+    private lateinit var playerAnchorPos: HitResult
+    private lateinit var playerAnchorNode: AnchorNode
+    private lateinit var playerNode: TransformableNode
 
     // MARK: Testing-abilities-related stuff
     private var playerTarget: PlayerTargetData? = null
     private var hpRenderableDuck: ViewRenderable? = null
     private var hpRenderableTpose: ViewRenderable? = null
+    private var hpRenderablePlayer: ViewRenderable? = null
     private var duckNPC = NPC(1.0, "duck", 5000.0)
     private var tposeNPC = NPC(1.0, "duck 2", 5000.0)
-    private var player = Player(5.0, "player", 5000.0)
+    private lateinit var player: Player
     var ducksInScene = false
+    var playerInScene = false
 
     // GSON and SHAREDPREFERENCE
 
@@ -135,6 +144,7 @@ fragment.arSceneView.session!!.pause()
 
         duckUri = Uri.parse("duck.sfb")
         tposeUri = Uri.parse("duck.sfb")
+        playerUri = Uri.parse("playermodelv8.sfb")
         val renderableFuture = ModelRenderable.builder()
             .setSource(this, duckUri)
             .build()
@@ -143,6 +153,14 @@ fragment.arSceneView.session!!.pause()
             .setSource(this, tposeUri)
             .build()
         renderableFuture2.thenAccept{renderedTpose = it}
+        val renderableFuturePlayer = ModelRenderable.builder()
+            .setSource(this, playerUri)
+            .build()
+        renderableFuturePlayer.thenAccept {
+            renderedPlayer = it
+            // lateinit Player, so it has a reference to the renderable, therefor the cast animation data
+            player = Player(5.0, "player", 5000.0, it)
+        }
     }
 
     private fun initButtons() {
@@ -154,6 +172,7 @@ fragment.arSceneView.session!!.pause()
         val spawnBtn = findViewById<Button>(R.id.playground_spawnBtn)
         spawnBtn.setOnClickListener {
             spawnObjects()
+            spawnPlayer()
         }
         // MARK: Testing-abilities-related stuff
         playground_attackDuckBtn.setOnClickListener {
@@ -191,6 +210,12 @@ fragment.arSceneView.session!!.pause()
             .build()
         renderableFuture2.thenAccept { hpRenderableTpose = it }
         hpRenderableTpose?.view?.textView_healthbar?.text = tposeNPC.getStatus().currentHealth.toString()
+
+        val renderableFuturePlayer = ViewRenderable.builder()
+            .setView(this, R.layout.healthbar)
+            .build()
+        renderableFuturePlayer.thenAccept { hpRenderablePlayer = it }
+        hpRenderablePlayer?.view?.textView_healthbar?.text = player.getStatus().currentHealth.toString()
     }
 
     // MARK: Testing-abilities-related stuff
@@ -202,7 +227,7 @@ fragment.arSceneView.session!!.pause()
             val ability = Ability.TEST
             val animData = ProjectileAnimationData(
                 // TODO make start position relative to screen position
-                Vector3(0f, 0f, 0.1f),
+                playerAnchorNode.worldPosition,
                 playerTarget!!.node.worldPosition,
                 this,
                 fragment,
@@ -353,6 +378,52 @@ fragment.arSceneView.session!!.pause()
 
     }
 
+    private fun updatePlayerRotation() {
+        if (playerTarget != null) {
+            playerNode.setLookDirection(playerTarget!!.node.worldPosition)
+            Log.d("DBG", "Player look direction changed.")
+        }
+    }
+
+    private fun spawnPlayer() {
+        if (!playerInScene) {
+            val frame = fragment.arSceneView.arFrame
+            val pt = getScreenCenter()
+            val hits: List<HitResult>
+            if (frame != null && renderedPlayer != null) {
+                hits = frame.hitTest(pt.x.toFloat(), pt.y.toFloat() + 400)
+                for (hit in hits) {
+                    val trackable = hit.trackable
+                    if (trackable is Plane) {
+                        playerAnchorPos = hit!!
+                        val playerAnchor = hit.createAnchor()
+                        playerAnchorNode = AnchorNode(playerAnchor)
+                        playerAnchorNode.setParent(fragment.arSceneView.scene)
+                        playerNode = TransformableNode(fragment.transformationSystem)
+                        val forward = fragment.arSceneView.scene.camera.forward
+                        playerAnchorNode.setLookDirection(Vector3(-(forward.x), -(forward.y), -(forward.z)))
+                        playerNode.scaleController.isEnabled = false
+                        playerNode.rotationController.isEnabled = false
+                        playerNode.setParent(playerAnchorNode)
+                        playerNode.renderable = renderedPlayer
+                        createHPBar(playerAnchorNode, hpRenderablePlayer)
+
+                        // update player look direction toward target if
+                        // player position changes during 0.5 seconds
+                        playerNode.setOnTouchListener {_, _ ->
+                            val oldPosition = playerNode.worldPosition
+                            Handler().postDelayed({
+                                if (playerNode.worldPosition != oldPosition)
+                                    updatePlayerRotation()
+                            }, 500)
+                        }
+                    }
+                }
+            }
+            playerInScene = true
+        }
+    }
+
     private fun spawnObjects() {
         if (!ducksInScene) {
             duckNPC = NPC(1.0, "duck", 5000.0)
@@ -464,6 +535,9 @@ fragment.arSceneView.session!!.pause()
                 playground_targetTxt.text = "Target: ${target.name}"
                 playerTargetHpRend?.view?.textView_healthbar?.text = casterModel.getStatus()
                     .currentHealth.toString()
+
+                // updates the player to "look" at the target's direction
+                updatePlayerRotation()
         }
     }
 

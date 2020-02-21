@@ -47,7 +47,7 @@ interface ProjectileAnimator {
                 .setSource(projAnimData.context, uri)
                 .build()
             renderableFuture.thenAccept {
-                val animData = it.getAnimationData(0) // 0 should be the index where cast animation is
+                val animData = it.getAnimationData(0) // 0 should be the index where projectile animation is
                 if (animData != null) { // Null check. By default the ability should have at least 1 animation but never know
                     instantiateNodeInScene(projAnimData, it, cb)
                     val animator = ModelAnimator(animData, it)
@@ -75,6 +75,7 @@ interface ProjectileAnimator {
 
     private fun instantiateNodeInScene(projAnimData: ProjectileAnimationData, renderable: ModelRenderable, cb: () -> Unit) {
         val node = TransformableNode(projAnimData.fragment.transformationSystem)
+        node.localScale = Vector3(0.1f, 0.1f, 0.1f)
         val scene = projAnimData.fragment.arSceneView.scene
         node.renderable = renderable
         scene.addChild(node)

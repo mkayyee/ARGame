@@ -11,7 +11,7 @@ enum class Ability {
 
     fun uri() : Uri {
         when (this) {
-            TEST-> return Uri.parse("blenderlovestocrash2.sfb")
+            TEST-> return Uri.parse("untitledv4.sfb")
         }
     }
 
@@ -26,7 +26,7 @@ enum class Ability {
 
     fun getCastAnimationString() : String?{
         return when (this) {
-            TEST -> null
+            TEST -> "RightArm|RightArmAction.001"
         }
     }
 }
