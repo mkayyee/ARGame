@@ -2,9 +2,12 @@ package com.example.argame.Model
 
 import android.animation.ObjectAnimator
 import android.view.animation.LinearInterpolator
+import com.google.ar.sceneform.math.Quaternion
+import com.google.ar.sceneform.math.QuaternionEvaluator
 import com.google.ar.sceneform.math.Vector3
 import com.google.ar.sceneform.math.Vector3Evaluator
 import com.google.ar.sceneform.ux.TransformableNode
+
 
 /***
  *  This is a helper singleton, that contains static methods
