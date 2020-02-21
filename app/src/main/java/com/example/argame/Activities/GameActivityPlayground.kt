@@ -66,6 +66,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener {
     var ducksInScene = false
     var playerInScene = false
 
+
     // GSON and SHAREDPREFERENCE
 
     private lateinit var saver: SharedPreferences
@@ -89,48 +90,24 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener {
     override fun onPause() {
         super.onPause()
         // TODO: Save level
-
-/*
-        val positionList = ArrayList<Vector3>()
-        anchorList.forEach {
-            positionList.add(it.worldPosition)
-        }
+/* // MARK: Example of saving items to class -> to gson -> to SharedPreferences
         val classified = ObjectLister(builderList)
         Log.d("Builderlist", builderList.size.toString())
         val saveGame = GameVault(classified)
         val saveToGson = gson.toJson(saveGame)
-
         saver.setGson = saveToGson
-
-
-fragment.arSceneView.session!!.pause()
-        doAsyncResult {
-            fragment.arSceneView.session!!.close()
-            onComplete {
-                Log.d("CLOSE", "Suljettu")
-            }
-        }*/
-
+*/
     }
 
     override fun onResume() {
         super.onResume()
-
         // TODO: Restore level and abilities
-
-/*        if (saver.setGson != null && builderList.size > 0) {
-            Log.d("JATKUU", saver.setGson)
-            //val collectionType = object : TypeToken<ArrayList<ObjectBuilder>>(){}.type
-
+/*
             val parsedVault = gson.fromJson(saver.setGson, GameVault::class.java)
             val parsedLister = parsedVault.classifiedBuilder
             val parsedBuilder = parsedLister.builderList
             val firstItem = parsedBuilder[0]
-            Log.d("JATKUU2", firstItem.toString())
-
-            Log.d("SESSION", fragment.arSceneView.session.toString())
             //spawnObjectsMarkThree(builderList)
-            // TODO: Put everything back to their places. Redo spawn functions to work with onPause and onResume
         }*/
     }
 
@@ -185,16 +162,12 @@ fragment.arSceneView.session!!.pause()
     }
 
     private fun callMenuFragment() {
+        // TODO: Move menu to *betweenlevelsActivity*
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.playground_main_menu_container, MenuFragmentController())
             .addToBackStack(null)
             .commit()
-
-        /*val resume = this.findViewById<Button>(R.id.button_resume_game)
-        if (resume != null) {
-            resume.isEnabled = true
-        }*/
     }
 
     // MARK: Testing-abilities-related stuff
@@ -259,7 +232,6 @@ fragment.arSceneView.session!!.pause()
             }
         }
 
-
     }
 
     private fun clearPlayerTarget() {
@@ -296,13 +268,6 @@ fragment.arSceneView.session!!.pause()
         }
     }
 
-    private fun destroyTpose(anchor: AnchorNode, target: TransformableNode) {
-        if (anchorList.isNotEmpty()) { // voi myös pitää listaa vaikka specifeistä anchornodeista scenessä
-            Log.d("DESTROY", "Function called with node: " + target.toString())
-            removeAnchorNode(anchor)
-        }
-    }
-
     private fun clearModels() {
         for (anchor in anchorList) {
             removeAnchorNode(anchor)
@@ -311,72 +276,6 @@ fragment.arSceneView.session!!.pause()
         ducksInScene = false
     }
 
-    private fun moveToTarget(model: TransformableNode, targetModel: TransformableNode) {
-        val objectAnimation = ObjectAnimator()
-        objectAnimation.setAutoCancel(true)
-        objectAnimation.setTarget(model)
-        objectAnimation.setObjectValues(model.getWorldPosition(), targetModel.getWorldPosition())
-        objectAnimation.setPropertyName("worldPosition")
-        objectAnimation.setEvaluator(Vector3Evaluator())
-        objectAnimation.setInterpolator(LinearInterpolator())
-        objectAnimation.setDuration(5000)
-        objectAnimation.start()
-    }
-
-    private fun spawnObjectsMarkTwo() {
-        val frame = fragment.arSceneView.arFrame
-        val pt = getScreenCenter()
-        val hits: List<HitResult>
-        if (frame != null && renderedDuck != null) {
-            hits = frame.hitTest(pt.x.toFloat(), pt.y.toFloat())
-            for (hit in hits) {
-                val trackable = hit.trackable
-                if (trackable is Plane) {
-                    // firstAnchorPos is for setting the base for the initial anchor
-                    val duckAnchor = hit!!.createAnchor()
-                    val duckAnchorNode = AnchorNode(duckAnchor)
-                    anchorList.add(duckAnchorNode)
-                    duckAnchorNode.setParent(fragment.arSceneView.scene)
-                    val duckNode = TransformableNode(fragment.transformationSystem)
-                    duckNode.scaleController.isEnabled = false
-                    duckNode.localScale = Vector3(0.1f, 0.1f, 0.1f)
-                    duckNode.setParent(duckAnchorNode)
-                    duckNode.renderable = renderedDuck
-                    val builder = ObjectBuilder(hit!!, duckNode.worldPosition, duckNode.localScale)
-                    //duckNode.setLookDirection(tposeNode.worldPosition)
-                    duckNode.select()
-
-                    // MARK: Testing-abilities-related stuff
-                    createHPBar(duckAnchorNode, hpRenderableDuck)
-
-                    // tap listeners for ability usage
-                    // TODO -> move hpRenderable out of this function. Could be stored inside every model..?
-/*                    createOnTapListenerForAttack(
-                        // TODO -> create separate functions for acquiring player target, and for setting up tap listeners
-                        tposeNode,
-                        tposeAnchorNode,
-                        duckAnchorNode,
-                        tposeNPC,
-                        hpRenderableDuck,
-                        duckNPC,
-                        hpRenderableTpose
-                    )
-                    createOnTapListenerForAttack(
-                        duckNode,
-                        duckAnchorNode,
-                        tposeAnchorNode,
-                        duckNPC,
-                        hpRenderableTpose,
-                        tposeNPC,
-                        hpRenderableDuck
-                    )*/
-                    ducksInScene = true
-                    break
-                }
-            }
-        }
-
-    }
 
     private fun updatePlayerRotation() {
         if (playerTarget != null) {
@@ -492,6 +391,7 @@ fragment.arSceneView.session!!.pause()
                             hpRenderableDuck
                         )
                         ducksInScene = true
+                        randomMove(duckNode)
                         break
                     }
                 }
@@ -551,5 +451,56 @@ fragment.arSceneView.session!!.pause()
             nodeToremove.anchor!!.detach()
             nodeToremove.setParent(null)
         }
+    }
+
+    private fun randomMove(node: TransformableNode) {
+        Log.d("RMOVE", "1")
+        val randomInt = (1..10).shuffled().first()
+        when(randomInt) {
+            in 1..10 -> NodeCreator(node, Vector3(0.5f,0.0f,0.0f))
+            /*in 11..30 -> //Liiku X suuntaan Y matka
+            in 31..60 -> //Liiku X suuntaan Y matka
+            in 61..100 -> // Liiku X suuntaan Y matka*/
+        }
+    }
+    private fun NodeCreator(initialNode: TransformableNode, newLocation: Vector3) {
+        Log.d("RMOVE", "2")
+        val newNode = Node()
+        val summedVector = Vector3.add(initialNode.worldPosition, newLocation)
+        newNode.worldPosition = summedVector
+        moveToTarget(initialNode,newNode)
+    }
+
+    private fun moveToTarget(model: TransformableNode, targetNode: Node) {
+        Log.d("RMOVE", "3")
+        val objectAnimation = ObjectAnimator()
+        objectAnimation.setAutoCancel(true)
+        objectAnimation.target = model
+        model.setLookDirection(Vector3.subtract(model.worldPosition, targetNode.worldPosition))
+        objectAnimation.setObjectValues(model.worldPosition, targetNode.worldPosition)
+        objectAnimation.setPropertyName("worldPosition")
+        objectAnimation.setEvaluator(Vector3Evaluator())
+        objectAnimation.interpolator = LinearInterpolator()
+        objectAnimation.duration = 3500
+        objectAnimation.start()
+
+
+            Handler().postDelayed({
+                val objectAnimation = ObjectAnimator()
+                objectAnimation.setAutoCancel(true)
+                objectAnimation.target = model
+                model.setLookDirection(Vector3.subtract(model.worldPosition, model.parent!!.worldPosition))
+                objectAnimation.setObjectValues(model.worldPosition, model.parent?.worldPosition)
+                objectAnimation.setPropertyName("worldPosition")
+                objectAnimation.setEvaluator(Vector3Evaluator())
+                objectAnimation.interpolator = LinearInterpolator()
+                objectAnimation.duration = 3500
+                objectAnimation.start()
+                Handler().postDelayed({
+                    randomMove(model)
+                }, 4000)
+
+            }, 4000)
+
     }
 }
