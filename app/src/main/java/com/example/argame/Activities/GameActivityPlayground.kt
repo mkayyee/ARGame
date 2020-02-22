@@ -283,7 +283,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener {
     private fun updatePlayerRotation() {
         if (playerTarget != null) {
             val playerPos = playerNode.worldPosition
-            val targetPos = playerTarget!!.node.worldPosition
+            val targetPos = playerTarget!!.node.children[0].worldPosition
             // get the angle between the two nodes
             val x = targetPos.x - playerPos.x
             val y = targetPos.z - playerPos.z
@@ -487,7 +487,6 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener {
         objectAnimation.interpolator = LinearInterpolator()
         objectAnimation.duration = 3500
         objectAnimation.start()
-
 
             Handler().postDelayed({
                 val objectAnimation = ObjectAnimator()
