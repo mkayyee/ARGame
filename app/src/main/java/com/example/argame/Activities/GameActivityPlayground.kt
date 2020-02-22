@@ -33,6 +33,7 @@ import com.google.ar.sceneform.ux.TransformableNode
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_game_playground.*
 import kotlinx.android.synthetic.main.healthbar.view.*
+import org.jetbrains.anko.apply
 import org.jetbrains.anko.doAsyncResult
 import org.jetbrains.anko.onComplete
 import org.jetbrains.anko.uiThread
@@ -51,7 +52,6 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener {
     private var renderedPlayer: ModelRenderable? = null
     private var protoTargetNode: TransformableNode? = null
     private var anchorList = ArrayList<AnchorNode>()
-    private var builderList = ArrayList<ObjectBuilder>()
     private lateinit var firstAnchorPos: HitResult
     private lateinit var playerAnchorPos: HitResult
     private lateinit var playerAnchorNode: AnchorNode
@@ -73,6 +73,9 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener {
 
     private lateinit var saver: SharedPreferences
     private val gson = Gson()
+    private var levelNum = 1
+    private var curLevel: Int? = null
+    private var newLevel: Int? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -81,17 +84,23 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener {
         fragment = supportFragmentManager.
             findFragmentById(R.id.playground_sceneform_fragment) as CustomArFragment
         saver = defaultPreference(this)
+        curLevel = saver.getInt("levelNum", 1)
         initButtons()
         prepareModels()
         // MARK: Testing-abilities-related stuff
         initHPRenderables()
         playground_targetTxt.text = "No target"
         saver.clearValues
+
+        newLevel = Level(this).createLevel()
+        Log.d("LEVEL", curLevel.toString())
     }
 
     override fun onPause() {
         super.onPause()
         // TODO: Save level
+        saver.edit().putInt("levelNum", levelNum)
+        saver.edit().apply()
 /* // MARK: Example of saving items to class -> to gson -> to SharedPreferences
         val classified = ObjectLister(builderList)
         Log.d("Builderlist", builderList.size.toString())
@@ -101,8 +110,17 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener {
 */
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        saver.edit().putInt("levelNum", levelNum)
+        saver.edit().apply()
+    }
+
     override fun onResume() {
         super.onResume()
+        curLevel = saver.getInt("levelNum", 1)
+
+
         // TODO: Restore level and abilities
 /*
             val parsedVault = gson.fromJson(saver.setGson, GameVault::class.java)
@@ -150,7 +168,9 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener {
         }
         val spawnBtn = findViewById<Button>(R.id.playground_spawnBtn)
         spawnBtn.setOnClickListener {
-            spawnObjects()
+            if (newLevel != null) {
+                spawnObjects(newLevel!!)
+            }
             spawnPlayer()
         }
         // MARK: Testing-abilities-related stuff
@@ -340,7 +360,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener {
         }
     }
 
-    private fun spawnObjects() {
+    private fun spawnObjects(numOfDucks: Int) {
         if (!ducksInScene) {
             duckNPC = NPC(1.0, "duck", 5000.0)
             tposeNPC = NPC(1.0, "duck 2", 5000.0)
@@ -358,40 +378,47 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener {
                         val duckAnchor = hit!!.createAnchor()
                         val duckAnchorNode = AnchorNode(duckAnchor)
                         anchorList.add(duckAnchorNode)
-                        val tposeAnchor = (frame.hitTest(
-                            (pt.x.toFloat() - 420.0f),
-                            (pt.y.toFloat() + 420.0f)
-                        ))[0].createAnchor()
-                        val tposeAnchorNode = AnchorNode(tposeAnchor)
-                        anchorList.add(tposeAnchorNode)
                         duckAnchorNode.setParent(fragment.arSceneView.scene)
-                        tposeAnchorNode.setParent(fragment.arSceneView.scene)
-                        val duckNode = TransformableNode(fragment.transformationSystem)
-                        val tposeNode = TransformableNode(fragment.transformationSystem)
-                        duckNode.scaleController.isEnabled = false
-                        tposeNode.scaleController.isEnabled = false
-                        duckNode.localScale = Vector3(0.1f, 0.1f, 0.1f)
-                        tposeNode.localScale = Vector3(0.1f, 0.1f, 0.1f)
-                        duckNode.setParent(duckAnchorNode)
-                        tposeNode.setParent(tposeAnchorNode)
+                        var additionalSpawns = (numOfDucks -1)
 
+                        while (additionalSpawns > 0) {
+                            additionalSpawns--
+                            val valuePool = (10..1000)
+                            val randX = valuePool.shuffled().first().toFloat()
+                            val randY = valuePool.shuffled().first().toFloat()
+                            Log.d("XYVALUES", randX.toString() + "  " + randY.toString())
+                            val anchor = (frame.hitTest(
+                                (pt.x.toFloat() - randX),
+                                (pt.y.toFloat() + randY)
+                            ))[0].createAnchor()
+                            val anchorNode = AnchorNode(anchor)
+                            anchorList.add(anchorNode) // TODO: Check if unnecessary
+                            anchorNode.setParent(fragment.arSceneView.scene)
+                            val npcNode = TransformableNode(fragment.transformationSystem)
+                            npcNode.scaleController.isEnabled = false
+                            npcNode.localScale = Vector3(0.1f, 0.1f, 0.1f)
+                            npcNode.setParent(anchorNode)
+                            npcNode.renderable = renderedDuck
+                            createHPBar(anchorNode, hpRenderableTpose)
+                        }
+
+                        val duckNode = TransformableNode(fragment.transformationSystem)
+                        duckNode.scaleController.isEnabled = false
+                        duckNode.localScale = Vector3(0.1f, 0.1f, 0.1f)
+                        duckNode.setParent(duckAnchorNode)
                         duckNode.renderable = renderedDuck
                         //duckNode.setLookDirection(tposeNode.worldPosition)
                         //tposeNode.setLookDirection(duckNode.worldPosition)
                         duckNode.select()
-                        tposeNode.renderable = renderedTpose
-                        protoTargetNode = tposeNode
-
                         // MARK: Testing-abilities-related stuff
                         createHPBar(duckAnchorNode, hpRenderableDuck)
-                        createHPBar(tposeAnchorNode, hpRenderableTpose)
 
                         // tap listeners for ability usage
                         // TODO -> move hpRenderable out of this function. Could be stored inside every model..?
                         createOnTapListenerForAttack(
                             // TODO -> create separate functions for acquiring player target, and for setting up tap listeners
-                            tposeNode,
-                            tposeAnchorNode,
+                            duckNode,
+                            duckAnchorNode,
                             duckAnchorNode,
                             tposeNPC,
                             hpRenderableDuck,
@@ -401,7 +428,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener {
                         createOnTapListenerForAttack(
                             duckNode,
                             duckAnchorNode,
-                            tposeAnchorNode,
+                            duckAnchorNode,
                             duckNPC,
                             hpRenderableTpose,
                             tposeNPC,
