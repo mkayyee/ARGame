@@ -33,7 +33,6 @@ import com.google.ar.sceneform.ux.TransformableNode
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_game_playground.*
 import kotlinx.android.synthetic.main.healthbar.view.*
-import org.jetbrains.anko.apply
 import org.jetbrains.anko.doAsyncResult
 import org.jetbrains.anko.onComplete
 import org.jetbrains.anko.uiThread
@@ -63,8 +62,8 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener, NP
     private var hpRenderableDuck: ViewRenderable? = null
     private var hpRenderableTpose: ViewRenderable? = null
     private var hpRenderablePlayer: ViewRenderable? = null
-    private var duckNPC = NPC(1.0, "duck", 5000.0, type = NPCType.MELEE)
-    private var tposeNPC = NPC(1.0, "duck 2", 5000.0, type = NPCType.MELEE)
+    private var duckNPC = NPC(1.0, "duck", 5000.0, type = NPCType.MELEE, id = 500)
+    private var tposeNPC = NPC(1.0, "duck 2", 5000.0, type = NPCType.MELEE, id = 600)
     private lateinit var player: Player
     var ducksInScene = false
     var playerInScene = false
@@ -80,6 +79,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener, NP
 
     // Spawning NPC's
     private var spawnedNPCs = arrayListOf<NPC>()
+    private var npcAnchors = arrayListOf<NPCAnchorData>()
     private var level = 1
     private var allNPChaveSpawned = false
 
@@ -252,7 +252,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener, NP
     }
 
     private fun beamTarget(playerTarget: PlayerTargetData) {
-        anchorList.forEach() {
+        anchorList.forEach {
             // TODO: Calculate a good offset for worldposition difference. 0.1f is just a placeholder.
             if (it.worldPosition.x - playerTarget.node.worldPosition.x < 0.1f
                 && it.worldPosition.y - playerTarget.node.worldPosition.y < 0.1f) {
@@ -373,8 +373,8 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener, NP
             spawnHandler.beginSpawning(NPCDataForLevels.LevelOne.npcs)
             updateNPCRemainingText("NPCs spawning: ${NPCDataForLevels.LevelOne.npcs.size}")
             // -------------------------------------------------------------------------------------
-            duckNPC = NPC(1.0, "duck", 5000.0, type = NPCType.MELEE)
-            tposeNPC = NPC(1.0, "duck 2", 5000.0, type = NPCType.MELEE)
+            duckNPC = NPC(1.0, "duck", 5000.0, type = NPCType.MELEE, id = 500)
+            tposeNPC = NPC(1.0, "duck 2", 5000.0, type = NPCType.MELEE, id = 600)
             // For prototyping only
             val frame = fragment.arSceneView.arFrame
             val pt = getScreenCenter()
@@ -386,7 +386,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener, NP
                     if (trackable is Plane) {
                         // firstAnchorPos is for setting the base for the initial anchor
                         firstAnchorPos = hit!!
-                        val duckAnchor = hit!!.createAnchor()
+                        val duckAnchor = hit.createAnchor()
                         val duckAnchorNode = AnchorNode(duckAnchor)
                         anchorList.add(duckAnchorNode)
                         duckAnchorNode.setParent(fragment.arSceneView.scene)
@@ -544,7 +544,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener, NP
             }, 4000)
     }
 
-    override fun notifyNPCSpawned(type: NPCType, remaining: Int, isLast: Boolean) {
+    override fun notifyNPCSpawned(type: NPCType, remaining: Int, npcID: Int, isLast: Boolean) {
         lateinit var renderable: ModelRenderable
         // get NPC model
         val renderableFuture = ModelRenderable.builder()
@@ -553,12 +553,13 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener, NP
         renderableFuture.thenAccept {
             renderable = it
             // create the NPC object when we have a ModelRenderable ready
-            val npcObject = type.getNPCObject(level, renderable)
-            val time = Time(System.currentTimeMillis())
+            val npcObject = type.getNPCObject(level, renderable, npcID)
             // add the NPC to spawnedNPCs
             spawnedNPCs.add(npcObject)
-            // TODO - Spawn NPC into the scene
+            // spawn NPC
+            spawnNPC(npcObject)
             // random debugs
+            val time = Time(System.currentTimeMillis())
             Log.d("NPCSPAWN", "NPC of type: ${type.name} spawned at: $time. NPC's remaining: $remaining")
             for (index in spawnedNPCs.indices) {
                 Log.d("NPCSPAWN", "spawnedNPCs[$index]: ${spawnedNPCs[index]}")
@@ -569,6 +570,47 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener, NP
                 updateNPCRemainingText("")
             } else {
                 updateNPCRemainingText("NPCs spawning: $remaining")
+            }
+        }
+    }
+
+    private fun spawnNPC(npc: NPC) {
+        lateinit var hpRenderable: ViewRenderable
+        val renderableFuture = ViewRenderable.builder()
+            .setView(this, R.layout.healthbar)
+            .build()
+        renderableFuture.thenAccept {
+            hpRenderable = it
+            hpRenderableDuck?.view?.textView_healthbar?.text = npc.getStatus().currentHealth.toString()
+            val frame = fragment.arSceneView.arFrame
+            val pt = getScreenCenter()
+            val hits: List<HitResult>
+            if (frame != null) {
+                hits = frame.hitTest(pt.x.toFloat(), pt.y.toFloat())
+                for (hit in hits) {
+                    val trackable = hit.trackable
+                    if (trackable is Plane) {
+                        val anchor = hit.createAnchor()
+                        val anchorNode = AnchorNode(anchor)
+                        npcAnchors.add(NPCAnchorData(anchorNode, npc.getID()))
+                        anchorNode.setParent(fragment.arSceneView.scene)
+                        val node = TransformableNode(fragment.transformationSystem)
+                        node.scaleController.isEnabled = false
+                        node.rotationController.isEnabled = false
+                        node.setParent(anchorNode)
+                        node.renderable = npc.model
+                        node.localScale = Vector3(0.1f,0.1f,0.1f)
+                        createHPBar(anchorNode, hpRenderable)
+//                        node.setOnTouchListener { _, _ ->
+//                            playerTarget = PlayerTargetData(node, npc, hpRenderable.view.textView_healthbar)
+//                            val oldPosition = node.worldPosition
+//                            Handler().postDelayed({
+//                                if (node.worldPosition != oldPosition)
+//                                    updatePlayerRotation()
+//                            }, 500)
+//                        }
+                    }
+                }
             }
         }
     }

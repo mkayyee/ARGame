@@ -23,12 +23,12 @@ object AnimationAPI {
     fun fireProjectile(model: TransformableNode, startPos: Vector3, endPos: Vector3, callback: () -> Unit) {
         val objectAnimation = ObjectAnimator()
         objectAnimation.setAutoCancel(true)
-        objectAnimation.setTarget(model)
+        objectAnimation.target = model
         objectAnimation.setObjectValues(startPos, endPos)
         objectAnimation.setPropertyName("worldPosition")
         objectAnimation.setEvaluator(Vector3Evaluator())
-        objectAnimation.setInterpolator(LinearInterpolator())
-        objectAnimation.setDuration(ABILITY_PROJECTILE_SPEED)
+        objectAnimation.interpolator = LinearInterpolator()
+        objectAnimation.duration = ABILITY_PROJECTILE_SPEED
         objectAnimation.start()
         // currently executed immediately --
         // could implement some logic to see if it reached the target

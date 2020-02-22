@@ -44,8 +44,8 @@ class GameActivity : AppCompatActivity(), FragmentCallbackListener {
     // MARK: Testing-abilities-related stuff
     private var hpRenderableDuck: ViewRenderable? = null
     private var hpRenderableTpose: ViewRenderable? = null
-    private var duckNPC = NPC(1.0, "duck", 5000.0, type = NPCType.MELEE)
-    private var tposeNPC = NPC(1.0, "tposer", 5000.0, type = NPCType.MELEE)
+    private var duckNPC = NPC(1.0, "duck", 5000.0, type = NPCType.MELEE, id = 500)
+    private var tposeNPC = NPC(1.0, "tposer", 5000.0, type = NPCType.MELEE, id = 600)
     private var player = Player(5.0, "player", 5000.0)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,11 +58,6 @@ class GameActivity : AppCompatActivity(), FragmentCallbackListener {
         initHPRenderables()
         val healthTxt = findViewById<TextView>(R.id.healthTxt)
         healthTxt.text = "Health ${player.getStatus().currentHealth}"
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-
     }
 
     override fun onButtonPressed(btn: Button) {
@@ -171,12 +166,12 @@ class GameActivity : AppCompatActivity(), FragmentCallbackListener {
     private fun moveToTarget(model: TransformableNode, targetModel: TransformableNode) {
         val objectAnimation = ObjectAnimator()
         objectAnimation.setAutoCancel(true)
-        objectAnimation.setTarget(model)
-        objectAnimation.setObjectValues(model.getWorldPosition(), targetModel.getWorldPosition())
+        objectAnimation.target = model
+        objectAnimation.setObjectValues(model.worldPosition, targetModel.worldPosition)
         objectAnimation.setPropertyName("worldPosition")
         objectAnimation.setEvaluator(Vector3Evaluator())
-        objectAnimation.setInterpolator(LinearInterpolator())
-        objectAnimation.setDuration(5000)
+        objectAnimation.interpolator = LinearInterpolator()
+        objectAnimation.duration = 5000
         objectAnimation.start()
     }
 

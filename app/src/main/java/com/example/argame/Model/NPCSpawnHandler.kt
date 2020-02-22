@@ -17,7 +17,7 @@ class NPCSpawnHandler(context: Context) {
     private var spawnCallback: NPCSpawnCallback
 
     interface NPCSpawnCallback {
-        fun notifyNPCSpawned(type: NPCType, remaining: Int, isLast: Boolean = false)
+        fun notifyNPCSpawned(type: NPCType, remaining: Int, npcID: Int, isLast: Boolean = false)
     }
 
     init {
@@ -26,24 +26,26 @@ class NPCSpawnHandler(context: Context) {
 
     fun beginSpawning(array: Array<NPCSpawnData>) {
         var npcsLeft = array.size
+        var npcID = 0
         array.forEach {
             npcsLeft --
             // notify that the last NPC was spawned, so GameActivity
             // can tell that the level is over when the last NPC dies.
             if (it == array.last()) {
-                spawnNPC(it.type, it.spawnTime, npcsLeft,true)
+                spawnNPC(it.type, it.spawnTime, npcsLeft, npcID,true)
             } else {
-                spawnNPC(it.type, it.spawnTime, npcsLeft)
+                spawnNPC(it.type, it.spawnTime, npcsLeft, npcID)
             }
+            npcID ++
         }
     }
 
-    private fun spawnNPC(type: NPCType, spawnTime: Long, remaining: Int, isLast: Boolean = false) {
+    private fun spawnNPC(type: NPCType, spawnTime: Long, remaining: Int, npcID: Int, isLast: Boolean = false) {
         Handler().postDelayed({
             if (isLast) {
-                spawnCallback.notifyNPCSpawned(type, remaining, true)
+                spawnCallback.notifyNPCSpawned(type, remaining, npcID,true)
             } else {
-                spawnCallback.notifyNPCSpawned(type, remaining)
+                spawnCallback.notifyNPCSpawned(type, remaining, npcID)
             }
         }, spawnTime)
     }
