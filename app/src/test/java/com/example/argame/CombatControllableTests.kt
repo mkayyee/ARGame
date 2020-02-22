@@ -13,10 +13,12 @@ const val playerName = "Player 1"
 
 class CombatControllableTests {
 
+    val npcType = NPCType.RANGED
+
     @Test
     fun testDealDamage() {
         val player = Player(positiveAP, playerName, positiveHP)
-        val npc = NPC(positiveAP, npcName, positiveHP)
+        val npc = NPC(positiveAP, npcName, positiveHP, type = npcType)
         // dealDamage() should deal damage equal to the input --
         // multiplied by the damage dealer's attackPower
         val npcStartHealth = npc.getStatus().currentHealth
@@ -43,7 +45,7 @@ class CombatControllableTests {
     fun testNegativeConstructorValues() {
         // Calling both constructors with negative values
         val player = Player(negativeAP, playerName, negativeHP)
-        val npc = NPC(negativeAP, npcName, negativeHP)
+        val npc = NPC(negativeAP, npcName, negativeHP, type = npcType)
         // Verifying that they are converted into positive values
         assertEquals(positiveHP, npc.getStatus().currentHealth, 0.0)
         assertEquals(positiveHP, player.getStatus().currentHealth, 0.0)
@@ -57,7 +59,7 @@ class CombatControllableTests {
         val zero = 0.0
         // Calling both constructors with smaller than allowed values
         val player = Player(lessThanOne, playerName, lessThanOne)
-        val npc = NPC(zero, npcName, zero)
+        val npc = NPC(zero, npcName, zero, type = npcType)
         // confirming that the values are set correctly (according to minimum values)
         assertNotEquals(npc.getStatus().currentHealth, zero, 0.0)
         assertNotEquals(npc.getStatus().attackPower, zero, 0.0)
@@ -75,7 +77,7 @@ class CombatControllableTests {
     @Test
     fun testGetStatus() {
         val player = Player(positiveAP, playerName, positiveHP)
-        val npc = NPC(negativeAP, npcName, negativeHP)
+        val npc = NPC(negativeAP, npcName, negativeHP, type = npcType)
         assertEquals(positiveHP, player.getStatus().currentHealth, 0.0)
         assertEquals(positiveHP, npc.getStatus().currentHealth, 0.0)
         assertEquals(positiveAP, player.getStatus().attackPower, 0.0)
@@ -89,7 +91,7 @@ class CombatControllableTests {
     @Test
     fun testKillCombatControllable() {
         val player = Player(positiveAP, playerName, positiveHP)
-        val npc = NPC(negativeAP, npcName, negativeHP)
+        val npc = NPC(negativeAP, npcName, negativeHP, type = npcType)
         // overkill (this will get multiplied by ap as well)
         val damage = npc.getStatus().maxHealth + 1
         player.dealDamage(damage, npc)
@@ -108,7 +110,7 @@ class CombatControllableTests {
     @Test
     fun testRestoreFullHealth() {
         val player = Player(positiveAP, playerName, positiveHP)
-        val npc = NPC(negativeAP, npcName, negativeHP)
+        val npc = NPC(negativeAP, npcName, negativeHP, type = npcType)
         // deal damage to player
         npc.dealDamage(1.0, player)
         // confirmation that the player did take damage
@@ -123,7 +125,7 @@ class CombatControllableTests {
     @Test
     fun testRestoreHealth() {
         val player = Player(positiveAP, playerName, positiveHP)
-        val npc = NPC(negativeAP, npcName, negativeHP)
+        val npc = NPC(negativeAP, npcName, negativeHP, type = npcType)
         npc.dealDamage(2.0, player)
         val damageDone = 2.0
         // do damage and confirm the right amount of damage taken

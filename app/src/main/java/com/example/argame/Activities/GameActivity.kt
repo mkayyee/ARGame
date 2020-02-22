@@ -14,6 +14,7 @@ import com.example.argame.Fragments.MenuFragmentController
 import com.example.argame.Interfaces.FragmentCallbackListener
 import com.example.argame.Model.CombatControllable
 import com.example.argame.Model.NPC
+import com.example.argame.Model.NPCType
 import com.example.argame.Model.Player
 import com.example.argame.R
 import com.google.ar.core.HitResult
@@ -43,8 +44,8 @@ class GameActivity : AppCompatActivity(), FragmentCallbackListener {
     // MARK: Testing-abilities-related stuff
     private var hpRenderableDuck: ViewRenderable? = null
     private var hpRenderableTpose: ViewRenderable? = null
-    private var duckNPC = NPC(1.0, "duck", 5000.0)
-    private var tposeNPC = NPC(1.0, "tposer", 5000.0)
+    private var duckNPC = NPC(1.0, "duck", 5000.0, type = NPCType.MELEE)
+    private var tposeNPC = NPC(1.0, "tposer", 5000.0, type = NPCType.MELEE)
     private var player = Player(5.0, "player", 5000.0)
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -37,10 +37,11 @@ import org.jetbrains.anko.apply
 import org.jetbrains.anko.doAsyncResult
 import org.jetbrains.anko.onComplete
 import org.jetbrains.anko.uiThread
+import java.sql.Time
 import kotlin.math.atan
 import kotlin.math.atan2
 
-class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener {
+class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener, NPCSpawnHandler.NPCSpawnCallback {
 
     private val menuFragController = MenuFragmentController()
     private lateinit var fragment: CustomArFragment
@@ -62,8 +63,8 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener {
     private var hpRenderableDuck: ViewRenderable? = null
     private var hpRenderableTpose: ViewRenderable? = null
     private var hpRenderablePlayer: ViewRenderable? = null
-    private var duckNPC = NPC(1.0, "duck", 5000.0)
-    private var tposeNPC = NPC(1.0, "duck 2", 5000.0)
+    private var duckNPC = NPC(1.0, "duck", 5000.0, type = NPCType.MELEE)
+    private var tposeNPC = NPC(1.0, "duck 2", 5000.0, type = NPCType.MELEE)
     private lateinit var player: Player
     var ducksInScene = false
     var playerInScene = false
@@ -76,6 +77,11 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener {
     private var levelNum = 1
     private var curLevel: Int? = null
     private var newLevel: Int? = null
+
+    // Spawning NPC's
+    private var spawnedNPCs = arrayListOf<NPC>()
+    private var level = 1
+    private var allNPChaveSpawned = false
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -362,8 +368,13 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener {
 
     private fun spawnObjects(numOfDucks: Int) {
         if (!ducksInScene) {
-            duckNPC = NPC(1.0, "duck", 5000.0)
-            tposeNPC = NPC(1.0, "duck 2", 5000.0)
+            // "Spawn NPC's" -------------------------------
+            val spawnHandler = NPCSpawnHandler(this)
+            spawnHandler.beginSpawning(NPCDataForLevels.LevelOne.npcs)
+            updateNPCRemainingText("NPCs spawning: ${NPCDataForLevels.LevelOne.npcs.size}")
+            // -------------------------------------------------------------------------------------
+            duckNPC = NPC(1.0, "duck", 5000.0, type = NPCType.MELEE)
+            tposeNPC = NPC(1.0, "duck 2", 5000.0, type = NPCType.MELEE)
             // For prototyping only
             val frame = fragment.arSceneView.arFrame
             val pt = getScreenCenter()
@@ -531,6 +542,38 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener {
                 }, 4000)
 
             }, 4000)
+    }
 
+    override fun notifyNPCSpawned(type: NPCType, remaining: Int, isLast: Boolean) {
+        lateinit var renderable: ModelRenderable
+        // get NPC model
+        val renderableFuture = ModelRenderable.builder()
+            .setSource(this, type.modelUri())
+            .build()
+        renderableFuture.thenAccept {
+            renderable = it
+            // create the NPC object when we have a ModelRenderable ready
+            val npcObject = type.getNPCObject(level, renderable)
+            val time = Time(System.currentTimeMillis())
+            // add the NPC to spawnedNPCs
+            spawnedNPCs.add(npcObject)
+            // TODO - Spawn NPC into the scene
+            // random debugs
+            Log.d("NPCSPAWN", "NPC of type: ${type.name} spawned at: $time. NPC's remaining: $remaining")
+            for (index in spawnedNPCs.indices) {
+                Log.d("NPCSPAWN", "spawnedNPCs[$index]: ${spawnedNPCs[index]}")
+            }
+            // when the last NPC has spawned, the level should end when it dies.
+            if (isLast) {
+                allNPChaveSpawned = true
+                updateNPCRemainingText("")
+            } else {
+                updateNPCRemainingText("NPCs spawning: $remaining")
+            }
+        }
+    }
+
+    private fun updateNPCRemainingText(text: String) {
+        playground_remaining.text = text
     }
 }
