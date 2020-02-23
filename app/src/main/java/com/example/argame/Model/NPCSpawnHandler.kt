@@ -32,6 +32,9 @@ class NPCSpawnHandler(context: Context, level: Int, private val handler: Handler
         spawnCallback = context as NPCSpawnCallback
         when (level) {
             1 -> npcs = NPCDataForLevels.LevelOne.npcs
+            2 -> npcs = NPCDataForLevels.LevelTwo.npcs
+            10 -> npcs = NPCDataForLevels.LevelTen.npcs
+
         }
     }
 

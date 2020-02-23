@@ -21,14 +21,14 @@ object NPCDataForLevels {
         val npc7 = NPCSpawnData(NPCType.MELEE, 0, 6)
         val npc8 = NPCSpawnData(NPCType.SUPPORT, 250000, 7)
 
-        val npcs = arrayOf(
+        val npcs = arrayListOf(
             npc1, npc2, npc3, npc4, npc5, npc6, npc7, npc8)
     }
 
     object LevelTen {
         val npc1 = NPCSpawnData(NPCType.BOSSLVL10, 3000, 100)
 
-        val npcs = arrayOf(
+        val npcs = arrayListOf(
             npc1)
     }
 }
