@@ -7,11 +7,13 @@ import android.net.Uri
  */
 
 enum class Ability {
-    TEST;
+    TEST,
+    BEAM;
 
     fun uri() : Uri {
         when (this) {
             TEST-> return Uri.parse("untitledv4.sfb")
+            BEAM -> return Uri.parse("Character.sfb")
         }
     }
 
@@ -21,12 +23,14 @@ enum class Ability {
     fun getDamage(caster: CombatControllableStatus) : Double {
         return when (this) {
             TEST -> caster.level * 0.5 + 200 + caster.attackPower
+            BEAM -> caster.level * 0.25 + 200 + caster.attackPower
         }
     }
 
     fun getCastAnimationString() : String?{
         return when (this) {
             TEST -> "RightArm|RightArmAction.001"
+            BEAM -> "RightArm|RightArmAction.001"
         }
     }
 }
