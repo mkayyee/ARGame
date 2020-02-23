@@ -7,7 +7,7 @@ object NPCDataForLevels {
         val npc3 = NPCSpawnData(NPCType.MELEE, 18000, 2)
         val npc4 = NPCSpawnData(NPCType.RANGED, 250000, 3)
         val npc5 = NPCSpawnData(NPCType.RANGED, 30000, 4)
-        val npcs = arrayOf(
+        val npcs = arrayListOf(
             npc1, npc2, npc3, npc4, npc5)
     }
 }
