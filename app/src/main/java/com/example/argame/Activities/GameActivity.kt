@@ -40,6 +40,7 @@ class GameActivity : AppCompatActivity(), FragmentCallbackListener {
     private var renderedTpose: ModelRenderable? = null
     private var protoTargetNode: TransformableNode? = null
     private var anchorList = ArrayList<AnchorNode>()
+    val npc = ArrayList<String>()
 
     // MARK: Testing-abilities-related stuff
     private var hpRenderableDuck: ViewRenderable? = null

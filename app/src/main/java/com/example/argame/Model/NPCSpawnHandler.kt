@@ -38,6 +38,14 @@ class NPCSpawnHandler(context: Context, level: Int, private val handler: Handler
                 npcs = NPCDataForLevels.LevelOne.npcs
                 first = npcs.first()
             }
+            2 -> {
+                npcs = NPCDataForLevels.LevelTwo.npcs
+                first = npcs.first()
+            }
+            10 -> {
+                npcs = NPCDataForLevels.LevelTen.npcs
+                first = npcs.first()
+            }
         }
     }
 
@@ -72,6 +80,7 @@ class NPCSpawnHandler(context: Context, level: Int, private val handler: Handler
             }
         }
     }
+
 
     private fun spawnNPC(type: NPCType, spawnTime: Long, remaining: Int, npcID: Int) {
         Log.d("SHANDLER", "NPC spawned. npcID: $npcID")

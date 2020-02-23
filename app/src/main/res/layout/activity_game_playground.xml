@@ -6,11 +6,14 @@
     android:layout_height="match_parent"
     tools:context=".Activities.GameActivity">
 
+
+
     <fragment
         android:id="@+id/playground_sceneform_fragment"
         android:name="com.example.argame.Fragments.CustomArFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
+
 
     <LinearLayout
         android:orientation="horizontal"
@@ -23,17 +26,28 @@
             android:id="@+id/playground_spawnBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Spawn/Reset models"
+            android:text="Start level"
+            android:alpha="0.75"
+            android:layout_marginBottom="20dp"/>
+        <Button
+            android:layout_margin="8dp"
+            android:id="@+id/playground_toggleLevel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Level 1"
+            android:alpha="0.75"
             android:layout_marginBottom="20dp"/>
         <Button
             android:layout_margin="8dp"
             android:id="@+id/playground_destroyBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Destroy"
+            android:text="Clear Level"
+            android:alpha="0.75"
             android:layout_marginBottom="20dp"/>
 
     </LinearLayout>
+
 
     <LinearLayout
         android:orientation="vertical"
@@ -42,28 +56,51 @@
         android:gravity="top|right">
 
         <Button
-            android:id="@+id/playground_menuBtn"
+            android:layout_margin="8dp"
+            android:id="@+id/playground_exitBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Menu"
-            android:layout_marginBottom="20dp"/>
+            android:text="Exit"
+            android:alpha="0.75"/>
 
     </LinearLayout>
+
 
     <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center|right">
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center|right">
 
-        <Button
-            android:id="@+id/playground_attackDuckBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Attack"
-            android:layout_marginTop="400dp"/>
+    <Button
 
-    </LinearLayout>
+        android:id="@+id/playground_attackDuckBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Attack"
+        android:alpha="0.75"
+        android:layout_marginTop="400dp"
+        android:layout_marginRight="10dp"/>
+
+</LinearLayout>
+
+    <LinearLayout
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center|left">
+
+    <Button
+        android:id="@+id/playground_beamDuckBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Beam"
+        android:alpha="0.75"
+        android:layout_marginTop="400dp"
+        android:layout_marginLeft="10dp"/>
+
+</LinearLayout>
+
 
     <LinearLayout
         android:orientation="vertical"
@@ -98,6 +135,8 @@
 
     </LinearLayout>
 
+
+
     <LinearLayout
         android:orientation="vertical"
         android:id="@+id/playground_main_menu_container"
@@ -106,4 +145,8 @@
         android:layout_gravity="center" />
 
 
+
+
 </FrameLayout>
+
+
