@@ -2,6 +2,8 @@ package com.example.argame.Model
 
 import android.content.Context
 import android.os.Handler
+import android.os.Looper
+import android.util.Log
 
 /***
  *   An instance of NPCSpawnHandler will be created
@@ -12,9 +14,12 @@ import android.os.Handler
  *   spawned, after a delay defined in the level's data array.
  */
 
-class NPCSpawnHandler(context: Context) {
+class NPCSpawnHandler(context: Context, level: Int) : Runnable {
 
     private var spawnCallback: NPCSpawnCallback
+    private lateinit var npcs: Array<NPCSpawnData>
+    private var timer: Long = 0
+    private var paused = false
 
     interface NPCSpawnCallback {
         fun notifyNPCSpawned(type: NPCType, remaining: Int, npcID: Int, isLast: Boolean = false)
@@ -22,21 +27,38 @@ class NPCSpawnHandler(context: Context) {
 
     init {
         spawnCallback = context as NPCSpawnCallback
+        when (level) {
+            1 -> npcs = NPCDataForLevels.LevelOne.npcs
+        }
     }
 
-    fun beginSpawning(array: Array<NPCSpawnData>) {
-        var npcsLeft = array.size
-        var npcID = 0
-        array.forEach {
-            npcsLeft --
-            // notify that the last NPC was spawned, so GameActivity
-            // can tell that the level is over when the last NPC dies.
-            if (it == array.last()) {
-                spawnNPC(it.type, it.spawnTime, npcsLeft, npcID,true)
+    fun pause() { paused = true }
+    fun resume() { paused = false }
+
+    override fun run() {
+        Looper.prepare()
+        while (true) {
+            if (!paused) {
+                Log.d("SHANDLER", "Timer value: $timer")
+                // scan through the array every 1 sec
+                Handler().postDelayed({
+                    npcs.forEach {
+                        if (it.spawnTime >= timer) {
+                            // notify that the last NPC was spawned, so GameActivity
+                            // can tell that the level is over when the last NPC dies.
+                            if (it == npcs.last()) {
+                                spawnNPC(it.type, it.spawnTime, 0, it.id, true)
+                            } else {
+                                spawnNPC(it.type, it.spawnTime, npcs.size, it.id)
+                            }
+                            // if !it.Spawntime >= timer -> safe to assume the rest aren't either.
+                        }
+                    }
+                    timer += 1000
+                }, 1000)
             } else {
-                spawnNPC(it.type, it.spawnTime, npcsLeft, npcID)
+                Log.d("SHANDLER", "spawn handler is paused")
             }
-            npcID ++
         }
     }
 

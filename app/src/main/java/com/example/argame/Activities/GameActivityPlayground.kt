@@ -78,6 +78,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener, NP
     private var newLevel: Int? = null
 
     // Spawning NPC's
+    private lateinit var spawnHandler: NPCSpawnHandler
     private var spawnedNPCs = arrayListOf<NPC>()
     private var npcAnchors = arrayListOf<NPCAnchorData>()
     private var level = 1
@@ -100,6 +101,8 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener, NP
 
         newLevel = Level(this).createLevel()
         Log.d("LEVEL", curLevel.toString())
+
+        spawnHandler = NPCSpawnHandler(this, curLevel ?: 1)
     }
 
     override fun onPause() {
@@ -114,6 +117,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener, NP
         val saveToGson = gson.toJson(saveGame)
         saver.setGson = saveToGson
 */
+        spawnHandler.pause()
     }
 
     override fun onDestroy() {
@@ -125,6 +129,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener, NP
     override fun onResume() {
         super.onResume()
         curLevel = saver.getInt("levelNum", 1)
+        spawnHandler.resume()
 
 
         // TODO: Restore level and abilities
@@ -309,7 +314,13 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener, NP
     private fun updatePlayerRotation() {
         if (playerTarget != null) {
             val playerPos = playerNode.worldPosition
-            val targetPos = playerTarget!!.node.children[0].worldPosition
+            var targetPos: Vector3
+            if (playerTarget!!.node.children != null) {
+                targetPos = playerTarget!!.node.children[0].worldPosition
+            }
+            else {
+                targetPos = playerTarget!!.node.worldPosition
+            }
             // get the angle between the two nodes
             val x = targetPos.x - playerPos.x
             val y = targetPos.z - playerPos.z
@@ -369,8 +380,10 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener, NP
     private fun spawnObjects(numOfDucks: Int) {
         if (!ducksInScene) {
             // "Spawn NPC's" -------------------------------
-            val spawnHandler = NPCSpawnHandler(this)
-            spawnHandler.beginSpawning(NPCDataForLevels.LevelOne.npcs)
+            val thread = Thread {
+                spawnHandler.run()
+            }
+            thread.start()
             updateNPCRemainingText("NPCs spawning: ${NPCDataForLevels.LevelOne.npcs.size}")
             // -------------------------------------------------------------------------------------
             duckNPC = NPC(1.0, "duck", 5000.0, type = NPCType.MELEE, id = 500)
@@ -601,14 +614,14 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener, NP
                         node.renderable = npc.model
                         node.localScale = Vector3(0.1f,0.1f,0.1f)
                         createHPBar(anchorNode, hpRenderable)
-//                        node.setOnTouchListener { _, _ ->
-//                            playerTarget = PlayerTargetData(node, npc, hpRenderable.view.textView_healthbar)
-//                            val oldPosition = node.worldPosition
-//                            Handler().postDelayed({
-//                                if (node.worldPosition != oldPosition)
-//                                    updatePlayerRotation()
-//                            }, 500)
-//                        }
+                        node.setOnTouchListener { _, _ ->
+                            playerTarget = PlayerTargetData(node, npc, hpRenderable.view.textView_healthbar)
+                            val oldPosition = node.worldPosition
+                            Handler().postDelayed({
+                                if (node.worldPosition != oldPosition)
+                                    updatePlayerRotation()
+                            }, 500)
+                        }
                     }
                 }
             }
