@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import kotlin.math.sign
 
 /***
  *   An instance of NPCSpawnHandler will be created
@@ -20,39 +21,51 @@ class NPCSpawnHandler(context: Context, level: Int, private val handler: Handler
     private lateinit var npcs: ArrayList<NPCSpawnData>
     private var timer: Long = 0
     private var paused = false
+    private var stopped = false
     private var scanning = true
+    private var nextSpawn: Long? = null
+    private lateinit var first: NPCSpawnData
 
     interface NPCSpawnCallback {
-        fun notifyNPCSpawned(type: NPCType, remaining: Int, npcID: Int, isLast: Boolean = false)
+        fun notifyNPCSpawned(type: NPCType, remaining: Int, npcID: Int)
         fun notifyAllNPCSpawned()
     }
 
     init {
         spawnCallback = context as NPCSpawnCallback
         when (level) {
-            1 -> npcs = NPCDataForLevels.LevelOne.npcs
+            1 -> {
+                npcs = NPCDataForLevels.LevelOne.npcs
+                first = npcs.first()
+            }
         }
     }
 
     fun pause() { paused = true }
     fun resume() { paused = false }
+    fun stop() { stopped = true }
 
     override fun run() {
+        nextSpawn = first.spawnTime
         Looper.prepare()
-        while (true) {
+        while (!stopped) {
             if (!paused) {
-                Log.d("SHANDLER", "Timer value: $timer")
-                // scan through the array every 1 sec
-                if (scanning) {
-                    scanning = false
-                    handler.postDelayed({
-                        Log.d("SHANDLER", "Timer value: $timer")
-                        if (npcs.isNotEmpty()) {
-                            spawnIfReady(npcs)
+                try {
+                    if (nextSpawn != null) {
+                        if (nextSpawn!! <= timer) {
+                            spawnNPC(first.type, first.spawnTime, npcs.size - 1, first.id)
                         }
-                        scanning = true
-                        timer += 1000
-                    }, 1000)
+                        if (scanning) {
+                            scanning = false
+                            handler.postDelayed({
+                                Log.d("SHANDLER", "Timer value: $timer")
+                                scanning = true
+                                timer += 1000
+                            }, 1000)
+                        }
+                    }
+                } catch (error: Exception) {
+                    Log.d("SHANDLER", "$error")
                 }
             } else {
                 Log.d("SHANDLER", "spawn handler is paused")
@@ -60,31 +73,27 @@ class NPCSpawnHandler(context: Context, level: Int, private val handler: Handler
         }
     }
 
-    private fun spawnIfReady(array: ArrayList<NPCSpawnData>) {
-        val first = array.first()
-        var second: NPCSpawnData? = null
-        if (array.size > 1) {
-            second = array[1]
-        }
-        if (first.spawnTime <= timer) {
-            if (second != null && second.spawnTime == array.first().spawnTime) {
-                spawnNPC(first.type, first.spawnTime, array.size, first.id)
-                array.removeAt(1)
-                spawnIfReady(array)
+    private fun spawnNPC(type: NPCType, spawnTime: Long, remaining: Int, npcID: Int) {
+        Log.d("SHANDLER", "NPC spawned. npcID: $npcID")
+        if (npcs.isNotEmpty()) {
+            if (npcs.size > 1) {
+                first = npcs[1]
+                nextSpawn = npcs[1].spawnTime
             } else {
-                spawnNPC(first.type, first.spawnTime, array.size, first.id)
-                array.removeAt(1)
+                nextSpawn = null
             }
+            npcs.removeAt(0)
         }
-    }
-
-    private fun spawnNPC(type: NPCType, spawnTime: Long, remaining: Int, npcID: Int, isLast: Boolean = false) {
-        Handler().postDelayed({
-            if (isLast) {
-                spawnCallback.notifyNPCSpawned(type, remaining, npcID,true)
-            } else {
-                spawnCallback.notifyNPCSpawned(type, remaining, npcID)
+        var time = spawnTime - timer
+        if (time.sign == -1) {
+            time = 0
+        }
+        handler.postDelayed({
+            spawnCallback.notifyNPCSpawned(type, remaining, npcID)
+            if (remaining == 0) {
+                spawnCallback.notifyAllNPCSpawned()
+                nextSpawn = null
             }
-        }, spawnTime)
+        }, time)
     }
 }

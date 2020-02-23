@@ -558,7 +558,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener, NP
             }, 4000)
     }
 
-    override fun notifyNPCSpawned(type: NPCType, remaining: Int, npcID: Int, isLast: Boolean) {
+    override fun notifyNPCSpawned(type: NPCType, remaining: Int, npcID: Int) {
         lateinit var renderable: ModelRenderable
         // get NPC model
         val renderableFuture = ModelRenderable.builder()
@@ -579,17 +579,16 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener, NP
                 Log.d("NPCSPAWN", "spawnedNPCs[$index]: ${spawnedNPCs[index]}")
             }
             // when the last NPC has spawned, the level should end when it dies.
-            if (isLast) {
-                allNPChaveSpawned = true
-                updateNPCRemainingText("")
-            } else {
-                updateNPCRemainingText("NPCs spawning: $remaining")
-            }
+            updateNPCRemainingText("NPCs spawning: $remaining")
+
         }
     }
 
     override fun notifyAllNPCSpawned() {
-        npcSpawnThread.stop()
+        spawnHandler.stop()
+        Handler().removeCallbacks(spawnHandler)
+        allNPChaveSpawned = true
+        updateNPCRemainingText("")
     }
 
     private fun spawnNPC(npc: NPC) {
