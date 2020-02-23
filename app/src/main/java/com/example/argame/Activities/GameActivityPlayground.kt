@@ -79,6 +79,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener, NP
 
     // Spawning NPC's
     private lateinit var spawnHandler: NPCSpawnHandler
+    private lateinit var npcSpawnThread: Thread
     private var spawnedNPCs = arrayListOf<NPC>()
     private var npcAnchors = arrayListOf<NPCAnchorData>()
     private var level = 1
@@ -102,7 +103,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener, NP
         newLevel = Level(this).createLevel()
         Log.d("LEVEL", curLevel.toString())
 
-        spawnHandler = NPCSpawnHandler(this, curLevel ?: 1)
+        spawnHandler = NPCSpawnHandler(this, curLevel ?: 1, Handler())
     }
 
     override fun onPause() {
@@ -377,10 +378,10 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener, NP
     private fun spawnObjects(numOfDucks: Int) {
         if (!ducksInScene) {
             // "Spawn NPC's" -------------------------------
-            val thread = Thread {
+            npcSpawnThread = Thread {
                 spawnHandler.run()
             }
-            thread.start()
+            npcSpawnThread.start()
             updateNPCRemainingText("NPCs spawning: ${NPCDataForLevels.LevelOne.npcs.size}")
             // -------------------------------------------------------------------------------------
 /*            duckNPC = NPC(1.0, "duck", 5000.0, type = NPCType.MELEE, id = 500)
@@ -582,6 +583,10 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener, NP
                 updateNPCRemainingText("NPCs spawning: $remaining")
             }
         }
+    }
+
+    override fun notifyAllNPCSpawned() {
+        npcSpawnThread.stop()
     }
 
     private fun spawnNPC(npc: NPC) {
