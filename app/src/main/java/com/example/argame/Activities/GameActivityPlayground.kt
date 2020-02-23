@@ -196,19 +196,19 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener, NP
                 1 -> {
                     levelButton.text = "Level 2"
                     curLevel = 2
-                    spawnHandler = NPCSpawnHandler(this, curLevel ?: 1)
+                    spawnHandler = NPCSpawnHandler(this, curLevel ?: 1, Handler())
 
                 }
                 2 -> {
                     levelButton.text = "Level 10"
                     curLevel = 10
-                    spawnHandler = NPCSpawnHandler(this, curLevel ?: 1)
+                    spawnHandler = NPCSpawnHandler(this, curLevel ?: 1, Handler())
 
                 }
                 else -> {
                     levelButton.text = "Level 1"
                     curLevel = 1
-                    spawnHandler = NPCSpawnHandler(this, curLevel ?: 1)
+                    spawnHandler = NPCSpawnHandler(this, curLevel ?: 1, Handler())
 
                 }
             }
@@ -510,10 +510,10 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener, NP
         Log.d("RMOVE", "1")
         val randomInt = (1..100).shuffled().first()
         when(randomInt) {
-            in 1..10 -> NodeCreator(node, Vector3(0.5f,0.0f,0.0f))
-            in 11..30 -> NodeCreator(node, Vector3(0.4f,-0.4f,0.0f))
-            in 31..60 -> NodeCreator(node, Vector3(0.3f,0.2f,0.0f))
-            in 61..100 -> NodeCreator(node, Vector3(0.2f,0.0f,0.0f))
+            in 1..10 -> NodeCreator(node, Vector3(0.9f,0.0f,0.0f))
+            in 11..30 -> NodeCreator(node, Vector3(0.8f,0.0f,-1.0f))
+            in 31..60 -> NodeCreator(node, Vector3(0.6f,0.0f,-1.0f))
+            in 61..100 -> NodeCreator(node, Vector3(0.4f,0.0f,0.0f))
         }
     }
     private fun NodeCreator(initialNode: TransformableNode, newLocation: Vector3) {
@@ -534,7 +534,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener, NP
         objectAnimation.setPropertyName("worldPosition")
         objectAnimation.setEvaluator(Vector3Evaluator())
         objectAnimation.interpolator = LinearInterpolator()
-        objectAnimation.duration = 3500
+        objectAnimation.duration = 3000
         objectAnimation.start()
 
             Handler().postDelayed({
@@ -546,10 +546,9 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener, NP
                 objectAnimation.setPropertyName("worldPosition")
                 objectAnimation.setEvaluator(Vector3Evaluator())
                 objectAnimation.interpolator = LinearInterpolator()
-                objectAnimation.duration = 3500
+                objectAnimation.duration = 4500
                 objectAnimation.start()
                 Handler().postDelayed({
-                    randomMove(model)
                 }, 4000)
 
             }, 4000)

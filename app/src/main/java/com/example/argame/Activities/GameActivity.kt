@@ -59,7 +59,6 @@ class GameActivity : AppCompatActivity(), FragmentCallbackListener {
         initHPRenderables()
         val healthTxt = findViewById<TextView>(R.id.healthTxt)
         healthTxt.text = "Health ${player.getStatus().currentHealth}"
-        npc.removeAt(npc.indexOf(it))
     }
 
     override fun onButtonPressed(btn: Button) {

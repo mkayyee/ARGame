@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import kotlin.math.sign
 
 /***
  *   An instance of NPCSpawnHandler will be created
@@ -67,24 +68,28 @@ class NPCSpawnHandler(context: Context, level: Int, private val handler: Handler
             second = array[1]
         }
         if (first.spawnTime <= timer) {
+            Log.d("SPAWN", first.spawnTime.toString())
             if (second != null && second.spawnTime == array.first().spawnTime) {
-                spawnNPC(first.type, first.spawnTime, array.size, first.id)
-                array.removeAt(1)
+                spawnNPC(first.type, first.spawnTime, array.size -1, first.id)
+                array.removeAt(0)
                 spawnIfReady(array)
             } else {
-                spawnNPC(first.type, first.spawnTime, array.size, first.id)
-                array.removeAt(1)
+                spawnNPC(first.type, first.spawnTime, array.size -1, first.id)
+                array.removeAt(0)
             }
         }
     }
 
-    private fun spawnNPC(type: NPCType, spawnTime: Long, remaining: Int, npcID: Int, isLast: Boolean = false) {
-        Handler().postDelayed({
-            if (isLast) {
-                spawnCallback.notifyNPCSpawned(type, remaining, npcID,true)
-            } else {
-                spawnCallback.notifyNPCSpawned(type, remaining, npcID)
+    private fun spawnNPC(type: NPCType, spawnTime: Long, remaining: Int, npcID: Int) {
+        var time = spawnTime - timer
+        if (time.sign == -1) {
+            time = 0
+        }
+        handler.postDelayed({
+            spawnCallback.notifyNPCSpawned(type, remaining, npcID)
+            if (remaining == 0) {
+                spawnCallback.notifyAllNPCSpawned()
             }
-        }, spawnTime)
+        }, time)
     }
 }
