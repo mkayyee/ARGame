@@ -69,6 +69,21 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:gravity="center|left">
+
+        <Button
+            android:id="@+id/playground_toggleLevel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Level 1"
+            android:layout_marginTop="400dp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:gravity="center|top">
 
         <TextView
