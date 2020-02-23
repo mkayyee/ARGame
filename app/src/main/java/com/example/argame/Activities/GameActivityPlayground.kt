@@ -309,7 +309,13 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener, NP
     private fun updatePlayerRotation() {
         if (playerTarget != null) {
             val playerPos = playerNode.worldPosition
-            val targetPos = playerTarget!!.node.children[0].worldPosition
+            var targetPos: Vector3
+            if (playerTarget!!.node.children != null) {
+                targetPos = playerTarget!!.node.children[0].worldPosition
+            }
+            else {
+                targetPos = playerTarget!!.node.worldPosition
+            }
             // get the angle between the two nodes
             val x = targetPos.x - playerPos.x
             val y = targetPos.z - playerPos.z
