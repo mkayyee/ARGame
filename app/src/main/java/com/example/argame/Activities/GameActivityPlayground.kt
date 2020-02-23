@@ -173,10 +173,6 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener, NP
 
     private fun initButtons() {
 
-        val menuBtn = findViewById<Button>(R.id.playground_menuBtn)
-        menuBtn.setOnClickListener {
-            callMenuFragment()
-        }
         val spawnBtn = findViewById<Button>(R.id.playground_spawnBtn)
         spawnBtn.setOnClickListener {
             if (newLevel != null) {
@@ -199,14 +195,20 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener, NP
                 1 -> {
                     levelButton.text = "Level 2"
                     curLevel = 2
+                    spawnHandler = NPCSpawnHandler(this, curLevel ?: 1)
+
                 }
                 2 -> {
                     levelButton.text = "Level 10"
                     curLevel = 10
+                    spawnHandler = NPCSpawnHandler(this, curLevel ?: 1)
+
                 }
                 else -> {
                     levelButton.text = "Level 1"
                     curLevel = 1
+                    spawnHandler = NPCSpawnHandler(this, curLevel ?: 1)
+
                 }
             }
         }
@@ -275,14 +277,13 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener, NP
     }
 
     private fun beamTarget(playerTarget: PlayerTargetData) {
-        anchorList.forEach {
-            // TODO: Calculate a good offset for worldposition difference. 0.1f is just a placeholder.
-            if (it.worldPosition.x - playerTarget.node.worldPosition.x < 0.1f
-                && it.worldPosition.y - playerTarget.node.worldPosition.y < 0.1f) {
-                // TODO: Needs a collection from where to look for other targets
+        if (playerTarget != null) {
+            playerTarget.node.parent!!.children.forEach {
+                if (it.worldPosition.x - playerTarget.node.worldPosition.y < 1.0f || it.worldPosition.z - playerTarget.node.worldPosition.y < 1.0f) {
+                    Log.d("BEAM", "Additional target found")
+                }
             }
         }
-
     }
 
     private fun clearPlayerTarget() {
@@ -539,8 +540,8 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener, NP
                 val objectAnimation = ObjectAnimator()
                 objectAnimation.setAutoCancel(true)
                 objectAnimation.target = model
-                model.setLookDirection(Vector3.subtract(model.worldPosition, model.parent!!.worldPosition))
-                objectAnimation.setObjectValues(model.worldPosition, model.parent?.worldPosition)
+                model.setLookDirection(Vector3.subtract(model.worldPosition, playerAnchorNode.worldPosition))
+                objectAnimation.setObjectValues(model.worldPosition, playerAnchorNode.worldPosition)
                 objectAnimation.setPropertyName("worldPosition")
                 objectAnimation.setEvaluator(Vector3Evaluator())
                 objectAnimation.interpolator = LinearInterpolator()
@@ -609,7 +610,11 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener, NP
                         node.setParent(anchorNode)
                         node.renderable = npc.model
                         node.localScale = Vector3(0.1f,0.1f,0.1f)
+                        if (npc.getID() == 100) {
+                            node.localScale = Vector3(0.4f,0.4f,0.4f)
+                        }
                         createHPBar(anchorNode, hpRenderable)
+                        randomMove(node)
                         node.setOnTouchListener { _, _ ->
                             playerTarget = PlayerTargetData(node, npc, hpRenderable.view.textView_healthbar)
                             val oldPosition = node.worldPosition

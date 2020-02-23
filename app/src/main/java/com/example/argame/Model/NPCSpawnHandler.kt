@@ -29,6 +29,8 @@ class NPCSpawnHandler(context: Context, level: Int) : Runnable {
         spawnCallback = context as NPCSpawnCallback
         when (level) {
             1 -> npcs = NPCDataForLevels.LevelOne.npcs
+            2 -> npcs = NPCDataForLevels.LevelTwo.npcs
+            10 -> npcs = NPCDataForLevels.LevelTen.npcs
         }
     }
 
@@ -41,7 +43,7 @@ class NPCSpawnHandler(context: Context, level: Int) : Runnable {
             if (!paused) {
                 Log.d("SHANDLER", "Timer value: $timer")
                 // scan through the array every 1 sec
-                Handler().postDelayed({
+                Handler(Looper.getMainLooper()).postDelayed({
                     npcs.forEach {
                         if (it.spawnTime >= timer) {
                             // notify that the last NPC was spawned, so GameActivity
@@ -54,7 +56,7 @@ class NPCSpawnHandler(context: Context, level: Int) : Runnable {
                             // if !it.Spawntime >= timer -> safe to assume the rest aren't either.
                         }
                     }
-                    timer += 1000
+                    timer += 10000
                 }, 1000)
             } else {
                 Log.d("SHANDLER", "spawn handler is paused")
