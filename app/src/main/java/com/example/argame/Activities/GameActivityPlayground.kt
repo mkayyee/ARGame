@@ -324,12 +324,17 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener, NP
     }
 
     // MARK: Testing-abilities-related stuff
-    private fun createHPBar(anchor: AnchorNode, renderable: ViewRenderable?) {
+    private fun createHPBar(node: TransformableNode, renderable: ViewRenderable?) {
         val hpNode = Node()
-        hpNode.setParent(anchor)
+        hpNode.setParent(node)
         hpNode.renderable = renderable
-        hpNode.localPosition = Vector3(0f,0.5f,0f)
-        hpNode.localScale = Vector3(0.5f, 0.5f, 0.5f)
+        if (node == playerNode) {
+            hpNode.localScale = Vector3(0.5f, 0.5f, 0.5f)
+            hpNode.localPosition = Vector3(0f, 0.5f, 0f)
+        } else {
+            hpNode.localScale = Vector3(5f, 5f, 5f)
+            hpNode.localPosition = Vector3(0f, 5f, 0f)
+        }
     }
 
     private fun clearModels() {
@@ -390,7 +395,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener, NP
                         playerNode.rotationController.isEnabled = false
                         playerNode.setParent(playerAnchorNode)
                         playerNode.renderable = renderedPlayer
-                        createHPBar(playerAnchorNode, hpRenderablePlayer)
+                        createHPBar(playerNode, hpRenderablePlayer)
 
                         // update player look direction toward target if
                         // player position changes during 0.5 seconds
@@ -650,7 +655,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener, NP
                         if (npc.getID() == 100) {
                             node.localScale = Vector3(0.4f,0.4f,0.4f)
                         }
-                        createHPBar(anchorNode, hpRenderable)
+                        createHPBar(node, hpRenderable)
                         randomMove(node)
                         node.setOnTouchListener { _, _ ->
                             val oldPosition = node.worldPosition
