@@ -312,18 +312,14 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
 
     private fun beamTarget() {
         if (playerTarget != null) {
-            playerTarget!!.node.parent?.scene?.children?.forEach {
-                // TODO: Figure out why children of every it is null. Should contain Nodes of each AnchorNode
-                if (it != playerAnchorNode && it.children.size < 0) {
-                   //if (it.children[0].worldPosition.x - playerTarget!!.node.worldPosition.x > 0.05f || it.children[0].worldPosition.z - playerTarget!!.node.worldPosition.z < 0.05) {
-                        Log.d("BEAM", "Additional target found " + it.worldPosition.toString())
-                        it.localScale = Vector3(1.3f, 1.3f, 1.3f)
-                        Log.d(
-                            "BEAM",
-                            "Target position " + playerTarget!!.node.worldPosition.toString()
-                        )
-                    //}
-
+            npcAnchors.forEach {
+                val npcAnchorNode = it.anchorNode
+                if (npcAnchorNode.worldPosition.x - playerTarget!!.node.worldPosition.x > 0.05f || npcAnchorNode.worldPosition.z - playerTarget!!.node.worldPosition.z < 0.05) {
+                    Log.d("BEAM", "Additional target found " + npcAnchorNode.toString())
+                    npcAnchorNode.localScale = Vector3(1.3f, 1.3f, 1.3f)
+                    Log.d(
+                        "BEAM", "Target position " + playerTarget!!.node.worldPosition.toString()
+                    )
                 }
             }
         }
