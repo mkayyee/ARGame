@@ -24,6 +24,7 @@
         <Button
             android:layout_margin="8dp"
             android:id="@+id/playground_spawnBtn"
+            android:enabled="false"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Start level"

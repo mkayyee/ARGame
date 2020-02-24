@@ -2,6 +2,7 @@ package com.example.argame.Activities
 
 import android.animation.ObjectAnimator
 import android.content.SharedPreferences
+import android.graphics.Color
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -12,6 +13,8 @@ import android.view.animation.LinearInterpolator
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toDrawable
 import com.example.argame.Fragments.CustomArFragment
 import com.example.argame.Fragments.MenuFragmentController
 import com.example.argame.Interfaces.FragmentCallbackListener
@@ -31,6 +34,7 @@ import com.google.ar.sceneform.rendering.ModelRenderable
 import com.google.ar.sceneform.rendering.ViewRenderable
 import com.google.ar.sceneform.ux.TransformableNode
 import com.google.gson.Gson
+import kotlinx.android.synthetic.main.activity_game.*
 import kotlinx.android.synthetic.main.activity_game_playground.*
 import kotlinx.android.synthetic.main.healthbar.view.*
 import org.jetbrains.anko.doAsyncResult
@@ -104,6 +108,10 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener, NP
         Log.d("LEVEL", curLevel.toString())
 
         spawnHandler = NPCSpawnHandler(this, curLevel ?: 1, Handler())
+
+        fragment.arSceneView.scene.addOnUpdateListener {
+            initSceneUpdateListener()
+        }
     }
 
     override fun onPause() {
@@ -149,6 +157,27 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener, NP
         menuFragController.onButtonPressed(btn)
     }
 
+    private fun initSceneUpdateListener() {
+        val frame = fragment.arSceneView.arFrame
+        val pt = getScreenCenter()
+        val hits: List<HitResult>
+        if (frame != null) {
+            hits = frame.hitTest(pt.x.toFloat(), pt.y.toFloat() + 400)
+            for (hit in hits) {
+                val trackable = hit.trackable
+                playground_spawnBtn.isEnabled = trackable is Plane && !playerInScene
+                // TODO - figure out an efficient implementation for code below.. maybe?
+//                    if (playerInScene) {
+//                        if (trackable !is Plane) {
+//                            spawnHandler.pause()
+//                        } else {
+//                            spawnHandler.resume()
+//                        }
+//                    }
+            }
+        }
+    }
+
     private fun prepareModels() {
 
         duckUri = Uri.parse("duck.sfb")
@@ -178,8 +207,8 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener, NP
         spawnBtn.setOnClickListener {
             if (newLevel != null) {
                 spawnObjects(newLevel!!)
+                spawnPlayer()
             }
-            spawnPlayer()
         }
         // MARK: Testing-abilities-related stuff
         playground_attackDuckBtn.setOnClickListener {
@@ -226,23 +255,26 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener, NP
 
     // MARK: Testing-abilities-related stuff
     private fun initHPRenderables() {
-        val renderableFuture = ViewRenderable.builder()
-            .setView(this, R.layout.healthbar)
-            .build()
-        renderableFuture.thenAccept { hpRenderableDuck = it }
-        hpRenderableDuck?.view?.textView_healthbar?.text = duckNPC.getStatus().currentHealth.toString()
-
-        val renderableFuture2 = ViewRenderable.builder()
-            .setView(this, R.layout.healthbar)
-            .build()
-        renderableFuture2.thenAccept { hpRenderableTpose = it }
-        hpRenderableTpose?.view?.textView_healthbar?.text = tposeNPC.getStatus().currentHealth.toString()
+//        val renderableFuture = ViewRenderable.builder()
+//            .setView(this, R.layout.healthbar)
+//            .build()
+//        renderableFuture.thenAccept { hpRenderableDuck = it }
+//        hpRenderableDuck?.view?.textView_healthbar?.text = duckNPC.getStatus().currentHealth.toString()
+//
+//        val renderableFuture2 = ViewRenderable.builder()
+//            .setView(this, R.layout.healthbar)
+//            .build()
+//        renderableFuture2.thenAccept { hpRenderableTpose = it }
+//        hpRenderableTpose?.view?.textView_healthbar?.text = tposeNPC.getStatus().currentHealth.toString()
 
         val renderableFuturePlayer = ViewRenderable.builder()
             .setView(this, R.layout.healthbar)
             .build()
-        renderableFuturePlayer.thenAccept { hpRenderablePlayer = it }
-        hpRenderablePlayer?.view?.textView_healthbar?.text = player.getStatus().currentHealth.toString()
+        renderableFuturePlayer.thenAccept {
+            hpRenderablePlayer = it
+            hpRenderablePlayer?.view?.textView_healthbar?.text = player.getStatus().currentHealth.toString()
+            hpRenderablePlayer?.view?.textView_healthbar?.background = ContextCompat.getDrawable(this, R.drawable.gradient_player_hpbar)
+        }
     }
 
     // MARK: Testing-abilities-related stuff
@@ -313,7 +345,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener, NP
         if (playerTarget != null) {
             val playerPos = playerNode.worldPosition
             var targetPos: Vector3
-            if (playerTarget!!.node.children != null) {
+            if (playerTarget!!.node.children.isNotEmpty()) {
                 targetPos = playerTarget!!.node.children[0].worldPosition
             }
             else {
@@ -344,6 +376,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener, NP
                 for (hit in hits) {
                     val trackable = hit.trackable
                     if (trackable is Plane) {
+                        playerInScene = true
                         playerAnchorPos = hit!!
                         val playerAnchor = hit.createAnchor()
                         playerAnchorNode = AnchorNode(playerAnchor)
@@ -371,7 +404,6 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener, NP
                     }
                 }
             }
-            playerInScene = true
         }
     }
 
@@ -382,6 +414,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener, NP
                 spawnHandler.run()
             }
             npcSpawnThread.start()
+            ducksInScene = true
             updateNPCRemainingText("NPCs spawning: ${NPCDataForLevels.LevelOne.npcs.size}")
             // -------------------------------------------------------------------------------------
 /*            duckNPC = NPC(1.0, "duck", 5000.0, type = NPCType.MELEE, id = 500)
@@ -620,17 +653,50 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener, NP
                         createHPBar(anchorNode, hpRenderable)
                         randomMove(node)
                         node.setOnTouchListener { _, _ ->
-                            playerTarget = PlayerTargetData(node, npc, hpRenderable.view.textView_healthbar)
                             val oldPosition = node.worldPosition
                             Handler().postDelayed({
-                                if (node.worldPosition != oldPosition)
+                                if (node.worldPosition != oldPosition) {
+                                    if (playerTarget != null) {
+                                        Log.d("node", "targetnode == node: ${playerTarget!!.node == node}")
+                                        val playerTargetNode = playerTarget!!.node
+                                        if (playerTargetNode != node) {
+                                            Log.d("node", "target not node")
+                                            val playerTargetBar = playerTarget!!.healthBar!!
+                                            updateOldTargetHPBar(playerTargetBar)
+                                        }
+                                    }
+                                    // set new target
+                                    val newTarget = PlayerTargetData(node, npc, hpRenderable.view.textView_healthbar)
+                                    playerTarget = newTarget
+                                    updateNewTargetHPBar(newTarget)
                                     updatePlayerRotation()
-                            }, 500)
+                                }
+                            }, 250)
                         }
                     }
                 }
             }
         }
+    }
+
+    private fun updateOldTargetHPBar(hpBar: TextView) {
+        hpBar.background =
+            ContextCompat.getDrawable(
+                this,
+                R.drawable.gradient_healthbar
+            )
+        // clear old target hp text
+        hpBar.text = ""
+    }
+
+    private fun updateNewTargetHPBar(targetData: PlayerTargetData) {
+        targetData.healthBar?.background =
+            ContextCompat.getDrawable(
+                this,
+                R.drawable.gradient_playertarget_hpbar
+            )
+        // clear old target hp text
+        playerTarget!!.healthBar?.text = targetData.model.getStatus().currentHealth.toString()
     }
 
     private fun updateNPCRemainingText(text: String) {
