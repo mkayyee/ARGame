@@ -574,9 +574,11 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener, NP
             for (index in spawnedNPCs.indices) {
                 Log.d("NPCSPAWN", "spawnedNPCs[$index]: ${spawnedNPCs[index]}")
             }
-            // when the last NPC has spawned, the level should end when it dies.
-            updateNPCRemainingText("NPCs spawning: $remaining")
-
+            if (remaining > 0) {
+                updateNPCRemainingText("NPCs spawning: $remaining")
+            } else {
+                updateNPCRemainingText("")
+            }
         }
     }
 
@@ -584,7 +586,6 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener, NP
         spawnHandler.stop()
         Handler().removeCallbacks(spawnHandler)
         allNPChaveSpawned = true
-        updateNPCRemainingText("")
     }
 
     private fun spawnNPC(npc: NPC) {

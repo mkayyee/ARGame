@@ -24,6 +24,7 @@ class NPCSpawnHandler(context: Context, level: Int, private val handler: Handler
     private var stopped = false
     private var scanning = true
     private var nextSpawn: Long? = null
+    private var previosSpawnId: Int? = null
     private lateinit var first: NPCSpawnData
 
     interface NPCSpawnCallback {
@@ -49,9 +50,18 @@ class NPCSpawnHandler(context: Context, level: Int, private val handler: Handler
         }
     }
 
-    fun pause() { paused = true }
-    fun resume() { paused = false }
-    fun stop() { stopped = true }
+    fun pause() {
+        paused = true
+        Log.d("SHANDLER", "Spawn handler paused")
+    }
+    fun resume() {
+        paused = false
+        Log.d("SHANDLER", "Spawn handler resumed")
+    }
+    fun stop() {
+        stopped = true
+        Log.d("SHANDLER", "Spawn handler stopped")
+    }
 
     override fun run() {
         nextSpawn = first.spawnTime
@@ -59,7 +69,7 @@ class NPCSpawnHandler(context: Context, level: Int, private val handler: Handler
         while (!stopped) {
             if (!paused) {
                 try {
-                    if (nextSpawn != null) {
+                    if (nextSpawn != null && first.id != previosSpawnId) {
                         if (nextSpawn!! <= timer) {
                             spawnNPC(first.type, first.spawnTime, npcs.size - 1, first.id)
                         }
@@ -75,8 +85,6 @@ class NPCSpawnHandler(context: Context, level: Int, private val handler: Handler
                 } catch (error: Exception) {
                     Log.d("SHANDLER", "$error")
                 }
-            } else {
-                Log.d("SHANDLER", "spawn handler is paused")
             }
         }
     }
@@ -99,6 +107,7 @@ class NPCSpawnHandler(context: Context, level: Int, private val handler: Handler
         }
         handler.postDelayed({
             spawnCallback.notifyNPCSpawned(type, remaining, npcID)
+            previosSpawnId = npcID
             if (remaining == 0) {
                 spawnCallback.notifyAllNPCSpawned()
                 nextSpawn = null
