@@ -584,12 +584,10 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener, NP
                 objectAnimation.setPropertyName("worldPosition")
                 objectAnimation.setEvaluator(Vector3Evaluator())
                 objectAnimation.interpolator = LinearInterpolator()
-                objectAnimation.duration = 4500
+                objectAnimation.duration = 15000
                 objectAnimation.start()
-                Handler().postDelayed({
-                }, 4000)
-
-            }, 4000)
+                objectAnimation.end()
+            }, 3500)
     }
 
     override fun notifyNPCSpawned(type: NPCType, remaining: Int, npcID: Int) {
@@ -642,7 +640,14 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener, NP
                 for (hit in hits) {
                     val trackable = hit.trackable
                     if (trackable is Plane) {
-                        val anchor = hit.createAnchor()
+                        val valuePool = (200..1200)
+                        val randX = valuePool.shuffled().first().toFloat()
+                        val randY = valuePool.shuffled().first().toFloat()
+                        Log.d("XYVALUES", randX.toString() + "  " + randY.toString())
+                        val anchor = (frame.hitTest(
+                            (pt.x.toFloat() - randX),
+                            (pt.y.toFloat() + randY)
+                        ))[0].createAnchor()
                         val anchorNode = AnchorNode(anchor)
                         npcAnchors.add(NPCAnchorData(anchorNode, npc.getID()))
                         anchorNode.setParent(fragment.arSceneView.scene)
