@@ -40,6 +40,7 @@ import kotlinx.android.synthetic.main.healthbar.view.*
 import org.jetbrains.anko.doAsyncResult
 import java.sql.Time
 import kotlin.math.atan
+import kotlin.math.pow
 
 class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     NPCSpawnHandler.NPCSpawnCallback {
@@ -310,17 +311,54 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         }
     }
 
+    private fun attackPlayer(npc: NPC, node: Node) {
+        // disable attack button for the animation duration
+            npc.dealDamage(5.0, player)
+            val ability = Ability.TEST
+            val animData = ProjectileAnimationData(
+                // TODO make start position relative to screen position
+                node.worldPosition,
+                playerAnchorNode.worldPosition,
+                this,
+                fragment,
+                ability.uri()
+            )
+            npc.useAbility(ability, player, animData) {
+                if (hpRenderablePlayer?.view?.textView_healthbar != null) {
+                    updateHPBar(hpRenderablePlayer?.view?.textView_healthbar, player)
+                }
+
+                // enable attack button after in callback
+                if (!player.getStatus().isAlive) {
+                    playerAnchorNode.localRotation = Quaternion(0f, 0f, 1f, 0f)
+                }
+            }
+        }
+
     private fun beamTarget() {
         if (playerTarget != null) {
             npcAnchors.forEach {
-                val npcAnchorNode = it.anchorNode
-                if (npcAnchorNode.worldPosition.x - playerTarget!!.node.worldPosition.x > 0.05f || npcAnchorNode.worldPosition.z - playerTarget!!.node.worldPosition.z < 0.05) {
+                val npcAnchorPos = it.anchorNode.worldPosition
+                val targetPos = playerTarget!!.node.worldPosition
+                val zDifPow = (npcAnchorPos.z - targetPos.z).pow(2)
+                val xDifPow = (npcAnchorPos.x - targetPos.x).pow(2)
+                val difAdded = (zDifPow+xDifPow)
+                val result = Math.sqrt(difAdded.toDouble())
+                Log.d("BEAM", "RESULT " + npcAnchors.indexOf(it)+ "  " + result)
+
+                if (result < 0.8) {
+                    Log.d("BEAM", "HIT NPC  " + npcAnchors.indexOf(it) )
+                    it.anchorNode.localScale = Vector3(0.4f, 0.4f, 0.4f)
+                }
+
+ /*               if (npcAnchorNode.worldPosition.x - playerTarget!!.node.worldPosition.x > 0.05f || npcAnchorNode.worldPosition.z - playerTarget!!.node.worldPosition.z < 0.05) {
                     Log.d("BEAM", "Additional target found " + npcAnchorNode.toString())
                     npcAnchorNode.localScale = Vector3(1.3f, 1.3f, 1.3f)
+
                     Log.d(
                         "BEAM", "Target position " + playerTarget!!.node.worldPosition.toString()
                     )
-                }
+                }*/
             }
         }
     }
@@ -484,26 +522,26 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         }
     }
 
-    private fun randomMove(node: TransformableNode) {
+    private fun randomMove(node: TransformableNode, npc: NPC) {
         Log.d("RMOVE", "1")
         val randomInt = (1..100).shuffled().first()
         when (randomInt) {
-            in 1..10 -> NodeCreator(node, Vector3(0.9f, 0.0f, 0.0f))
-            in 11..30 -> NodeCreator(node, Vector3(0.8f, 0.0f, -1.0f))
-            in 31..60 -> NodeCreator(node, Vector3(0.6f, 0.0f, -1.0f))
-            in 61..100 -> NodeCreator(node, Vector3(0.4f, 0.0f, 0.0f))
+            in 1..10 -> NodeCreator(node, Vector3(0.9f, 0.0f, 0.0f), npc)
+            in 11..30 -> NodeCreator(node, Vector3(0.8f, 0.0f, -1.0f), npc)
+            in 31..60 -> NodeCreator(node, Vector3(0.6f, 0.0f, -1.0f), npc)
+            in 61..100 -> NodeCreator(node, Vector3(0.4f, 0.0f, 0.0f), npc)
         }
     }
 
-    private fun NodeCreator(initialNode: TransformableNode, newLocation: Vector3) {
+    private fun NodeCreator(initialNode: TransformableNode, newLocation: Vector3, npc: NPC) {
         Log.d("RMOVE", "2")
         val newNode = Node()
         val summedVector = Vector3.add(initialNode.worldPosition, newLocation)
         newNode.worldPosition = summedVector
-        moveToTarget(initialNode, newNode)
+        moveToTarget(initialNode, newNode, npc)
     }
 
-    private fun moveToTarget(model: TransformableNode, targetNode: Node) {
+    private fun moveToTarget(model: TransformableNode, targetNode: Node, npc: NPC) {
         Log.d("RMOVE", "3")
         val objectAnimation = ObjectAnimator()
         objectAnimation.setAutoCancel(true)
@@ -532,6 +570,11 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             objectAnimation.interpolator = LinearInterpolator()
             objectAnimation.duration = 15000
             objectAnimation.start()
+            Handler().postDelayed({
+
+                //npc.dealDamage(100.0,player)
+                attackPlayer(npc, model)
+            }, 15000)
         }, 3500)
     }
 
@@ -610,7 +653,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                             node.localScale = Vector3(0.4f, 0.4f, 0.4f)
                         }
                         createHPBar(node, hpRenderable)
-                        randomMove(node)
+                        randomMove(node, npc)
                         node.setOnTouchListener { _, _ ->
                             val oldPosition = node.worldPosition
                             Handler().postDelayed({
