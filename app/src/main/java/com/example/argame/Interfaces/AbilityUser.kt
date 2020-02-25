@@ -34,7 +34,7 @@ interface AbilityUser {
                 animator = ModelAnimator(animationData, caster.model)
                 animator.start()
             }
-            caster.instantiateProjectile(projectileData) {
+            caster.instantiateProjectile(projectileData, ability) {
                 // retrieved callback that the projectile was fired, so probably safe to deal damage
                 caster.dealDamage(ability.getDamage(casterStatus), target)
                 cb()

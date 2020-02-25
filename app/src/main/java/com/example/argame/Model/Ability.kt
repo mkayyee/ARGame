@@ -13,7 +13,7 @@ enum class Ability {
     fun uri() : Uri {
         when (this) {
             TEST-> return Uri.parse("untitledv4.sfb")
-            BEAM -> return Uri.parse("Character.sfb")
+            BEAM -> return Uri.parse("beam.sfb")
         }
     }
 

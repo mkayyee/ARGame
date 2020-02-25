@@ -93,3 +93,8 @@ sceneform.asset('sampledata/Player/playermodelv8.fbx',
         'default',
         'sampledata/Player/playermodelv8.sfa',
         'src/main/assets/playermodelv8')
+
+sceneform.asset('sampledata/Abilities/beam.fbx',
+        'default',
+        'sampledata/Abilities/beam.sfa',
+        'src/main/assets/beam')

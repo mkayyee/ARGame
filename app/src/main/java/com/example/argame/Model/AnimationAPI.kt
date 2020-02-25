@@ -6,6 +6,7 @@ import com.google.ar.sceneform.math.Quaternion
 import com.google.ar.sceneform.math.QuaternionEvaluator
 import com.google.ar.sceneform.math.Vector3
 import com.google.ar.sceneform.math.Vector3Evaluator
+import com.google.ar.sceneform.rendering.ModelRenderable
 import com.google.ar.sceneform.ux.TransformableNode
 
 
@@ -34,4 +35,16 @@ object AnimationAPI {
         // could implement some logic to see if it reached the target
         callback()
     }
+
+    // Reference:
+    // https://stackoverflow.com/questions/53371583/draw-line-between-location-markers-in-arcore
+    fun stretchModel(startPos: Vector3, endPos: Vector3, node: TransformableNode) {
+        val difference = Vector3.subtract(startPos, endPos)
+        val directionFromTopToBottom = difference.normalized()
+        val rotation = Quaternion.lookRotation(directionFromTopToBottom, Vector3.up())
+        node.worldPosition = Vector3.add(startPos, endPos).scaled(0.5f)
+        node.worldRotation = rotation
+    }
+
+
 }

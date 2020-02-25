@@ -337,6 +337,16 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
 
     private fun beamTarget() {
         if (playerTarget != null) {
+            playground_beamDuckBtn.isEnabled = false
+            val beam = Ability.BEAM
+            val data = ProjectileAnimationData(
+                playerNode.worldPosition, playerTarget!!.node.worldPosition, this, fragment, beam.uri())
+            player.useAbility(beam, playerTarget!!.model, data) {
+                if (playerTarget!!.healthBar != null) {
+                    updateHPBar(playerTarget!!.healthBar, playerTarget!!.model)
+                }
+                playground_beamDuckBtn.isEnabled = true
+            }
             npcAnchors.forEach {
                 val npcAnchorPos = it.anchorNode.worldPosition
                 val targetPos = playerTarget!!.node.worldPosition

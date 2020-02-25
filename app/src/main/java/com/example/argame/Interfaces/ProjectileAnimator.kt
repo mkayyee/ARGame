@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Handler
 import android.util.Log.wtf
 import com.example.argame.Model.ABILITY_PROJECTILE_SPEED
+import com.example.argame.Model.Ability
 import com.example.argame.Model.AnimationAPI
 import com.example.argame.Model.ProjectileAnimationData
 import com.google.ar.core.Anchor
@@ -13,6 +14,7 @@ import com.google.ar.sceneform.AnchorNode
 import com.google.ar.sceneform.Node
 import com.google.ar.sceneform.Scene
 import com.google.ar.sceneform.animation.ModelAnimator
+import com.google.ar.sceneform.math.Quaternion
 import com.google.ar.sceneform.math.Vector3
 import com.google.ar.sceneform.rendering.MaterialFactory
 import com.google.ar.sceneform.rendering.ModelRenderable
@@ -20,6 +22,8 @@ import com.google.ar.sceneform.rendering.ShapeFactory
 import com.google.ar.sceneform.ux.TransformableNode
 import com.google.ar.sceneform.ux.TransformationSystem
 import kotlinx.coroutines.delay
+import kotlin.math.atan
+import kotlin.math.pow
 
 /***
  *  Instantiates a projectile from a 3D model and checks that it has an animation.
@@ -39,7 +43,7 @@ import kotlinx.coroutines.delay
 
 interface ProjectileAnimator {
 
-    fun instantiateProjectile(projAnimData: ProjectileAnimationData, cb: () -> Unit) {
+    fun instantiateProjectile(projAnimData: ProjectileAnimationData, ability: Ability, cb: () -> Unit) {
         val uri: Uri? = projAnimData.modelUri
         // Get 3d model of the projectile if not null
         if (projAnimData.modelUri != null) {
@@ -49,7 +53,11 @@ interface ProjectileAnimator {
             renderableFuture.thenAccept {
                 val animData = it.getAnimationData(0) // 0 should be the index where projectile animation is
                 if (animData != null) { // Null check. By default the ability should have at least 1 animation but never know
-                    instantiateNodeInScene(projAnimData, it, cb)
+                    if (ability == Ability.BEAM) {
+                        instantiateNodeInScene(projAnimData, it, cb, true)
+                    } else {
+                        instantiateNodeInScene(projAnimData, it, cb)
+                    }
                     val animator = ModelAnimator(animData, it)
                     animator.start()
                 } else {
@@ -73,13 +81,32 @@ interface ProjectileAnimator {
             }
     }
 
-    private fun instantiateNodeInScene(projAnimData: ProjectileAnimationData, renderable: ModelRenderable, cb: () -> Unit) {
+    private fun instantiateNodeInScene(
+        projAnimData: ProjectileAnimationData,
+        renderable: ModelRenderable,
+        cb: () -> Unit,
+        isBeam: Boolean = false) {
+
         val node = TransformableNode(projAnimData.fragment.transformationSystem)
-        node.localScale = Vector3(0.1f, 0.1f, 0.1f)
         val scene = projAnimData.fragment.arSceneView.scene
         node.renderable = renderable
         scene.addChild(node)
-        animateProjectile(projAnimData, node) {
+        if (!isBeam) {
+            node.localScale = Vector3(0.02f, 0.02f, 0.02f)
+            animateProjectile(projAnimData, node) {
+                Handler().postDelayed({
+                    cb()
+                    deleteProjectile(node, projAnimData.fragment.arSceneView.scene)
+                }, ABILITY_PROJECTILE_SPEED)
+            }
+        } else {
+            val casterPos = projAnimData.startPos
+            val targetPos = projAnimData.endPos
+            AnimationAPI.stretchModel(casterPos, targetPos, node)
+            //val length = (targetPos.y - casterPos.y).pow(2f) + (targetPos.x - casterPos.x).pow(2f)
+            //node.localScale = Vector3(0.1f, 0.1f, length)
+            // node.localPosition = Vector3(targetPos.y - casterPos.y, 0.5f, targetPos.x - casterPos.x)
+            // node.localRotation = Quaternion.rotationBetweenVectors(casterPos, targetPos)
             Handler().postDelayed({
                 cb()
                 deleteProjectile(node, projAnimData.fragment.arSceneView.scene)
