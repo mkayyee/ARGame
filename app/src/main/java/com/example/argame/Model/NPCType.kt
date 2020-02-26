@@ -27,18 +27,24 @@ enum class NPCType {
     BOSSLVL30;
     // etc
 
-    fun getNPCObject(level: Int, renderable: ModelRenderable, npcID: Int) : NPC {
+    fun getNPCObject(level: Int, renderable: ModelRenderable, npcID: Int, context: Context) : NPC {
         // hpGrowModifier and apGrowModifier defined in CombatControllable (how much AP scales per level, how much HP scales per level)
         val hpMultiplier = hpGrowModifier.pow(level.toDouble())
         val apMultiplier = apGrowModifier.pow(level.toDouble())
 
         return when (this) {
-            MELEE -> NPC(MELEE_BASE_AP * apMultiplier, "Hurdur", MELEE_BASE_HP * hpMultiplier, renderable, type = this, id = npcID)
-            RANGED -> NPC(RANGED_BASE_AP * apMultiplier, "Hurdur", RANGED_BASE_HP * hpMultiplier, renderable, type = this, id = npcID)
-            SUPPORT -> NPC(SUPPORT_BASE_AP * apMultiplier, "Hurdur", SUPPORT_BASE_HP * hpMultiplier, renderable,  type = this, id = npcID)
-            BOSSLVL10 -> NPC(BOSSLVL10_BASE_AP, "Hurdur", BOSSLVL10_BASE_HP, renderable, type = this, id = npcID)
-            BOSSLVL20 -> NPC(BOSSLVL20_BASE_AP, "Hurdur", BOSSLVL20_BASE_HP, renderable, type = this, id = npcID)
-            BOSSLVL30 -> NPC(BOSSLVL30_BASE_AP, "Hurdur", BOSSLVL30_BASE_HP, renderable, type = this, id = npcID)
+            MELEE -> NPC(MELEE_BASE_AP * apMultiplier,
+                "Hurdur", MELEE_BASE_HP * hpMultiplier, renderable, type = this, id = npcID, context = context)
+            RANGED -> NPC(RANGED_BASE_AP * apMultiplier,
+                "Hurdur", RANGED_BASE_HP * hpMultiplier, renderable, type = this, id = npcID, context = context)
+            SUPPORT -> NPC(SUPPORT_BASE_AP * apMultiplier,
+                "Hurdur", SUPPORT_BASE_HP * hpMultiplier, renderable,  type = this, id = npcID, context = context)
+            BOSSLVL10 -> NPC(BOSSLVL10_BASE_AP,
+                "Hurdur", BOSSLVL10_BASE_HP, renderable, type = this, id = npcID, context = context)
+            BOSSLVL20 -> NPC(BOSSLVL20_BASE_AP,
+                "Hurdur", BOSSLVL20_BASE_HP, renderable, type = this, id = npcID, context = context)
+            BOSSLVL30 -> NPC(BOSSLVL30_BASE_AP,
+                "Hurdur", BOSSLVL30_BASE_HP, renderable, type = this, id = npcID, context = context)
         }
     }
 

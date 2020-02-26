@@ -71,30 +71,26 @@ sceneform.asset('sampledata/untitledv4.fbx',
         'sampledata/untitledv4.sfa',
         'src/main/assets/untitledv4')
 
-
 sceneform.asset('sampledata/blenderlovestocrash2.fbx',
         'default',
         'sampledata/blenderlovestocrash2.sfa',
         'src/main/assets/blenderlovestocrash2')
 
-
-
-sceneform.asset('sampledata/Player/playermodelv6.fbx',
-        'default',
-        'sampledata/Player/playermodelv6.sfa',
-        'src/main/assets/playermodelv6')
-
-sceneform.asset('sampledata/Player/playermodelv7.fbx',
-        'default',
-        'sampledata/Player/playermodelv7.sfa',
-        'src/main/assets/playermodelv7')
-
-sceneform.asset('sampledata/Player/playermodelv8.fbx',
-        'default',
-        'sampledata/Player/playermodelv8.sfa',
-        'src/main/assets/playermodelv8')
-
 sceneform.asset('sampledata/Abilities/beam.fbx',
         'default',
         'sampledata/Abilities/beam.sfa',
         'src/main/assets/beam')
+
+
+
+
+sceneform.asset('sampledata/Player/playermodelthreeworked.fbx',
+        'default',
+        'sampledata/Player/playermodelthreeworked.sfa',
+        'src/main/assets/playermodelthreeworked')
+
+
+sceneform.asset('sampledata/Player/playermodeltwithend.fbx',
+        'default',
+        'sampledata/Player/playermodeltwithend.sfa',
+        'src/main/assets/playermodeltwithend')

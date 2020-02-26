@@ -23,7 +23,8 @@ abstract class CombatControllable(
     baseHealth: Double,
     val name: String,
     private var attackPower: Double,
-    val model: ModelRenderable? = null
+    val model: ModelRenderable? = null,
+    context: Context
 ) : ProjectileAnimator, AbilityUser {
     private var health: Double
     private var maxHealth = baseHealth
@@ -32,8 +33,16 @@ abstract class CombatControllable(
     private var level = 1
     private var xp = 0.0
     private var xpRequiredForLevel = 1000.0
+    private val callback: CombatControllableListener
+
+    interface CombatControllableListener {
+        fun onCCDamaged(cc: CombatControllable)
+        fun onCCDeath(cc: CombatControllable)
+    }
 
     init {
+        callback = context as CombatControllableListener
+
         var notifyInputError = false
 
         if (maxHealth in 0.0..minimumMaxHealth) {
@@ -136,10 +145,12 @@ abstract class CombatControllable(
             // Not allowing negative input values
             health - damage in 0.0..health -> {
                 health -= damage
+                callback.onCCDamaged(this)
             }
             health - damage <= 0 -> {
                 health = 0.0
                 isAlive = false
+                callback.onCCDeath(this)
             }
             else -> {
                 wtf("CCERROR", "Negative value as takeDamage() input")

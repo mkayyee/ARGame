@@ -44,6 +44,7 @@ import kotlin.math.pow
 interface ProjectileAnimator {
 
     fun instantiateProjectile(projAnimData: ProjectileAnimationData, ability: Ability, cb: () -> Unit) {
+        // TODO: val callback = projectileData.context as Ability.AbilityCallbackListener
         val uri: Uri? = projAnimData.modelUri
         // Get 3d model of the projectile if not null
         if (projAnimData.modelUri != null) {

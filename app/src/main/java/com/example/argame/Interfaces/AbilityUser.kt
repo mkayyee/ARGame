@@ -24,7 +24,7 @@ interface AbilityUser {
                    ability: Ability, projectileData: ProjectileAnimationData, cb: () -> Unit) {
         val casterStatus = caster.getStatus()
         val targetStatus = target.getStatus()
-        val animator: ModelAnimator?
+        var animator: ModelAnimator? = null
 
         // the cast animation data (related to the caster's 3d model, not the projectile)
         val animationData = caster.model?.getAnimationData(ability.getCastAnimationString())
@@ -32,7 +32,9 @@ interface AbilityUser {
             if (animationData != null) {
                 // TODO(?) A completion callback parameter to end the animation, or make some completion animation.
                 animator = ModelAnimator(animationData, caster.model)
+                animator.duration = ABILITY_PROJECTILE_SPEED
                 animator.start()
+                Handler().postDelayed({animator.end()}, ABILITY_PROJECTILE_SPEED)
             }
             caster.instantiateProjectile(projectileData, ability) {
                 // retrieved callback that the projectile was fired, so probably safe to deal damage

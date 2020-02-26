@@ -3,13 +3,10 @@
     {
       clips: [
         {
-          name: 'RightArm|RightArmAction',
-        },
-        {
-          name: 'RightArm|RightArmAction.001',
+          name: 'PlayerAttack',
         },
       ],
-      path: 'sampledata/Player/playermodelv6.fbx',
+      path: 'sampledata/Player/playermodelthreeworked.fbx',
     },
   ],
   materials: [
@@ -251,8 +248,8 @@
       'BoneWeights',
     ],
     collision: {},
-    file: 'sampledata/Player/playermodelv6.fbx',
-    name: 'playermodelv6',
+    file: 'sampledata/Player/playermodelthreeworked.fbx',
+    name: 'playermodelthreeworked',
     recenter: 'root',
   },
   version: '0.54:2',

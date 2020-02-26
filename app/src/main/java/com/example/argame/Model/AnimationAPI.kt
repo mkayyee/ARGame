@@ -3,10 +3,8 @@ package com.example.argame.Model
 import android.animation.ObjectAnimator
 import android.view.animation.LinearInterpolator
 import com.google.ar.sceneform.math.Quaternion
-import com.google.ar.sceneform.math.QuaternionEvaluator
 import com.google.ar.sceneform.math.Vector3
 import com.google.ar.sceneform.math.Vector3Evaluator
-import com.google.ar.sceneform.rendering.ModelRenderable
 import com.google.ar.sceneform.ux.TransformableNode
 
 
@@ -17,7 +15,7 @@ import com.google.ar.sceneform.ux.TransformableNode
  */
 
 // TODO make enum or something for different abilities
-const val ABILITY_PROJECTILE_SPEED: Long = 3000
+const val ABILITY_PROJECTILE_SPEED: Long = 1500
 
 object AnimationAPI {
 
@@ -39,11 +37,15 @@ object AnimationAPI {
     // Reference:
     // https://stackoverflow.com/questions/53371583/draw-line-between-location-markers-in-arcore
     fun stretchModel(startPos: Vector3, endPos: Vector3, node: TransformableNode) {
-        val difference = Vector3.subtract(startPos, endPos)
-        val directionFromTopToBottom = difference.normalized()
-        val rotation = Quaternion.lookRotation(directionFromTopToBottom, Vector3.up())
+        val rotation = calculateNewRotation(startPos, endPos)
         node.worldPosition = Vector3.add(startPos, endPos).scaled(0.5f)
         node.worldRotation = rotation
+    }
+
+    fun calculateNewRotation(startPos: Vector3, endPos: Vector3) : Quaternion {
+        val difference = Vector3.subtract(startPos, endPos)
+        val directionFromTopToBottom = difference.normalized()
+        return Quaternion.lookRotation(directionFromTopToBottom, Vector3.up())
     }
 
 

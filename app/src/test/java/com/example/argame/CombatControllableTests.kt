@@ -1,5 +1,6 @@
 package com.example.argame
 
+import com.example.argame.Activities.GameActivityPlayground
 import com.example.argame.Model.*
 import org.junit.Test
 import org.junit.Assert.*
@@ -17,8 +18,8 @@ class CombatControllableTests {
 
     @Test
     fun testDealDamage() {
-        val player = Player(positiveAP, playerName, positiveHP)
-        val npc = NPC(positiveAP, npcName, positiveHP, type = npcType)
+        val player = Player(positiveAP, playerName, positiveHP, context = GameActivityPlayground())
+        val npc = NPC(positiveAP, npcName, positiveHP, type = npcType, context = GameActivityPlayground(), id = 1)
         // dealDamage() should deal damage equal to the input --
         // multiplied by the damage dealer's attackPower
         val npcStartHealth = npc.getStatus().currentHealth
@@ -44,8 +45,8 @@ class CombatControllableTests {
     @Test
     fun testNegativeConstructorValues() {
         // Calling both constructors with negative values
-        val player = Player(negativeAP, playerName, negativeHP)
-        val npc = NPC(negativeAP, npcName, negativeHP, type = npcType)
+        val player = Player(negativeAP, playerName, negativeHP, context = GameActivityPlayground())
+        val npc = NPC(negativeAP, npcName, negativeHP, type = npcType, context = GameActivityPlayground(), id = 1)
         // Verifying that they are converted into positive values
         assertEquals(positiveHP, npc.getStatus().currentHealth, 0.0)
         assertEquals(positiveHP, player.getStatus().currentHealth, 0.0)
@@ -58,8 +59,8 @@ class CombatControllableTests {
         val lessThanOne = 0.5
         val zero = 0.0
         // Calling both constructors with smaller than allowed values
-        val player = Player(lessThanOne, playerName, lessThanOne)
-        val npc = NPC(zero, npcName, zero, type = npcType)
+        val player = Player(lessThanOne, playerName, lessThanOne, context = GameActivityPlayground())
+        val npc = NPC(zero, npcName, zero, type = npcType ,context = GameActivityPlayground(), id = 1)
         // confirming that the values are set correctly (according to minimum values)
         assertNotEquals(npc.getStatus().currentHealth, zero, 0.0)
         assertNotEquals(npc.getStatus().attackPower, zero, 0.0)
@@ -76,8 +77,8 @@ class CombatControllableTests {
 
     @Test
     fun testGetStatus() {
-        val player = Player(positiveAP, playerName, positiveHP)
-        val npc = NPC(negativeAP, npcName, negativeHP, type = npcType)
+        val player = Player(positiveAP, playerName, positiveHP, context = GameActivityPlayground())
+        val npc = NPC(negativeAP, npcName, negativeHP, type = npcType, context = GameActivityPlayground(), id = 1)
         assertEquals(positiveHP, player.getStatus().currentHealth, 0.0)
         assertEquals(positiveHP, npc.getStatus().currentHealth, 0.0)
         assertEquals(positiveAP, player.getStatus().attackPower, 0.0)
@@ -90,8 +91,8 @@ class CombatControllableTests {
 
     @Test
     fun testKillCombatControllable() {
-        val player = Player(positiveAP, playerName, positiveHP)
-        val npc = NPC(negativeAP, npcName, negativeHP, type = npcType)
+        val player = Player(positiveAP, playerName, positiveHP, context = GameActivityPlayground())
+        val npc = NPC(negativeAP, npcName, negativeHP, type = npcType, context = GameActivityPlayground(), id = 1)
         // overkill (this will get multiplied by ap as well)
         val damage = npc.getStatus().maxHealth + 1
         player.dealDamage(damage, npc)
@@ -109,8 +110,8 @@ class CombatControllableTests {
 
     @Test
     fun testRestoreFullHealth() {
-        val player = Player(positiveAP, playerName, positiveHP)
-        val npc = NPC(negativeAP, npcName, negativeHP, type = npcType)
+        val player = Player(positiveAP, playerName, positiveHP, context = GameActivityPlayground())
+        val npc = NPC(negativeAP, npcName, negativeHP, type = npcType, context = GameActivityPlayground(), id = 1)
         // deal damage to player
         npc.dealDamage(1.0, player)
         // confirmation that the player did take damage
@@ -124,8 +125,8 @@ class CombatControllableTests {
 
     @Test
     fun testRestoreHealth() {
-        val player = Player(positiveAP, playerName, positiveHP)
-        val npc = NPC(negativeAP, npcName, negativeHP, type = npcType)
+        val player = Player(positiveAP, playerName, positiveHP, context = GameActivityPlayground())
+        val npc = NPC(negativeAP, npcName, negativeHP, type = npcType, context = GameActivityPlayground(), id = 1)
         npc.dealDamage(2.0, player)
         val damageDone = 2.0
         // do damage and confirm the right amount of damage taken
@@ -166,7 +167,7 @@ class CombatControllableTests {
 
     @Test
     fun testIncreaseMaxHealth() {
-        val player = Player(positiveAP, playerName, positiveHP)
+        val player = Player(positiveAP, playerName, positiveHP, context = GameActivityPlayground())
         // increase max health by 200%
         player.increaseMaxHealth(2.0)
         // confirm
@@ -192,7 +193,7 @@ class CombatControllableTests {
 
     @Test
     fun testIncreaseMaxAP() {
-        val player = Player(positiveAP, playerName, positiveHP)
+        val player = Player(positiveAP, playerName, positiveHP ,context = GameActivityPlayground())
         // increase max AP by 200%
         player.increaseAP(2.0)
         // confirm
@@ -218,7 +219,7 @@ class CombatControllableTests {
 
     @Test
     fun testLeveulUp() {
-        val player = Player(20.0, "player 1", 300.0, null)
+        val player = Player(20.0, "player 1", 300.0, null, GameActivityPlayground())
         // verifying that the player starts at 0 xp and at level 1
         var status = player.getStatus()
         val level = status.level

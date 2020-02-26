@@ -43,7 +43,7 @@ import kotlin.math.atan
 import kotlin.math.pow
 
 class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
-    NPCSpawnHandler.NPCSpawnCallback {
+    NPCSpawnHandler.NPCSpawnCallback, Ability.AbilityCallbackListener, CombatControllable.CombatControllableListener {
 
     private val menuFragController = MenuFragmentController()
     private lateinit var fragment: CustomArFragment
@@ -177,7 +177,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
 
         duckUri = Uri.parse("duck.sfb")
         tposeUri = Uri.parse("duck.sfb")
-        playerUri = Uri.parse("playermodelv8.sfb")
+        playerUri = Uri.parse("playermodeltwithend.sfb")
         val renderableFuture = ModelRenderable.builder()
             .setSource(this, duckUri)
             .build()
@@ -192,7 +192,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         renderableFuturePlayer.thenAccept {
             renderedPlayer = it
             // lateinit Player, so it has a reference to the renderable, therefor the cast animation data
-            player = Player(5.0, "player", 5000.0, it)
+            player = Player(5.0, "player", 5000.0, it, this)
         }
     }
 
@@ -272,6 +272,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             .build()
         renderableFuturePlayer.thenAccept {
             hpRenderablePlayer = it
+            player.setHPRenderable(it)
             hpRenderablePlayer?.view?.textView_healthbar?.text =
                 player.getStatus().currentHealth.toString()
             hpRenderablePlayer?.view?.textView_healthbar?.background =
@@ -284,7 +285,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         // disable attack button for the animation duration
         if (playerTarget != null) {
             playground_attackDuckBtn.isEnabled = false
-            player.dealDamage(5.0, playerTarget!!.model)
+            player.dealDamage(50.0, playerTarget!!.model)
             val ability = Ability.TEST
             val animData = ProjectileAnimationData(
                 // TODO make start position relative to screen position
@@ -295,16 +296,16 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                 ability.uri()
             )
             player.useAbility(ability, playerTarget!!.model, animData) {
-                if (playerTarget!!.healthBar != null) {
-                    updateHPBar(playerTarget!!.healthBar, playerTarget!!.model)
-                }
+//                if (playerTarget!!.healthBar != null) {
+//                    updateHPBar(playerTarget!!.healthBar, playerTarget!!.model)
+//                }
                 //beamTarget(playerTarget!!)
 
                 // enable attack button after in callback
                 playground_attackDuckBtn.isEnabled = true
-                if (!playerTarget!!.model.getStatus().isAlive) {
-                    playerTarget!!.node.localRotation = Quaternion(0f, 0f, 1f, 0f)
-                }
+//                if (!playerTarget!!.model.getStatus().isAlive) {
+//                    playerTarget!!.node.localRotation = Quaternion(0f, 0f, 1f, 0f)
+//                }
             }
         } else {
             Toast.makeText(this, "You don't have a target", Toast.LENGTH_SHORT).show()
@@ -324,14 +325,9 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                 ability.uri()
             )
             npc.useAbility(ability, player, animData) {
-                if (hpRenderablePlayer?.view?.textView_healthbar != null) {
-                    updateHPBar(hpRenderablePlayer?.view?.textView_healthbar, player)
-                }
-
-                // enable attack button after in callback
-                if (!player.getStatus().isAlive) {
-                    playerAnchorNode.localRotation = Quaternion(0f, 0f, 1f, 0f)
-                }
+//                if (hpRenderablePlayer?.view?.textView_healthbar != null) {
+//                    updateHPBar(hpRenderablePlayer?.view?.textView_healthbar, player)
+//                }
             }
         }
 
@@ -358,7 +354,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
 
                 if (result < 0.8) {
                     Log.d("BEAM", "HIT NPC  " + npcAnchors.indexOf(it) )
-                    it.anchorNode.localScale = Vector3(0.4f, 0.4f, 0.4f)
+                    //it.anchorNode.localScale = Vector3(0.4f, 0.4f, 0.4f)
                 }
 
  /*               if (npcAnchorNode.worldPosition.x - playerTarget!!.node.worldPosition.x > 0.05f || npcAnchorNode.worldPosition.z - playerTarget!!.node.worldPosition.z < 0.05) {
@@ -403,27 +399,15 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     private fun updatePlayerRotation() {
         if (playerTarget != null) {
             val playerPos = playerNode.worldPosition
-            var targetPos: Vector3
+            val targetPos: Vector3
             if (playerTarget!!.node.children.isNotEmpty()) {
                 targetPos = playerTarget!!.node.children[0].worldPosition
             } else {
                 targetPos = playerTarget!!.node.worldPosition
             }
-            // get the angle between the two nodes
-            val x = targetPos.x - playerPos.x
-            val y = targetPos.z - playerPos.z
-            val tan = x / y
-            val arctan = atan(tan).toDouble()
-            val degrees = Math.toDegrees(arctan).toFloat()
-            Log.d(
-                "dbg",
-                "Player x: ${playerPos.x} Player y: ${playerPos.y} Player z: ${playerPos.z}" +
-                        "Target x: ${targetPos.x} Target y: ${targetPos.y} Target z: ${targetPos.z}"
-            )
-            Log.d("DBG", "tan.... : $tan")
-            Log.d("DBG", "arctan: $arctan")
-            playerNode.localRotation = Quaternion.axisAngle(Vector3(0f, 1f, 0f), degrees)
-            Log.d("DBG", "Player look direction changed.")
+            val rotation = AnimationAPI.calculateNewRotation(playerPos, targetPos)
+            playerNode.localRotation = Quaternion(0f, rotation.x, 0f, rotation.z)
+
         }
     }
 
@@ -441,8 +425,8 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                         playerAnchorPos = hit!!
                         val playerAnchor = hit.createAnchor()
                         playerAnchorNode = AnchorNode(playerAnchor)
-                        playerAnchorNode.localRotation =
-                            Quaternion.axisAngle(Vector3(1f, 0f, 0f), 180f)
+//                        playerAnchorNode.localRotation =
+//                            Quaternion.axisAngle(Vector3(1f, 0f, 0f), 180f)
                         anchorList.add(playerAnchorNode)
                         playerAnchorNode.setParent(fragment.arSceneView.scene)
                         playerNode = TransformableNode(fragment.transformationSystem)
@@ -597,7 +581,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         renderableFuture.thenAccept {
             renderable = it
             // create the NPC object when we have a ModelRenderable ready
-            val npcObject = type.getNPCObject(level, renderable, npcID)
+            val npcObject = type.getNPCObject(level, renderable, npcID, this)
             // add the NPC to spawnedNPCs
             spawnedNPCs.add(npcObject)
             // spawn NPC
@@ -632,6 +616,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             .build()
         renderableFuture.thenAccept {
             hpRenderable = it
+            npc.setHPRenderable(it)
             hpRenderableDuck?.view?.textView_healthbar?.text =
                 npc.getStatus().currentHealth.toString()
             val frame = fragment.arSceneView.arFrame
@@ -669,13 +654,8 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                             Handler().postDelayed({
                                 if (node.worldPosition != oldPosition) {
                                     if (playerTarget != null) {
-                                        Log.d(
-                                            "node",
-                                            "targetnode == node: ${playerTarget!!.node == node}"
-                                        )
                                         val playerTargetNode = playerTarget!!.node
                                         if (playerTargetNode != node) {
-                                            Log.d("node", "target not node")
                                             val playerTargetBar = playerTarget!!.healthBar!!
                                             updateOldTargetHPBar(playerTargetBar)
                                         }
@@ -720,5 +700,54 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
 
     private fun updateNPCRemainingText(text: String) {
         playground_remaining.text = text
+    }
+
+    override fun onAbilityCast(caster: CombatControllable, target: CombatControllable, ability: Ability) {
+        // create cast animation here
+        // TODO: caster.model!!.getAnimationData("")
+    }
+
+    override fun onAbilityHit(caster: CombatControllable, target: CombatControllable, ability: Ability) {
+        // create being hit animation here
+        // TODO: target.model!!.getAnimationData("")
+    }
+
+    override fun onCCDamaged(cc: CombatControllable) {
+        Log.d("CCDMG", "CombatControllable: ${cc.getStatus().name} damaged.")
+        if (cc == player) {
+            updateHPBar(hpRenderablePlayer?.view?.textView_healthbar, player)
+        } else {
+            if (cc is NPC) {
+                Log.d("CCDMG", "NPC damaged. ID: ${cc.getID()}")
+                if (cc.getHPBar() != null) {
+                    updateHPBar(cc.getHPBar()!!.view.textView_healthbar, cc)
+                }
+            }
+        }
+    }
+
+    override fun onCCDeath(cc: CombatControllable) {
+        if (cc == player) {
+            // TODO: notify game over
+            playerNode.localRotation = Quaternion(0f, 0f, 1f, 0f)
+        } else {
+            if (cc is NPC) {
+                spawnedNPCs.forEach {
+                    if (cc == it) {
+                        // the indices should be the same..?
+                        // might need to change this to a safer approach
+                        val anchor = npcAnchors[spawnedNPCs.indexOf(it)]
+                        // check that the correct anchor was indeed picked
+                        if (anchor.npcID == it.getID()) {
+                            anchor.anchorNode.localRotation = Quaternion(0f, 0f, 1f, 0f)
+                        }
+                        Handler().postDelayed({
+                            // remove the NPC from scene after a delay
+                            removeAnchorNode(anchor.anchorNode)
+                        }, 2000)
+                    }
+                }
+            }
+        }
     }
 }

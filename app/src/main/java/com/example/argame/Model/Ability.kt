@@ -10,6 +10,11 @@ enum class Ability {
     TEST,
     BEAM;
 
+    interface AbilityCallbackListener {
+        fun onAbilityCast(caster: CombatControllable, target: CombatControllable, ability: Ability)
+        fun onAbilityHit(caster: CombatControllable, target: CombatControllable, ability: Ability)
+    }
+
     fun uri() : Uri {
         when (this) {
             TEST-> return Uri.parse("untitledv4.sfb")
@@ -29,8 +34,8 @@ enum class Ability {
 
     fun getCastAnimationString() : String?{
         return when (this) {
-            TEST -> "RightArm|RightArmAction.001"
-            BEAM -> "RightArm|RightArmAction.001"
+            TEST -> "PlayerAttack"
+            BEAM -> "PlayerAttack"
         }
     }
 }

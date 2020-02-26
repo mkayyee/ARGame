@@ -30,7 +30,7 @@ import kotlinx.android.synthetic.main.activity_game.*
 import kotlinx.android.synthetic.main.healthbar.view.*
 
 
-class GameActivity : AppCompatActivity(), FragmentCallbackListener {
+class GameActivity : AppCompatActivity(), FragmentCallbackListener, CombatControllable.CombatControllableListener {
 
     private val menuFragController = MenuFragmentController()
     private lateinit var fragment: CustomArFragment
@@ -45,9 +45,9 @@ class GameActivity : AppCompatActivity(), FragmentCallbackListener {
     // MARK: Testing-abilities-related stuff
     private var hpRenderableDuck: ViewRenderable? = null
     private var hpRenderableTpose: ViewRenderable? = null
-    private var duckNPC = NPC(1.0, "duck", 5000.0, type = NPCType.MELEE, id = 500)
-    private var tposeNPC = NPC(1.0, "tposer", 5000.0, type = NPCType.MELEE, id = 600)
-    private var player = Player(5.0, "player", 5000.0)
+    private var duckNPC = NPC(1.0, "duck", 5000.0, type = NPCType.MELEE, id = 500, context = this)
+    private var tposeNPC = NPC(1.0, "tposer", 5000.0, type = NPCType.MELEE, id = 600, context = this)
+    private var player = Player(5.0, "player", 5000.0, context = GameActivityPlayground())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -228,6 +228,14 @@ class GameActivity : AppCompatActivity(), FragmentCallbackListener {
             nodeToremove.anchor!!.detach()
             nodeToremove.setParent(null)
         }
+    }
+
+    override fun onCCDamaged(cc: CombatControllable) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun onCCDeath(cc: CombatControllable) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
 }
