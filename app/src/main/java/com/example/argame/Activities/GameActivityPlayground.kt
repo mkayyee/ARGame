@@ -625,7 +625,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     }
 
 
-    private fun spawnNPC(npc: NPC) {
+    private fun spawnNPC(npc: NPC, type: NPCType) {
         // To make sure no duplicates are possible. Not that it should be, but apparently it is
         val ids = spawnedNPCs.filter { it.getID() == npc.getID() }
         if (ids.isEmpty()) {
@@ -668,7 +668,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                                 node.localScale = Vector3(0.4f, 0.4f, 0.4f)
                             }
                             createHPBar(node, hpRenderable, npc)
-                            randomMove(node, npc)
+                            randomMove(node, npc, type)
                             node.setOnTouchListener { _, _ ->
                                 val oldPosition = node.worldPosition
                                 Handler().postDelayed({
