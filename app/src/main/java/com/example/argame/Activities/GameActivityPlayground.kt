@@ -7,6 +7,7 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.view.animation.LinearInterpolator
@@ -14,6 +15,7 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.util.toRange
 import androidx.preference.PreferenceManager
 import com.example.argame.Fragments.CustomArFragment
 import com.example.argame.Fragments.MenuFragmentController
@@ -37,8 +39,10 @@ import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_game.*
 import kotlinx.android.synthetic.main.activity_game_playground.*
 import kotlinx.android.synthetic.main.healthbar.view.*
+import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.doAsyncResult
 import java.sql.Time
+import kotlin.concurrent.thread
 import kotlin.math.atan
 import kotlin.math.pow
 
@@ -516,27 +520,28 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         }
     }
 
-    private fun randomMove(node: TransformableNode, npc: NPC) {
+    private fun randomMove(node: TransformableNode, npc: NPC, type: NPCType) {
         Log.d("RMOVE", "1")
         val randomInt = (1..100).shuffled().first()
         when (randomInt) {
-            in 1..10 -> NodeCreator(node, Vector3(0.9f, 0.0f, 0.0f), npc)
-            in 11..30 -> NodeCreator(node, Vector3(0.8f, 0.0f, -1.0f), npc)
-            in 31..60 -> NodeCreator(node, Vector3(0.6f, 0.0f, -1.0f), npc)
-            in 61..100 -> NodeCreator(node, Vector3(0.4f, 0.0f, 0.0f), npc)
+            in 1..10 -> NodeCreator(node, Vector3(0.9f, 0.0f, 0.0f), npc, type)
+            in 11..30 -> NodeCreator(node, Vector3(0.8f, 0.0f, -1.0f), npc, type)
+            in 31..60 -> NodeCreator(node, Vector3(0.6f, 0.0f, -1.0f), npc, type)
+            in 61..100 -> NodeCreator(node, Vector3(0.4f, 0.0f, 0.0f), npc, type)
         }
     }
 
-    private fun NodeCreator(initialNode: TransformableNode, newLocation: Vector3, npc: NPC) {
+    private fun NodeCreator(initialNode: TransformableNode, newLocation: Vector3, npc: NPC, type: NPCType) {
         Log.d("RMOVE", "2")
         val newNode = Node()
         val summedVector = Vector3.add(initialNode.worldPosition, newLocation)
         newNode.worldPosition = summedVector
-        moveToTarget(initialNode, newNode, npc)
+        moveToTarget(initialNode, newNode, npc, type)
     }
 
-    private fun moveToTarget(model: TransformableNode, targetNode: Node, npc: NPC) {
+    private fun moveToTarget(model: TransformableNode, targetNode: Node, npc: NPC, type: NPCType) {
         Log.d("RMOVE", "3")
+        // Move to previously randomized location
         val objectAnimation = ObjectAnimator()
         objectAnimation.setAutoCancel(true)
         objectAnimation.target = model
@@ -548,6 +553,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         objectAnimation.duration = 3000
         objectAnimation.start()
 
+        // Move towards player after X seconds
         Handler().postDelayed({
             val objectAnimation = ObjectAnimator()
             objectAnimation.setAutoCancel(true)
@@ -558,18 +564,64 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                     playerAnchorNode.worldPosition
                 )
             )
-            objectAnimation.setObjectValues(model.worldPosition, playerAnchorNode.worldPosition)
+            if (type == NPCType.MELEE) {
+                val stopX = playerAnchorNode.worldPosition.x
+                // If NPC is melee -> stop next to the player
+                val valuePool = floatArrayOf(-0.12f,-0.10f,-0.08f,-0.06f,0.06f,0.08f,0.10f,0.12f)
+                val randomifier = valuePool[(0..7).shuffled().first()]
+                val newX = (stopX+randomifier)
+                val stop = Vector3(newX,playerAnchorNode.worldPosition.y, playerAnchorNode.worldPosition.z)
+                objectAnimation.setObjectValues(model.worldPosition, stop)
+                objectAnimation.duration = 15000
+                //attackLooper(npc, model) TODO: Looping melee attack
+                Handler().postDelayed({
+                    // Correct look direction towards player (again)
+                    model.setLookDirection(
+                        Vector3.subtract(
+                            model.worldPosition,
+                            playerAnchorNode.worldPosition
+                        )
+                    )
+                }, 15000)
+            }
+            else {
+                // If NPC is ranged, stop halfway
+                val rangedStartX = model.worldPosition.x
+                val rangedStartZ = model.worldPosition.z
+                val rangedStopX = playerAnchorNode.worldPosition.x
+                val rangedStopZ = playerAnchorNode.worldPosition.z
+                val newX = ((rangedStopX+rangedStartX)/2)
+                val newZ = ((rangedStopZ+rangedStartZ)/2)
+                val stop = Vector3(newX,model.worldPosition.y,newZ)
+                objectAnimation.setObjectValues(model.worldPosition, stop)
+                objectAnimation.duration = 7000
+                // Attack until attacker or target is dead
+                attackLooper(npc, model)
+            }
+
             objectAnimation.setPropertyName("worldPosition")
             objectAnimation.setEvaluator(Vector3Evaluator())
             objectAnimation.interpolator = LinearInterpolator()
-            objectAnimation.duration = 15000
-            objectAnimation.start()
-            Handler().postDelayed({
 
-                //npc.dealDamage(100.0,player)
-                attackPlayer(npc, model)
-            }, 15000)
+            objectAnimation.start()
+
         }, 3500)
+    }
+
+    fun attackLooper(npc: NPC, model: TransformableNode) {
+        var cooldown = false
+        val thread = Thread {
+            while (npc.getStatus().isAlive && player.getStatus().isAlive) {
+                if (!cooldown) {
+                    cooldown = true
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        attackPlayer(npc, model)
+                        cooldown = false
+                    }, 7100)
+                }
+            }
+        }
+        thread.start()
     }
 
     override fun notifyNPCSpawned(type: NPCType, remaining: Int, npcID: Int) {
@@ -585,7 +637,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             // add the NPC to spawnedNPCs
             spawnedNPCs.add(npcObject)
             // spawn NPC
-            spawnNPC(npcObject)
+            spawnNPC(npcObject, type)
             // random debugs
             val time = Time(System.currentTimeMillis())
             Log.d(
@@ -609,7 +661,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         allNPChaveSpawned = true
     }
 
-    private fun spawnNPC(npc: NPC) {
+    private fun spawnNPC(npc: NPC, type: NPCType) {
         lateinit var hpRenderable: ViewRenderable
         val renderableFuture = ViewRenderable.builder()
             .setView(this, R.layout.healthbar)
@@ -627,8 +679,8 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                 for (hit in hits) {
                     val trackable = hit.trackable
                     if (trackable is Plane) {
-                        val valuePool = (200..1200)
-                        val randX = valuePool.shuffled().first().toFloat()
+                        val valuePool = (800..1400)
+                        val randX = valuePool.shuffled().first()/1.2.toFloat()
                         val randY = valuePool.shuffled().first().toFloat()
                         Log.d("XYVALUES", randX.toString() + "  " + randY.toString())
                         val anchor = (frame.hitTest(
@@ -648,7 +700,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                             node.localScale = Vector3(0.4f, 0.4f, 0.4f)
                         }
                         createHPBar(node, hpRenderable)
-                        randomMove(node, npc)
+                        randomMove(node, npc, type)
                         node.setOnTouchListener { _, _ ->
                             val oldPosition = node.worldPosition
                             Handler().postDelayed({
