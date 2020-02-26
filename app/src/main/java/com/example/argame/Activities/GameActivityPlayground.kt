@@ -30,6 +30,7 @@ import com.google.ar.core.HitResult
 import com.google.ar.core.Plane
 import com.google.ar.sceneform.AnchorNode
 import com.google.ar.sceneform.Node
+import com.google.ar.sceneform.animation.ModelAnimator
 import com.google.ar.sceneform.math.Quaternion
 import com.google.ar.sceneform.math.Vector3
 import com.google.ar.sceneform.math.Vector3Evaluator
@@ -286,6 +287,11 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                 fragment,
                 ability.uri()
             )
+            // cancel the current animation if any
+            cancelAnimator(player)
+            // the cast animation data (related to the caster's 3d model, not the projectile)
+            val animationData = player.model?.getAnimationData(ability.getCastAnimationString())
+            player.setModelAnimator(ModelAnimator(animationData, player.model))
             player.useAbility(ability, playerTarget!!.model, animData) {
 //                if (playerTarget!!.healthBar != null) {
 //                    updateHPBar(playerTarget!!.healthBar, playerTarget!!.model)
@@ -300,6 +306,15 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             }
         } else {
             Toast.makeText(this, "You don't have a target", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun cancelAnimator(cc: CombatControllable) {
+        val animator = cc.getModelAnimator()
+        if (animator != null) {
+            if (animator.isRunning) {
+                animator.cancel()
+            }
         }
     }
 
@@ -324,10 +339,13 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
 
     private fun beamTarget() {
         if (playerTarget != null) {
+            cancelAnimator(player)
             playground_beamDuckBtn.isEnabled = false
             val beam = Ability.BEAM
+            val attackAnimationData = player.model?.getAnimationData(Ability.BEAM.getCastAnimationString())
             val data = ProjectileAnimationData(
                 playerNode.worldPosition, playerTarget!!.node.worldPosition, this, fragment, beam.uri())
+            player.setModelAnimator(ModelAnimator(attackAnimationData, player.model))
             player.useAbility(beam, playerTarget!!.model, data) {
                 if (playerTarget!!.healthBar != null) {
                     updateHPBar(playerTarget!!.healthBar, playerTarget!!.model)
@@ -773,9 +791,17 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                             }
                         }
                         Handler().postDelayed({
-                            // remove the NPC from scene after a delay
-                            npcAnchors.removeAt(spawnedNPCs.indexOf(it))
-                            spawnedNPCs.removeAt(spawnedNPCs.indexOf(it))
+                            // Remove the NPC from scene after a delay
+                            // When using many abilities at the same time,
+                            // the first one might already kill the target.
+                            // That is why we need to check if the target
+                            // still exists when receiving another callback.
+                            if (spawnedNPCs.indexOf(it) > 1) {
+                                if (npcAnchors.size >= spawnedNPCs.indexOf(it)) {
+                                    npcAnchors.removeAt(spawnedNPCs.indexOf(it))
+                                    spawnedNPCs.removeAt(spawnedNPCs.indexOf(it))
+                                }
+                            }
                             // Level completed!
                             if (npcAnchors.size == 0) {
                                 Toast.makeText(this, "ALL DUCKS DEAD!", Toast.LENGTH_LONG)
