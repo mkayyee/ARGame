@@ -15,7 +15,7 @@ class Player(
     : CombatControllable(startHealth, name, ap, model, context) {
 
     fun setHPRenderable(renderable: ViewRenderable) {
-        hpBar = renderable;
+        hpBar = renderable
     }
 
     fun getHPBar() : ViewRenderable? {

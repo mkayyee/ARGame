@@ -273,10 +273,9 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         renderableFuturePlayer.thenAccept {
             hpRenderablePlayer = it
             player.setHPRenderable(it)
-            hpRenderablePlayer?.view?.textView_healthbar?.text =
-                player.getStatus().currentHealth.toString()
-            hpRenderablePlayer?.view?.textView_healthbar?.background =
-                ContextCompat.getDrawable(this, R.drawable.gradient_player_hpbar)
+            val hpBar = hpRenderablePlayer?.view?.textView_healthbar
+                hpBar?.text = player.getStatus().currentHealth.toString()
+            hpBar?.background = ContextCompat.getDrawable(this, R.drawable.gradient_player_hpbar)
         }
     }
 
@@ -285,7 +284,6 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         // disable attack button for the animation duration
         if (playerTarget != null) {
             playground_attackDuckBtn.isEnabled = false
-            player.dealDamage(50.0, playerTarget!!.model)
             val ability = Ability.TEST
             val animData = ProjectileAnimationData(
                 // TODO make start position relative to screen position
@@ -377,7 +375,11 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     private fun createHPBar(node: TransformableNode, renderable: ViewRenderable?) {
         val hpNode = Node()
         hpNode.setParent(node)
+        val hpBar = renderable?.view?.textView_healthbar
+        val parent = hpBar?.parent as View
+        hpBar.width  = parent.width
         hpNode.renderable = renderable
+
         if (node == playerNode) {
             hpNode.localScale = Vector3(0.5f, 0.5f, 0.5f)
             hpNode.localPosition = Vector3(0f, 0.5f, 0f)
@@ -473,6 +475,11 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
 
     private fun updateHPBar(tv: TextView?, model: CombatControllable) {
         tv?.text = model.getStatus().currentHealth.toString()
+        val parent = tv?.parent as View
+        val ratio = model.getStatus().currentHealth / model.getStatus().maxHealth
+        tv.width = (parent.width * ratio).toInt()
+        Log.d("width", " Parent width * ratio ${(parent.width * ratio).toInt()}")
+        Log.d("width", tv.width.toString())
     }
 
     private fun createOnTapListenerForAttack(
@@ -648,7 +655,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                             node.localScale = Vector3(0.4f, 0.4f, 0.4f)
                         }
                         createHPBar(node, hpRenderable)
-                        randomMove(node, npc)
+                        //randomMove(node, npc)
                         node.setOnTouchListener { _, _ ->
                             val oldPosition = node.worldPosition
                             Handler().postDelayed({
@@ -727,8 +734,10 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     }
 
     override fun onCCDeath(cc: CombatControllable) {
+        // TODO: Stop any pending animation here
         if (cc == player) {
-            // TODO: notify game over
+            Toast.makeText(this, "YOU DIED", Toast.LENGTH_LONG)
+                .show()
             playerNode.localRotation = Quaternion(0f, 0f, 1f, 0f)
         } else {
             if (cc is NPC) {
@@ -739,10 +748,23 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                         val anchor = npcAnchors[spawnedNPCs.indexOf(it)]
                         // check that the correct anchor was indeed picked
                         if (anchor.npcID == it.getID()) {
-                            anchor.anchorNode.localRotation = Quaternion(0f, 0f, 1f, 0f)
+                            cc.getHPBar()!!.view!!.textView_healthbar.text = "\uD83D\uDC80"
+                            val node = anchor.anchorNode.children[0]
+                            node.localRotation = Quaternion(0f, 0f, 1f, 0f)
+
+                            if (node is TransformableNode) {
+                                node.translationController.isEnabled = false
+                            }
                         }
                         Handler().postDelayed({
                             // remove the NPC from scene after a delay
+                            npcAnchors.removeAt(spawnedNPCs.indexOf(it))
+                            spawnedNPCs.removeAt(spawnedNPCs.indexOf(it))
+                            // Level completed!
+                            if (npcAnchors.size == 0) {
+                                Toast.makeText(this, "ALL DUCKS DEAD!", Toast.LENGTH_LONG)
+                                    .show()
+                            }
                             removeAnchorNode(anchor.anchorNode)
                         }, 2000)
                     }
