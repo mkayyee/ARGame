@@ -103,7 +103,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         prepareModels()
         // MARK: Testing-abilities-related stuff
         initHPRenderables()
-        playground_targetTxt.text = "No target"
+        playground_targetTxt.text = "Ducks alive ${spawnedNPCs.size}"
         //saver.clearValues
 
         newLevel = Level(this).createLevel()
@@ -675,6 +675,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                             ))[0].createAnchor()
                             val anchorNode = AnchorNode(anchor)
                             npcAnchors.add(NPCAnchorData(anchorNode, npc.getID()))
+                            playground_targetTxt.text = "Ducks alive ${spawnedNPCs.size}"
                             anchorNode.setParent(fragment.arSceneView.scene)
                             val node = TransformableNode(fragment.transformationSystem)
                             node.scaleController.isEnabled = false
@@ -807,6 +808,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                                 Toast.makeText(this, "ALL DUCKS DEAD!", Toast.LENGTH_LONG)
                                     .show()
                             }
+                            playground_targetTxt.text = "Ducks alive ${spawnedNPCs.size}"
                             removeAnchorNode(anchor.anchorNode)
                         }, 2000)
                     }
