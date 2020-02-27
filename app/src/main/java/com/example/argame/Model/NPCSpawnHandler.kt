@@ -18,7 +18,7 @@ import kotlin.math.sign
 class NPCSpawnHandler(context: Context, level: Int, private val handler: Handler) : Runnable {
 
     private var spawnCallback: NPCSpawnCallback
-    private lateinit var npcs: ArrayList<NPCSpawnData>
+    private lateinit var npcs: MutableList<NPCSpawnData>
     private var timer: Long = 0
     private var paused = false
     private var stopped = false
@@ -37,7 +37,7 @@ class NPCSpawnHandler(context: Context, level: Int, private val handler: Handler
         spawnCallback = context as NPCSpawnCallback
         when (level) {
             1 -> {
-                npcs = NPCDataForLevels.LevelOne.npcs
+                npcs = NPCDataForLevels.LevelOne.npcs.toMutableList()
                 first = npcs.first()
             }
             2 -> {
