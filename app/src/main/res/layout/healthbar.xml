@@ -6,6 +6,7 @@
     android:layout_height="20dp">
 
     <TextView
+        android:layout_margin="1dp"
         android:id="@+id/textView_healthbar"
         android:textAlignment="center"
         android:textColor="#ffffff"

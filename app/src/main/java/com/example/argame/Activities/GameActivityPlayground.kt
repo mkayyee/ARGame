@@ -17,6 +17,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.util.toRange
+import androidx.core.view.isVisible
 import androidx.preference.PreferenceManager
 import com.example.argame.Fragments.CustomArFragment
 import com.example.argame.Fragments.MenuFragmentController
@@ -55,11 +56,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
 
     private val menuFragController = MenuFragmentController()
     private lateinit var fragment: CustomArFragment
-    private lateinit var duckUri: Uri
-    private lateinit var tposeUri: Uri
     private lateinit var playerUri: Uri
-    private var renderedDuck: ModelRenderable? = null
-    private var renderedTpose: ModelRenderable? = null
     private var renderedPlayer: ModelRenderable? = null
     private var anchorList = ArrayList<AnchorNode>()
     private lateinit var playerAnchorPos: HitResult
@@ -182,18 +179,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     }
 
     private fun prepareModels() {
-
-        duckUri = Uri.parse("duck.sfb")
-        tposeUri = Uri.parse("duck.sfb")
         playerUri = Uri.parse("playermodeltwithend.sfb")
-        val renderableFuture = ModelRenderable.builder()
-            .setSource(this, duckUri)
-            .build()
-        renderableFuture.thenAccept { renderedDuck = it }
-        val renderableFuture2 = ModelRenderable.builder()
-            .setSource(this, tposeUri)
-            .build()
-        renderableFuture2.thenAccept { renderedTpose = it }
         val renderableFuturePlayer = ModelRenderable.builder()
             .setSource(this, playerUri)
             .build()
@@ -234,13 +220,11 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                     levelButton.text = "Level 2"
                     curLevel = 2
                     spawnHandler = NPCSpawnHandler(this, curLevel ?: 1, Handler())
-
                 }
                 2 -> {
                     levelButton.text = "Level 10"
                     curLevel = 10
                     spawnHandler = NPCSpawnHandler(this, curLevel ?: 1, Handler())
-
                 }
                 else -> {
                     levelButton.text = "Level 1"
@@ -347,9 +331,10 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                 playerNode.worldPosition, playerTarget!!.node.worldPosition, this, fragment, beam.uri())
             player.setModelAnimator(ModelAnimator(attackAnimationData, player.model))
             player.useAbility(beam, playerTarget!!.model, data) {
-                if (playerTarget!!.healthBar != null) {
-                    updateHPBar(playerTarget!!.healthBar, playerTarget!!.model)
-                }
+                // should do code below in onCCDamaged()
+//                if (playerTarget!!.healthBar != null) {
+//                    updateHPBar(playerTarget!!.healthBar, playerTarget!!.model)
+//                }
                 playground_beamDuckBtn.isEnabled = true
             }
             npcAnchors.forEach {
@@ -401,7 +386,11 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         for (anchor in anchorList) {
             removeAnchorNode(anchor)
         }
+        for (anchor in npcAnchors) {
+            removeAnchorNode(anchor.anchorNode)
+        }
         anchorList.clear()
+        npcAnchors.clear()
         ducksInScene = false
         playerInScene = false
     }
@@ -783,6 +772,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                         // check that the correct anchor was indeed picked
                         if (anchor.npcID == it.getID()) {
                             val hpBar = cc.getHPBar()
+                            hpBar?.view?.visibility = View.GONE
                             updateHPBar(hpBar!!.view.textView_healthbar, cc)
                             val node = anchor.anchorNode.children[0]
                             node.localRotation = Quaternion(0f, 0f, 1f, 0f)
