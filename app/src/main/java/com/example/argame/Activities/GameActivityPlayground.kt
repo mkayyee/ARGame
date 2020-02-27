@@ -541,8 +541,8 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                 //attackLooper(npc, model) TODO: Looping melee attack
                 Handler().postDelayed({
                     // Correct look direction towards player (again)
-                    model.setLookDirection(
-                        Vector3.subtract(
+                    model.setLookDirection(                        Vector3.subtract(
+
                             model.worldPosition,
                             playerAnchorNode.worldPosition
                         )
