@@ -391,8 +391,10 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         for (anchor in npcAnchors) {
             removeAnchorNode(anchor.anchorNode)
         }
+        spawnedNPCs.clear()
         anchorList.clear()
         npcAnchors.clear()
+        npcsAlive.clear()
         ducksInScene = false
         playerInScene = false
     }
