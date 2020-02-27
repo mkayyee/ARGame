@@ -87,7 +87,6 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     private var spawnedNPCs = arrayListOf<NPC>()
     private var npcsAlive = arrayListOf<NPC>()
     private var npcAnchors = arrayListOf<NPCAnchorData>()
-    private var level = 1
     private var allNPChaveSpawned = false
 
 
@@ -633,7 +632,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         renderableFuture.thenAccept {
             renderable = it
             // create the NPC object when we have a ModelRenderable ready
-            val npcObject = type.getNPCObject(level, renderable, npcID, this)
+            val npcObject = type.getNPCObject(curLevel!!, renderable, npcID, this)
             // spawn NPC
             spawnNPC(npcObject, type)
             // random debugs
@@ -788,6 +787,8 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
 
     override fun onCCDeath(cc: CombatControllable) {
         // TODO: Stop any pending animation here
+        val totalNpcCount = NPCDataForLevels.getNPCForLevelCount(curLevel!!)
+        val npcsRemaining = totalNpcCount - spawnedNPCs.size
         if (cc == player) {
             Toast.makeText(this, "YOU DIED", Toast.LENGTH_LONG)
                 .show()
@@ -825,7 +826,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                                 }
                             }
                             // Level completed!
-                            if (npcAnchors.size == 0) {
+                            if (npcAnchors.size == 0 && npcsRemaining == 0 ) {
                                 Toast.makeText(this, "ALL DUCKS DEAD!", Toast.LENGTH_LONG)
                                     .show()
                                 callNextLevelFragment()

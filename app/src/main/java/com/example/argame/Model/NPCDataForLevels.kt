@@ -1,6 +1,16 @@
 package com.example.argame.Model
 
 object NPCDataForLevels {
+
+    fun getNPCForLevelCount(level: Int) : Int {
+        return when (level) {
+            1 -> LevelOne.npcs.size
+            2 -> LevelTwo.npcs.size
+            10 -> LevelTen.npcs.size
+            else -> 0
+        }
+    }
+
     object LevelOne {
         val npc1 = NPCSpawnData(NPCType.MELEE, 0, 0)
         val npc2 = NPCSpawnData(NPCType.SUPPORT, 5000, 1)
