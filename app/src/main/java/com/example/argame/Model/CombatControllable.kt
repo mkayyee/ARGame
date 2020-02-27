@@ -1,9 +1,11 @@
 package com.example.argame.Model
 
+import android.animation.Animator
 import android.content.Context
 import android.util.Log.wtf
 import com.example.argame.Interfaces.AbilityUser
 import com.example.argame.Interfaces.ProjectileAnimator
+import com.google.ar.sceneform.animation.ModelAnimator
 import com.google.ar.sceneform.rendering.ModelRenderable
 import kotlin.math.sign
 
@@ -34,6 +36,7 @@ abstract class CombatControllable(
     private var xp = 0.0
     private var xpRequiredForLevel = 1000.0
     private val callback: CombatControllableListener
+    private var modelAnimator: ModelAnimator? = null
 
     interface CombatControllableListener {
         fun onCCDamaged(cc: CombatControllable)
@@ -71,6 +74,14 @@ abstract class CombatControllable(
         }
         health = maxHealth
         status = CombatControllableStatus(isAlive, health, attackPower, name, maxHealth, level, xp, xpRequiredForLevel)
+    }
+
+    fun setModelAnimator(animator: ModelAnimator) {
+        modelAnimator = animator
+    }
+
+    fun getModelAnimator() : ModelAnimator? {
+        return modelAnimator
     }
 
     fun restoreFullHealth() {
