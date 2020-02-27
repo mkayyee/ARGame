@@ -20,6 +20,7 @@ import androidx.core.util.toRange
 import androidx.core.view.isVisible
 import androidx.core.view.marginBottom
 import androidx.core.view.marginEnd
+import androidx.fragment.app.FragmentManager
 import androidx.preference.PreferenceManager
 import com.example.argame.Fragments.CustomArFragment
 import com.example.argame.Fragments.GameOverFragment
@@ -52,6 +53,7 @@ import org.jetbrains.anko.doAsyncResult
 import org.jetbrains.anko.matchParent
 import java.sql.Time
 import kotlin.concurrent.thread
+import kotlin.math.absoluteValue
 import kotlin.math.atan
 import kotlin.math.pow
 
@@ -95,6 +97,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game_playground)
+        this.supportFragmentManager.popBackStack()
         fragment =
             supportFragmentManager.findFragmentById(R.id.playground_sceneform_fragment) as CustomArFragment
         //saver = defaultPreference(this)
@@ -259,7 +262,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.playground_main_menu_container, GameOverFragment())
-            .addToBackStack(null)
+            .addToBackStack("game_over")
             .commit()
     }
 
@@ -851,6 +854,12 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                             if (npcAnchors.size == 0 && npcsRemaining == 0 ) {
                                 Toast.makeText(this, "ALL DUCKS DEAD!", Toast.LENGTH_LONG)
                                     .show()
+                                when (curLevel) {
+                                    1 -> curLevel = 2
+                                    2 -> curLevel = 10
+                                    else -> curLevel = 1
+                                }
+                                saver.edit().putInt("levelNum", curLevel!!).apply()
                                 callNextLevelFragment()
                             }
                             playground_targetTxt.text = "Ducks alive ${npcsAlive.size}"
