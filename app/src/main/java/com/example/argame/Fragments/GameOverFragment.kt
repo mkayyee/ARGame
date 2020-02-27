@@ -1,12 +1,15 @@
 package com.example.argame.Fragments
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
+import com.example.argame.Activities.GameActivityPlayground
+import com.example.argame.Activities.MainActivity
 import com.example.argame.Interfaces.FragmentCallbackListener
 import com.example.argame.R
 import kotlinx.android.synthetic.main.profile.*
@@ -17,31 +20,35 @@ import kotlinx.android.synthetic.main.profile.*
  *  Instantiated from MenuFragmentController
  */
 
-class GameOverFragment : Fragment() {
+class GameOverFragment : Fragment(), View.OnClickListener {
 
-    private var buttonCallbackListener: FragmentCallbackListener? = null
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        buttonCallbackListener = context as FragmentCallbackListener
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return layoutInflater.inflate(R.layout.menu_game_over, container, false)
+        val v = layoutInflater.inflate(R.layout.menu_game_over, container, false)
+        val newGameBtn = v.findViewById<Button>(R.id.button_new_game)
+        val exitBtn =  v.findViewById<Button>(R.id.button_exit)
+        newGameBtn.setOnClickListener(this)
+        exitBtn.setOnClickListener(this)
+        return v
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        setupButtonListeners()
+    override fun onClick (v: View) {
+        when (v.id) {
+            R.id.button_exit -> {
+                val intent = Intent(activity, MainActivity::class.java)  // HUOMIO !!!!
+                startActivity(intent)
+            }
+            R.id.button_new_game -> {
+                val intent = Intent(activity, GameActivityPlayground::class.java)  // HUOMIO !!!!
+                startActivity(intent)
+             }
+        }
     }
 
-    private fun setupButtonListeners() {
-        //profile_button_back.setOnClickListener {
-           // buttonCallbackListener!!.onButtonPressed(it as Button) TODO
-       // }
-    }
+
+
 }
