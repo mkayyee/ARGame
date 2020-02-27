@@ -27,6 +27,14 @@
         android:text="@string/new_game"/>
 
     <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_select_abilities"
+        android:layout_gravity="center"
+        android:layout_width="300dp"
+        android:layout_margin="5dp"
+        android:layout_height="wrap_content"
+        android:text="@string/select_abilities"/>
+
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/button_exit"
         android:layout_gravity="center"
         android:layout_width="300dp"
