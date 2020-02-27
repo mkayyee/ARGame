@@ -41,11 +41,11 @@ class NPCSpawnHandler(context: Context, level: Int, private val handler: Handler
                 first = npcs.first()
             }
             2 -> {
-                npcs = NPCDataForLevels.LevelTwo.npcs
+                npcs = NPCDataForLevels.LevelTwo.npcs.toMutableList()
                 first = npcs.first()
             }
             10 -> {
-                npcs = NPCDataForLevels.LevelTen.npcs
+                npcs = NPCDataForLevels.LevelTen.npcs.toMutableList()
                 first = npcs.first()
             }
         }
