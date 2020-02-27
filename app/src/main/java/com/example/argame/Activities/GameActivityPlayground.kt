@@ -114,7 +114,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         spawnHandler = NPCSpawnHandler(this, curLevel ?: 1, Handler())
 
         fragment.arSceneView.scene.addOnUpdateListener {
-            initSceneUpdateListener()
+            sceneUpdateListener()
         }
     }
 
@@ -161,7 +161,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         menuFragController.onButtonPressed(btn)
     }
 
-    private fun initSceneUpdateListener() {
+    private fun sceneUpdateListener() {
         val frame = fragment.arSceneView.arFrame
         val pt = getScreenCenter()
         val hits: List<HitResult>
@@ -453,6 +453,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                     if (!trackableWasPlane) {
                         val trackable = hit.trackable
                         if (trackable is Plane) {
+                            fragment.arSceneView.planeRenderer.isVisible = false
                             trackableWasPlane = true
                             playerInScene = true
                             playerAnchorPos = hit!!
