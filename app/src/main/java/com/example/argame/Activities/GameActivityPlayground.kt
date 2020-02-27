@@ -46,6 +46,7 @@ import com.google.ar.sceneform.ux.TransformableNode
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_game.*
 import kotlinx.android.synthetic.main.activity_game_playground.*
+import kotlinx.android.synthetic.main.activity_level_intermission.*
 import kotlinx.android.synthetic.main.healthbar.*
 import kotlinx.android.synthetic.main.healthbar.view.*
 import org.jetbrains.anko.doAsync
@@ -160,9 +161,13 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     }
 
     override fun onButtonPressed(btn: Button) {
-        // The callback's are forwarded to MenuFragmentController,
-        // that handles all the logic for these events
-        menuFragController.onButtonPressed(btn)
+        if (btn.id == button_close_ability_menu.id) {
+            callNextLevelFragment()
+        } else {
+            // The callback's are forwarded to MenuFragmentController,
+            // that handles all the logic for these events
+            menuFragController.onButtonPressed(btn)
+        }
     }
 
     private fun sceneUpdateListener() {
@@ -271,7 +276,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         // TODO: Move menu to *betweenlevelsActivity*
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.playground_main_menu_container, NextLevelFragment())
+            .replace(R.id.playground_main_menu_container, NextLevelFragment(supportFragmentManager))
             .addToBackStack(null)
             .commit()
     }

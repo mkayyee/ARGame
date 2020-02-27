@@ -12,6 +12,7 @@
     <string name="games_played">Games played: </string>
     <string name="highest_score">Highest score: </string>
     <string name="choose_ability">Choose ability</string>
+    <string name="select_abilities">Select abilities</string>
     <string name="exit">Exit</string>
     <string name="next_level">Next Level</string>
     <string name="game_over">Game Over</string>
