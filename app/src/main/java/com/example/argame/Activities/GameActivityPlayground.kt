@@ -18,6 +18,8 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.util.toRange
 import androidx.core.view.isVisible
+import androidx.core.view.marginBottom
+import androidx.core.view.marginEnd
 import androidx.preference.PreferenceManager
 import com.example.argame.Fragments.CustomArFragment
 import com.example.argame.Fragments.GameOverFragment
@@ -501,7 +503,10 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         //tv?.text = model.getStatus().currentHealth.toString()
         val parent = tv?.parent as View
         val ratio = model.getStatus().currentHealth / model.getStatus().maxHealth
-        tv.layoutParams = LinearLayout.LayoutParams((parent.width * ratio).toInt(), matchParent)
+        val layOutParams = LinearLayout.LayoutParams((parent.width * ratio).toInt(), matchParent)
+        val currentMargin = tv.marginEnd
+        tv.layoutParams = layOutParams
+        layOutParams.setMargins(currentMargin, currentMargin, currentMargin, currentMargin)
         Log.d("width", " Parent width (${parent.width}) * ratio ($ratio) ${(parent.width * ratio).toInt()}")
         Log.d("width", tv.width.toString())
     }
