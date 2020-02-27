@@ -788,6 +788,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     override fun onCCDeath(cc: CombatControllable) {
         // TODO: Stop any pending animation here
         val totalNpcCount = NPCDataForLevels.getNPCForLevelCount(curLevel!!)
+        Log.d("NPCDED", "curLevel: $curLevel LevelOne.size: ${NPCDataForLevels.getNPCForLevelCount(curLevel!!)}")
         val npcsRemaining = totalNpcCount - spawnedNPCs.size
         if (cc == player) {
             Toast.makeText(this, "YOU DIED", Toast.LENGTH_LONG)
@@ -826,6 +827,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                                 }
                             }
                             // Level completed!
+                            Log.d("NPCDED", "npcAnchors.size: ${npcAnchors.size} npcsRemaining: $npcsRemaining, spawnedNpcs.count: ${spawnedNPCs.size}")
                             if (npcAnchors.size == 0 && npcsRemaining == 0 ) {
                                 Toast.makeText(this, "ALL DUCKS DEAD!", Toast.LENGTH_LONG)
                                     .show()
