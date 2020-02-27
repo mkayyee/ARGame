@@ -376,7 +376,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         hpNode.renderable = renderable
 
         if (node == playerNode) {
-            hpNode.localScale = Vector3(0.5f, 0.5f, 0.5f)
+            hpNode.localScale = Vector3(0.35f, 0.35f, 0.35f)
             hpNode.localPosition = Vector3(0f, 0.5f, 0f)
         } else {
             hpNode.localScale = Vector3(5f, 5f, 5f)
@@ -602,30 +602,34 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     }
 
     override fun notifyNPCSpawned(type: NPCType, remaining: Int, npcID: Int) {
-        lateinit var renderable: ModelRenderable
-        // get NPC model
-        val renderableFuture = ModelRenderable.builder()
-            .setSource(this, type.modelUri())
-            .build()
-        renderableFuture.thenAccept {
-            renderable = it
-            // create the NPC object when we have a ModelRenderable ready
-            val npcObject = type.getNPCObject(curLevel!!, renderable, npcID, this)
-            // spawn NPC
-            spawnNPC(npcObject, type)
-            // random debugs
-            val time = Time(System.currentTimeMillis())
-            Log.d(
-                "NPCSPAWN",
-                "NPC of type: ${type.name} spawned at: $time. NPC's remaining: $remaining"
-            )
-            for (index in spawnedNPCs.indices) {
-                Log.d("NPCSPAWN", "spawnedNPCs[$index]: ${spawnedNPCs[index]}")
-            }
-            if (remaining > 0) {
-                updateNPCRemainingText("NPCs spawning: $remaining")
-            } else {
-                updateNPCRemainingText("")
+        val ids = spawnedNPCs.filter { it.getID() == npcID }
+        val anchors = npcAnchors.filter { it.npcID == npcID }
+        if (ids.isEmpty() && anchors.isEmpty()) {
+            lateinit var renderable: ModelRenderable
+            // get NPC model
+            val renderableFuture = ModelRenderable.builder()
+                .setSource(this, type.modelUri())
+                .build()
+            renderableFuture.thenAccept {
+                renderable = it
+                // create the NPC object when we have a ModelRenderable ready
+                val npcObject = type.getNPCObject(curLevel!!, renderable, npcID, this)
+                // spawn NPC
+                spawnNPC(npcObject, type)
+                // random debugs
+                val time = Time(System.currentTimeMillis())
+                Log.d(
+                    "NPCSPAWN",
+                    "NPC of type: ${type.name} spawned at: $time. NPC's remaining: $remaining"
+                )
+                for (index in spawnedNPCs.indices) {
+                    Log.d("NPCSPAWN", "spawnedNPCs[$index]: ${spawnedNPCs[index]}")
+                }
+                if (remaining > 0) {
+                    updateNPCRemainingText("NPCs spawning: $remaining")
+                } else {
+                    updateNPCRemainingText("")
+                }
             }
         }
     }

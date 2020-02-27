@@ -16,8 +16,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MaterialComponents.Light.DarkActionBar">
         <activity android:name=".Activities.GameActivityPlayground" android:launchMode="singleInstance"></activity>
-        <activity android:name=".Activities.MenuActivity" />
-        <activity android:name=".Activities.MainActivity">
+        <activity android:name=".Activities.MenuActivity" android:launchMode="singleInstance"/>
+        <activity android:name=".Activities.MainActivity" android:launchMode="singleInstance">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
