@@ -20,7 +20,9 @@ import androidx.core.util.toRange
 import androidx.core.view.isVisible
 import androidx.preference.PreferenceManager
 import com.example.argame.Fragments.CustomArFragment
+import com.example.argame.Fragments.GameOverFragment
 import com.example.argame.Fragments.MenuFragmentController
+import com.example.argame.Fragments.NextLevelFragment
 import com.example.argame.Interfaces.FragmentCallbackListener
 import com.example.argame.Interfaces.PreferenceHelper.defaultPreference
 import com.example.argame.Interfaces.PreferenceHelper.setGson
@@ -200,6 +202,11 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                 spawnPlayer()
             }
         }
+
+        val exitBtn = findViewById<Button>(R.id.playground_exitBtn)
+        exitBtn.setOnClickListener {
+            callGameOverFragment()
+        }
         // MARK: Testing-abilities-related stuff
         playground_attackDuckBtn.setOnClickListener {
             attackTarget()
@@ -245,6 +252,26 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             .addToBackStack(null)
             .commit()
     }
+
+        private fun callGameOverFragment() {
+        // TODO: Move menu to *betweenlevelsActivity*
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.playground_main_menu_container, GameOverFragment())
+            .addToBackStack(null)
+            .commit()
+    }
+
+    private fun callNextLevelFragment() {
+        // TODO: Move menu to *betweenlevelsActivity*
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.playground_main_menu_container, NextLevelFragment())
+            .addToBackStack(null)
+            .commit()
+    }
+
+
 
     private fun initHPRenderables() {
         val renderableFuturePlayer = ViewRenderable.builder()
@@ -765,6 +792,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             Toast.makeText(this, "YOU DIED", Toast.LENGTH_LONG)
                 .show()
             playerNode.localRotation = Quaternion(0f, 0f, 1f, 0f)
+            callGameOverFragment()
         } else {
             if (cc is NPC) {
                 npcsAlive.forEach {
@@ -800,6 +828,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                             if (npcAnchors.size == 0) {
                                 Toast.makeText(this, "ALL DUCKS DEAD!", Toast.LENGTH_LONG)
                                     .show()
+                                callNextLevelFragment()
                             }
                             playground_targetTxt.text = "Ducks alive ${npcsAlive.size}"
                             removeAnchorNode(anchor.anchorNode)
