@@ -20,7 +20,9 @@ import androidx.core.util.toRange
 import androidx.core.view.isVisible
 import androidx.preference.PreferenceManager
 import com.example.argame.Fragments.CustomArFragment
+import com.example.argame.Fragments.GameOverFragment
 import com.example.argame.Fragments.MenuFragmentController
+import com.example.argame.Fragments.NextLevelFragment
 import com.example.argame.Interfaces.FragmentCallbackListener
 import com.example.argame.Interfaces.PreferenceHelper.defaultPreference
 import com.example.argame.Interfaces.PreferenceHelper.setGson
@@ -85,7 +87,6 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     private var spawnedNPCs = arrayListOf<NPC>()
     private var npcsAlive = arrayListOf<NPC>()
     private var npcAnchors = arrayListOf<NPCAnchorData>()
-    private var level = 1
     private var allNPChaveSpawned = false
 
 
@@ -200,6 +201,11 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                 spawnPlayer()
             }
         }
+
+        val exitBtn = findViewById<Button>(R.id.playground_exitBtn)
+        exitBtn.setOnClickListener {
+            callGameOverFragment()
+        }
         // MARK: Testing-abilities-related stuff
         playground_attackDuckBtn.setOnClickListener {
             attackTarget()
@@ -245,6 +251,26 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             .addToBackStack(null)
             .commit()
     }
+
+        private fun callGameOverFragment() {
+        // TODO: Move menu to *betweenlevelsActivity*
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.playground_main_menu_container, GameOverFragment())
+            .addToBackStack(null)
+            .commit()
+    }
+
+    private fun callNextLevelFragment() {
+        // TODO: Move menu to *betweenlevelsActivity*
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.playground_main_menu_container, NextLevelFragment())
+            .addToBackStack(null)
+            .commit()
+    }
+
+
 
     private fun initHPRenderables() {
         val renderableFuturePlayer = ViewRenderable.builder()
@@ -606,7 +632,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         renderableFuture.thenAccept {
             renderable = it
             // create the NPC object when we have a ModelRenderable ready
-            val npcObject = type.getNPCObject(level, renderable, npcID, this)
+            val npcObject = type.getNPCObject(curLevel!!, renderable, npcID, this)
             // spawn NPC
             spawnNPC(npcObject, type)
             // random debugs
@@ -761,10 +787,13 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
 
     override fun onCCDeath(cc: CombatControllable) {
         // TODO: Stop any pending animation here
+        val totalNpcCount = NPCDataForLevels.getNPCForLevelCount(curLevel!!)
+        val npcsRemaining = totalNpcCount - spawnedNPCs.size
         if (cc == player) {
             Toast.makeText(this, "YOU DIED", Toast.LENGTH_LONG)
                 .show()
             playerNode.localRotation = Quaternion(0f, 0f, 1f, 0f)
+            callGameOverFragment()
         } else {
             if (cc is NPC) {
                 npcsAlive.forEach {
@@ -797,9 +826,10 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                                 }
                             }
                             // Level completed!
-                            if (npcAnchors.size == 0) {
+                            if (npcAnchors.size == 0 && npcsRemaining == 0 ) {
                                 Toast.makeText(this, "ALL DUCKS DEAD!", Toast.LENGTH_LONG)
                                     .show()
+                                callNextLevelFragment()
                             }
                             playground_targetTxt.text = "Ducks alive ${npcsAlive.size}"
                             removeAnchorNode(anchor.anchorNode)
