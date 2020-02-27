@@ -37,11 +37,6 @@ interface AbilityUser {
                 // retrieved callback that the projectile was fired, so probably safe to deal damage
                 caster.dealDamage(ability.getDamage(casterStatus), target)
                 cb()
-                Log.d(
-                    "COMBAT", "${casterStatus.name} used" +
-                            " ability: ${ability.name} on ${targetStatus.name} " +
-                            "for ${ability.getDamage(casterStatus)} damage."
-                )
             }
         } else {
             cb()

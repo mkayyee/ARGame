@@ -83,6 +83,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     private lateinit var spawnHandler: NPCSpawnHandler
     private lateinit var npcSpawnThread: Thread
     private var spawnedNPCs = arrayListOf<NPC>()
+    private var npcsAlive = arrayListOf<NPC>()
     private var npcAnchors = arrayListOf<NPCAnchorData>()
     private var level = 1
     private var allNPChaveSpawned = false
@@ -100,7 +101,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         prepareModels()
         // MARK: Testing-abilities-related stuff
         initHPRenderables()
-        playground_targetTxt.text = "Ducks alive ${spawnedNPCs.size}"
+        playground_targetTxt.text = "Ducks alive ${npcsAlive.size}"
         //saver.clearValues
 
         newLevel = Level(this).createLevel()
@@ -194,8 +195,8 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
 
         val spawnBtn = findViewById<Button>(R.id.playground_spawnBtn)
         spawnBtn.setOnClickListener {
-            if (newLevel != null) {
-                spawnObjects(newLevel!!)
+            if (newLevel != null && !playerInScene) {
+                spawnObjects()
                 spawnPlayer()
             }
         }
@@ -458,8 +459,8 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         }
     }
 
-    private fun spawnObjects(numOfDucks: Int) {
-        if (!ducksInScene) {
+    private fun spawnObjects() {
+        if (!ducksInScene && !spawnHandler.isRunning()) {
             // "Spawn NPC's"
             npcSpawnThread = Thread {
                 spawnHandler.run()
@@ -635,7 +636,8 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     private fun spawnNPC(npc: NPC, type: NPCType) {
         // To make sure no duplicates are possible. Not that it should be, but apparently it is
         val ids = spawnedNPCs.filter { it.getID() == npc.getID() }
-        if (ids.isEmpty()) {
+        val checkAnchors = npcAnchors.filter { it.npcID == npc.getID() }
+        if (ids.isEmpty() && checkAnchors.isEmpty()) {
             spawnedNPCs.add(npc)
             lateinit var hpRenderable: ViewRenderable
             val renderableFuture = ViewRenderable.builder()
@@ -664,7 +666,8 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                             ))[0].createAnchor()
                             val anchorNode = AnchorNode(anchor)
                             npcAnchors.add(NPCAnchorData(anchorNode, npc.getID()))
-                            playground_targetTxt.text = "Ducks alive ${spawnedNPCs.size}"
+                            npcsAlive.add(npc)
+                            playground_targetTxt.text = "Ducks alive ${npcsAlive.size}"
                             anchorNode.setParent(fragment.arSceneView.scene)
                             val node = TransformableNode(fragment.transformationSystem)
                             node.scaleController.isEnabled = false
@@ -764,11 +767,11 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             playerNode.localRotation = Quaternion(0f, 0f, 1f, 0f)
         } else {
             if (cc is NPC) {
-                spawnedNPCs.forEach {
+                npcsAlive.forEach {
                     if (cc == it) {
                         // the indices should be the same..?
                         // might need to change this to a safer approach
-                        val anchor = npcAnchors[spawnedNPCs.indexOf(it)]
+                        val anchor = npcAnchors[npcsAlive.indexOf(it)]
                         // check that the correct anchor was indeed picked
                         if (anchor.npcID == it.getID()) {
                             val hpBar = cc.getHPBar()
@@ -787,10 +790,10 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                             // the first one might already kill the target.
                             // That is why we need to check if the target
                             // still exists when receiving another callback.
-                            if (spawnedNPCs.indexOf(it) > 1) {
-                                if (npcAnchors.size >= spawnedNPCs.indexOf(it)) {
-                                    npcAnchors.removeAt(spawnedNPCs.indexOf(it))
-                                    spawnedNPCs.removeAt(spawnedNPCs.indexOf(it))
+                            if (npcsAlive.indexOf(it) >= 0) {
+                                if (npcAnchors.size >= npcsAlive.indexOf(it)) {
+                                    npcAnchors.removeAt(npcsAlive.indexOf(it))
+                                    npcsAlive.removeAt(npcsAlive.indexOf(it))
                                 }
                             }
                             // Level completed!
@@ -798,7 +801,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                                 Toast.makeText(this, "ALL DUCKS DEAD!", Toast.LENGTH_LONG)
                                     .show()
                             }
-                            playground_targetTxt.text = "Ducks alive ${spawnedNPCs.size}"
+                            playground_targetTxt.text = "Ducks alive ${npcsAlive.size}"
                             removeAnchorNode(anchor.anchorNode)
                         }, 2000)
                     }

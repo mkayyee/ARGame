@@ -23,6 +23,7 @@ class NPCSpawnHandler(context: Context, level: Int, private val handler: Handler
     private var paused = false
     private var stopped = false
     private var scanning = true
+    private var started = false
     private var nextSpawn: Long? = null
     private var previosSpawnId: Int? = null
     private lateinit var first: NPCSpawnData
@@ -50,6 +51,10 @@ class NPCSpawnHandler(context: Context, level: Int, private val handler: Handler
         }
     }
 
+    fun isRunning() : Boolean {
+        return started
+    }
+
     fun pause() {
         paused = true
         Log.d("SHANDLER", "Spawn handler paused")
@@ -64,6 +69,7 @@ class NPCSpawnHandler(context: Context, level: Int, private val handler: Handler
     }
 
     override fun run() {
+        started = true
         nextSpawn = first.spawnTime
         Looper.prepare()
         while (!stopped) {
