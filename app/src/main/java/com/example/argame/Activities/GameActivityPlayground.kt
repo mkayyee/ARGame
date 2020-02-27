@@ -58,7 +58,8 @@ import kotlin.math.atan
 import kotlin.math.pow
 
 class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
-    NPCSpawnHandler.NPCSpawnCallback, Ability.AbilityCallbackListener, CombatControllable.CombatControllableListener {
+    NPCSpawnHandler.NPCSpawnCallback, Ability.AbilityCallbackListener,
+    CombatControllable.CombatControllableListener {
 
     private val menuFragController = MenuFragmentController()
     private lateinit var fragment: CustomArFragment
@@ -257,7 +258,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             .commit()
     }
 
-        private fun callGameOverFragment() {
+    private fun callGameOverFragment() {
         // TODO: Move menu to *betweenlevelsActivity*
         supportFragmentManager
             .beginTransaction()
@@ -274,7 +275,6 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             .addToBackStack(null)
             .commit()
     }
-
 
 
     private fun initHPRenderables() {
@@ -309,7 +309,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             val animationData = player.model?.getAnimationData(ability.getCastAnimationString())
             player.setModelAnimator(ModelAnimator(animationData, player.model))
             player.useAbility(ability, playerTarget!!.model, animData) {
-//                if (playerTarget!!.healthBar != null) {
+                //                if (playerTarget!!.healthBar != null) {
 //                    updateHPBar(playerTarget!!.healthBar, playerTarget!!.model)
 //                }
                 //beamTarget(playerTarget!!)
@@ -336,31 +336,37 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
 
     private fun attackPlayer(npc: NPC, node: Node) {
         // disable attack button for the animation duration
-            npc.dealDamage(5.0, player)
-            val ability = Ability.TEST
-            val animData = ProjectileAnimationData(
-                // TODO make start position relative to screen position
-                node.worldPosition,
-                playerAnchorNode.worldPosition,
-                this,
-                fragment,
-                ability.uri()
-            )
-            npc.useAbility(ability, player, animData) {
-//                if (hpRenderablePlayer?.view?.textView_healthbar != null) {
+        npc.dealDamage(5.0, player)
+        val ability = Ability.TEST
+        val animData = ProjectileAnimationData(
+            // TODO make start position relative to screen position
+            node.worldPosition,
+            playerAnchorNode.worldPosition,
+            this,
+            fragment,
+            ability.uri()
+        )
+        npc.useAbility(ability, player, animData) {
+            //                if (hpRenderablePlayer?.view?.textView_healthbar != null) {
 //                    updateHPBar(hpRenderablePlayer?.view?.textView_healthbar, player)
 //                }
-            }
         }
+    }
 
     private fun beamTarget() {
         if (playerTarget != null) {
             cancelAnimator(player)
             playground_beamDuckBtn.isEnabled = false
             val beam = Ability.BEAM
-            val attackAnimationData = player.model?.getAnimationData(Ability.BEAM.getCastAnimationString())
+            val attackAnimationData =
+                player.model?.getAnimationData(Ability.BEAM.getCastAnimationString())
             val data = ProjectileAnimationData(
-                playerNode.worldPosition, playerTarget!!.node.worldPosition, this, fragment, beam.uri())
+                playerNode.worldPosition,
+                playerTarget!!.node.worldPosition,
+                this,
+                fragment,
+                beam.uri()
+            )
             player.setModelAnimator(ModelAnimator(attackAnimationData, player.model))
             player.useAbility(beam, playerTarget!!.model, data) {
                 // should do code below in onCCDamaged()
@@ -374,23 +380,23 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                 val targetPos = playerTarget!!.node.worldPosition
                 val zDifPow = (npcAnchorPos.z - targetPos.z).pow(2)
                 val xDifPow = (npcAnchorPos.x - targetPos.x).pow(2)
-                val difAdded = (zDifPow+xDifPow)
+                val difAdded = (zDifPow + xDifPow)
                 val result = Math.sqrt(difAdded.toDouble())
-                Log.d("BEAM", "RESULT " + npcAnchors.indexOf(it)+ "  " + result)
+                Log.d("BEAM", "RESULT " + npcAnchors.indexOf(it) + "  " + result)
 
                 if (result < 0.8) {
-                    Log.d("BEAM", "HIT NPC  " + npcAnchors.indexOf(it) )
+                    Log.d("BEAM", "HIT NPC  " + npcAnchors.indexOf(it))
                     //it.anchorNode.localScale = Vector3(0.4f, 0.4f, 0.4f)
                 }
 
- /*               if (npcAnchorNode.worldPosition.x - playerTarget!!.node.worldPosition.x > 0.05f || npcAnchorNode.worldPosition.z - playerTarget!!.node.worldPosition.z < 0.05) {
-                    Log.d("BEAM", "Additional target found " + npcAnchorNode.toString())
-                    npcAnchorNode.localScale = Vector3(1.3f, 1.3f, 1.3f)
+                /*               if (npcAnchorNode.worldPosition.x - playerTarget!!.node.worldPosition.x > 0.05f || npcAnchorNode.worldPosition.z - playerTarget!!.node.worldPosition.z < 0.05) {
+                                   Log.d("BEAM", "Additional target found " + npcAnchorNode.toString())
+                                   npcAnchorNode.localScale = Vector3(1.3f, 1.3f, 1.3f)
 
-                    Log.d(
-                        "BEAM", "Target position " + playerTarget!!.node.worldPosition.toString()
-                    )
-                }*/
+                                   Log.d(
+                                       "BEAM", "Target position " + playerTarget!!.node.worldPosition.toString()
+                                   )
+                               }*/
             }
         }
     }
@@ -400,7 +406,11 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     }
 
     // MARK: Testing-abilities-related stuff
-    private fun createHPBar(node: TransformableNode, renderable: ViewRenderable?, model: CombatControllable) {
+    private fun createHPBar(
+        node: TransformableNode,
+        renderable: ViewRenderable?,
+        model: CombatControllable
+    ) {
         val hpNode = Node()
         hpNode.setParent(node)
         hpNode.renderable = renderable
@@ -517,7 +527,10 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         val currentMargin = tv.marginEnd
         tv.layoutParams = layOutParams
         layOutParams.setMargins(currentMargin, currentMargin, currentMargin, currentMargin)
-        Log.d("width", " Parent width (${parent.width}) * ratio ($ratio) ${(parent.width * ratio).toInt()}")
+        Log.d(
+            "width",
+            " Parent width (${parent.width}) * ratio ($ratio) ${(parent.width * ratio).toInt()}"
+        )
         Log.d("width", tv.width.toString())
     }
 
@@ -545,7 +558,12 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         }
     }
 
-    private fun NodeCreator(initialNode: TransformableNode, newLocation: Vector3, npc: NPC, type: NPCType) {
+    private fun NodeCreator(
+        initialNode: TransformableNode,
+        newLocation: Vector3,
+        npc: NPC,
+        type: NPCType
+    ) {
         Log.d("RMOVE", "2")
         val newNode = Node()
         val summedVector = Vector3.add(initialNode.worldPosition, newLocation)
@@ -581,32 +599,32 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             if (type == NPCType.MELEE) {
                 val stopX = playerAnchorNode.worldPosition.x
                 // If NPC is melee -> stop next to the player
-                val valuePool = floatArrayOf(-0.12f,-0.10f,-0.08f,-0.06f,0.06f,0.08f,0.10f,0.12f)
+                val valuePool =
+                    floatArrayOf(-0.12f, -0.10f, -0.08f, -0.06f, 0.06f, 0.08f, 0.10f, 0.12f)
                 val randomifier = valuePool[(0..7).shuffled().first()]
-                val newX = (stopX+randomifier)
-                val stop = Vector3(newX,playerAnchorNode.worldPosition.y, playerAnchorNode.worldPosition.z)
+                val newX = (stopX + randomifier)
+                val stop = Vector3(
+                    newX,
+                    playerAnchorNode.worldPosition.y,
+                    playerAnchorNode.worldPosition.z
+                )
                 objectAnimation.setObjectValues(model.worldPosition, stop)
                 objectAnimation.duration = 15000
                 //attackLooper(npc, model) TODO: Looping melee attack
                 Handler().postDelayed({
                     // Correct look direction towards player (again)
-                    model.setLookDirection(                        Vector3.subtract(
+                    attackLooperMelee(npc, model)
 
-                            model.worldPosition,
-                            playerAnchorNode.worldPosition
-                        )
-                    )
                 }, 15000)
-            }
-            else {
+            } else {
                 // If NPC is ranged, stop halfway
                 val rangedStartX = model.worldPosition.x
                 val rangedStartZ = model.worldPosition.z
                 val rangedStopX = playerAnchorNode.worldPosition.x
                 val rangedStopZ = playerAnchorNode.worldPosition.z
-                val newX = ((rangedStopX+rangedStartX)/2)
-                val newZ = ((rangedStopZ+rangedStartZ)/2)
-                val stop = Vector3(newX,model.worldPosition.y,newZ)
+                val newX = ((rangedStopX + rangedStartX) / 2)
+                val newZ = ((rangedStopZ + rangedStartZ) / 2)
+                val stop = Vector3(newX, model.worldPosition.y, newZ)
                 objectAnimation.setObjectValues(model.worldPosition, stop)
                 objectAnimation.duration = 7000
                 // Attack until attacker or target is dead
@@ -632,6 +650,32 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                         attackPlayer(npc, model)
                         cooldown = false
                     }, 7100)
+                }
+            }
+        }
+        thread.start()
+    }
+
+    fun attackLooperMelee(npc: NPC, model: TransformableNode) {
+        var cooldown = false
+        val thread = Thread {
+            while (npc.getStatus().isAlive && player.getStatus().isAlive) {
+                if (!cooldown) {
+                    cooldown = true
+                    model.setLookDirection(Vector3.forward())
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        model.setLookDirection(Vector3.forward())
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            model.setLookDirection(
+                                Vector3.subtract(
+                                    model.worldPosition,
+                                    playerAnchorNode.worldPosition
+                                )
+                            )
+                            npc.dealDamage(100.0, player)
+                        }, 1500)
+                        cooldown = false
+                    }, 6000)
                 }
             }
         }
@@ -784,12 +828,20 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         playground_remaining.text = text
     }
 
-    override fun onAbilityCast(caster: CombatControllable, target: CombatControllable, ability: Ability) {
+    override fun onAbilityCast(
+        caster: CombatControllable,
+        target: CombatControllable,
+        ability: Ability
+    ) {
         // create cast animation here
         // TODO: caster.model!!.getAnimationData("")
     }
 
-    override fun onAbilityHit(caster: CombatControllable, target: CombatControllable, ability: Ability) {
+    override fun onAbilityHit(
+        caster: CombatControllable,
+        target: CombatControllable,
+        ability: Ability
+    ) {
         // create being hit animation here
         // TODO: target.model!!.getAnimationData("")
     }
@@ -811,7 +863,10 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     override fun onCCDeath(cc: CombatControllable) {
         // TODO: Stop any pending animation here
         val totalNpcCount = NPCDataForLevels.getNPCForLevelCount(curLevel!!)
-        Log.d("NPCDED", "curLevel: $curLevel LevelOne.size: ${NPCDataForLevels.getNPCForLevelCount(curLevel!!)}")
+        Log.d(
+            "NPCDED",
+            "curLevel: $curLevel LevelOne.size: ${NPCDataForLevels.getNPCForLevelCount(curLevel!!)}"
+        )
         val npcsRemaining = totalNpcCount - spawnedNPCs.size
         if (cc == player) {
             Toast.makeText(this, "YOU DIED", Toast.LENGTH_LONG)
@@ -850,8 +905,11 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                                 }
                             }
                             // Level completed!
-                            Log.d("NPCDED", "npcAnchors.size: ${npcAnchors.size} npcsRemaining: $npcsRemaining, spawnedNpcs.count: ${spawnedNPCs.size}")
-                            if (npcAnchors.size == 0 && npcsRemaining == 0 ) {
+                            Log.d(
+                                "NPCDED",
+                                "npcAnchors.size: ${npcAnchors.size} npcsRemaining: $npcsRemaining, spawnedNpcs.count: ${spawnedNPCs.size}"
+                            )
+                            if (npcAnchors.size == 0 && npcsRemaining == 0) {
                                 Toast.makeText(this, "ALL DUCKS DEAD!", Toast.LENGTH_LONG)
                                     .show()
                                 Log.d("CURLEVEL", curLevel.toString())
