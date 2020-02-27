@@ -74,22 +74,22 @@ class NPCSpawnHandler(context: Context, level: Int, private val handler: Handler
         Looper.prepare()
         while (!stopped) {
             if (!paused) {
-                try {
-                    if (nextSpawn != null && first.id != previosSpawnId) {
-                        if (nextSpawn!! <= timer) {
-                            spawnNPC(first.type, first.spawnTime, npcs.size - 1, first.id)
+                if (scanning) {
+                    scanning = false
+                    try {
+                        if (nextSpawn != null && first.id != previosSpawnId) {
+                            if (nextSpawn!! <= timer) {
+                                spawnNPC(first.type, first.spawnTime, npcs.size - 1, first.id)
+                            }
                         }
-                        if (scanning) {
-                            scanning = false
-                            handler.postDelayed({
-                                Log.d("SHANDLER", "Timer value: $timer")
-                                scanning = true
-                                timer += 1000
-                            }, 1000)
-                        }
+                        handler.postDelayed({
+                            Log.d("SHANDLER", "Timer value: $timer")
+                            scanning = true
+                            timer += 1000
+                        }, 1000)
+                    } catch (error: Exception) {
+                        Log.d("SHANDLER", "$error")
                     }
-                } catch (error: Exception) {
-                    Log.d("SHANDLER", "$error")
                 }
             }
         }
