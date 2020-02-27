@@ -854,11 +854,14 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                             if (npcAnchors.size == 0 && npcsRemaining == 0 ) {
                                 Toast.makeText(this, "ALL DUCKS DEAD!", Toast.LENGTH_LONG)
                                     .show()
+                                Log.d("CURLEVEL", curLevel.toString())
                                 when (curLevel) {
                                     1 -> curLevel = 2
                                     2 -> curLevel = 10
                                     else -> curLevel = 1
                                 }
+                                Log.d("CURLEVEL", curLevel.toString())
+
                                 saver.edit().putInt("levelNum", curLevel!!).apply()
                                 callNextLevelFragment()
                             }

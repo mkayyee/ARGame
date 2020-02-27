@@ -39,10 +39,12 @@ class GameOverFragment : Fragment(), View.OnClickListener {
     override fun onClick (v: View) {
         when (v.id) {
             R.id.button_exit -> {
+                activity?.finish()
                 val intent = Intent(activity, MainActivity::class.java)  // HUOMIO !!!!
                 startActivity(intent)
             }
             R.id.button_new_game -> {
+                activity?.finish()
                 val intent = Intent(activity, GameActivityPlayground::class.java)  // HUOMIO !!!!
                 startActivity(intent)
              }
