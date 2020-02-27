@@ -446,40 +446,44 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             val hits: List<HitResult>
             if (frame != null && renderedPlayer != null) {
                 hits = frame.hitTest(pt.x.toFloat(), pt.y.toFloat() + 400)
+                var trackableWasPlane = false
                 for (hit in hits) {
-                    val trackable = hit.trackable
-                    if (trackable is Plane) {
-                        playerInScene = true
-                        playerAnchorPos = hit!!
-                        val playerAnchor = hit.createAnchor()
-                        playerAnchorNode = AnchorNode(playerAnchor)
+                    if (!trackableWasPlane) {
+                        val trackable = hit.trackable
+                        if (trackable is Plane) {
+                            trackableWasPlane = true
+                            playerInScene = true
+                            playerAnchorPos = hit!!
+                            val playerAnchor = hit.createAnchor()
+                            playerAnchorNode = AnchorNode(playerAnchor)
 //                        playerAnchorNode.localRotation =
 //                            Quaternion.axisAngle(Vector3(1f, 0f, 0f), 180f)
-                        anchorList.add(playerAnchorNode)
-                        playerAnchorNode.setParent(fragment.arSceneView.scene)
-                        playerNode = TransformableNode(fragment.transformationSystem)
-                        val forward = fragment.arSceneView.scene.camera.forward
-                        playerAnchorNode.setLookDirection(
-                            Vector3(
-                                -(forward.x),
-                                -(forward.y),
-                                -(forward.z)
+                            anchorList.add(playerAnchorNode)
+                            playerAnchorNode.setParent(fragment.arSceneView.scene)
+                            playerNode = TransformableNode(fragment.transformationSystem)
+                            val forward = fragment.arSceneView.scene.camera.forward
+                            playerAnchorNode.setLookDirection(
+                                Vector3(
+                                    -(forward.x),
+                                    -(forward.y),
+                                    -(forward.z)
+                                )
                             )
-                        )
-                        playerNode.scaleController.isEnabled = false
-                        playerNode.rotationController.isEnabled = false
-                        playerNode.setParent(playerAnchorNode)
-                        playerNode.renderable = renderedPlayer
-                        createHPBar(playerNode, hpRenderablePlayer, player)
+                            playerNode.scaleController.isEnabled = false
+                            playerNode.rotationController.isEnabled = false
+                            playerNode.setParent(playerAnchorNode)
+                            playerNode.renderable = renderedPlayer
+                            createHPBar(playerNode, hpRenderablePlayer, player)
 
-                        // update player look direction toward target if
-                        // player position changes during 0.5 seconds
-                        playerNode.setOnTouchListener { _, _ ->
-                            val oldPosition = playerNode.worldPosition
-                            Handler().postDelayed({
-                                if (playerNode.worldPosition != oldPosition)
-                                    updatePlayerRotation()
-                            }, 500)
+                            // update player look direction toward target if
+                            // player position changes during 0.5 seconds
+                            playerNode.setOnTouchListener { _, _ ->
+                                val oldPosition = playerNode.worldPosition
+                                Handler().postDelayed({
+                                    if (playerNode.worldPosition != oldPosition)
+                                        updatePlayerRotation()
+                                }, 500)
+                            }
                         }
                     }
                 }
@@ -688,55 +692,59 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                 val hits: List<HitResult>
                 if (frame != null) {
                     hits = frame.hitTest(pt.x.toFloat(), pt.y.toFloat())
+                    var trackableWasPlane = false
                     for (hit in hits) {
-                        val trackable = hit.trackable
-                        if (trackable is Plane) {
-                            val valuePool = (200..1200)
-                            val randX = valuePool.shuffled().first().toFloat()
-                            val randY = valuePool.shuffled().first().toFloat()
-                            Log.d("XYVALUES", randX.toString() + "  " + randY.toString())
-                            val anchor = (frame.hitTest(
-                                (pt.x.toFloat() - randX ),
-                                (pt.y.toFloat() + randY)
-                            ))[0].createAnchor()
-                            val anchorNode = AnchorNode(anchor)
-                            npcAnchors.add(NPCAnchorData(anchorNode, npc.getID()))
-                            npcsAlive.add(npc)
-                            playground_targetTxt.text = "Ducks alive ${npcsAlive.size}"
-                            anchorNode.setParent(fragment.arSceneView.scene)
-                            val node = TransformableNode(fragment.transformationSystem)
-                            node.scaleController.isEnabled = false
-                            node.rotationController.isEnabled = false
-                            node.setParent(anchorNode)
-                            node.renderable = npc.model
-                            node.localScale = Vector3(0.1f, 0.1f, 0.1f)
-                            if (npc.getID() == 100) {
-                                node.localScale = Vector3(0.4f, 0.4f, 0.4f)
-                            }
-                            createHPBar(node, hpRenderable, npc)
-                            randomMove(node, npc, type)
-                            node.setOnTouchListener { _, _ ->
-                                val oldPosition = node.worldPosition
-                                Handler().postDelayed({
-                                    if (node.worldPosition != oldPosition) {
-                                        if (playerTarget != null) {
-                                            val playerTargetNode = playerTarget!!.node
-                                            if (playerTargetNode != node) {
-                                                val playerTargetBar = playerTarget!!.healthBar!!
-                                                updateOldTargetHPBar(playerTargetBar)
+                        if (!trackableWasPlane) {
+                            val trackable = hit.trackable
+                            if (trackable is Plane) {
+                                trackableWasPlane = true
+                                val valuePool = (200..1200)
+                                val randX = valuePool.shuffled().first().toFloat()
+                                val randY = valuePool.shuffled().first().toFloat()
+                                Log.d("XYVALUES", randX.toString() + "  " + randY.toString())
+                                val anchor = (frame.hitTest(
+                                    (pt.x.toFloat() - randX),
+                                    (pt.y.toFloat() + randY)
+                                ))[0].createAnchor()
+                                val anchorNode = AnchorNode(anchor)
+                                npcAnchors.add(NPCAnchorData(anchorNode, npc.getID()))
+                                npcsAlive.add(npc)
+                                playground_targetTxt.text = "Ducks alive ${npcsAlive.size}"
+                                anchorNode.setParent(fragment.arSceneView.scene)
+                                val node = TransformableNode(fragment.transformationSystem)
+                                node.scaleController.isEnabled = false
+                                node.rotationController.isEnabled = false
+                                node.setParent(anchorNode)
+                                node.renderable = npc.model
+                                node.localScale = Vector3(0.1f, 0.1f, 0.1f)
+                                if (npc.getID() == 100) {
+                                    node.localScale = Vector3(0.4f, 0.4f, 0.4f)
+                                }
+                                createHPBar(node, hpRenderable, npc)
+                                randomMove(node, npc, type)
+                                node.setOnTouchListener { _, _ ->
+                                    val oldPosition = node.worldPosition
+                                    Handler().postDelayed({
+                                        if (node.worldPosition != oldPosition) {
+                                            if (playerTarget != null) {
+                                                val playerTargetNode = playerTarget!!.node
+                                                if (playerTargetNode != node) {
+                                                    val playerTargetBar = playerTarget!!.healthBar!!
+                                                    updateOldTargetHPBar(playerTargetBar)
+                                                }
                                             }
+                                            // set new target
+                                            val newTarget = PlayerTargetData(
+                                                node,
+                                                npc,
+                                                hpRenderable.view.textView_healthbar
+                                            )
+                                            playerTarget = newTarget
+                                            updateNewTargetHPBar(newTarget)
+                                            updatePlayerRotation()
                                         }
-                                        // set new target
-                                        val newTarget = PlayerTargetData(
-                                            node,
-                                            npc,
-                                            hpRenderable.view.textView_healthbar
-                                        )
-                                        playerTarget = newTarget
-                                        updateNewTargetHPBar(newTarget)
-                                        updatePlayerRotation()
-                                    }
-                                }, 250)
+                                    }, 250)
+                                }
                             }
                         }
                     }
