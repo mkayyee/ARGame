@@ -18,9 +18,14 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.util.toRange
 import androidx.core.view.isVisible
+import androidx.core.view.marginBottom
+import androidx.core.view.marginEnd
+import androidx.fragment.app.FragmentManager
 import androidx.preference.PreferenceManager
 import com.example.argame.Fragments.CustomArFragment
+import com.example.argame.Fragments.GameOverFragment
 import com.example.argame.Fragments.MenuFragmentController
+import com.example.argame.Fragments.NextLevelFragment
 import com.example.argame.Interfaces.FragmentCallbackListener
 import com.example.argame.Interfaces.PreferenceHelper.defaultPreference
 import com.example.argame.Interfaces.PreferenceHelper.setGson
@@ -48,6 +53,7 @@ import org.jetbrains.anko.doAsyncResult
 import org.jetbrains.anko.matchParent
 import java.sql.Time
 import kotlin.concurrent.thread
+import kotlin.math.absoluteValue
 import kotlin.math.atan
 import kotlin.math.pow
 
@@ -91,6 +97,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game_playground)
+        this.supportFragmentManager.popBackStack()
         fragment =
             supportFragmentManager.findFragmentById(R.id.playground_sceneform_fragment) as CustomArFragment
         //saver = defaultPreference(this)
@@ -110,7 +117,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         spawnHandler = NPCSpawnHandler(this, curLevel ?: 1, Handler())
 
         fragment.arSceneView.scene.addOnUpdateListener {
-            initSceneUpdateListener()
+            sceneUpdateListener()
         }
     }
 
@@ -157,7 +164,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         menuFragController.onButtonPressed(btn)
     }
 
-    private fun initSceneUpdateListener() {
+    private fun sceneUpdateListener() {
         val frame = fragment.arSceneView.arFrame
         val pt = getScreenCenter()
         val hits: List<HitResult>
@@ -198,6 +205,11 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                 spawnObjects()
                 spawnPlayer()
             }
+        }
+
+        val exitBtn = findViewById<Button>(R.id.playground_exitBtn)
+        exitBtn.setOnClickListener {
+            callGameOverFragment()
         }
         // MARK: Testing-abilities-related stuff
         playground_attackDuckBtn.setOnClickListener {
@@ -244,6 +256,26 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             .addToBackStack(null)
             .commit()
     }
+
+        private fun callGameOverFragment() {
+        // TODO: Move menu to *betweenlevelsActivity*
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.playground_main_menu_container, GameOverFragment())
+            .addToBackStack("game_over")
+            .commit()
+    }
+
+    private fun callNextLevelFragment() {
+        // TODO: Move menu to *betweenlevelsActivity*
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.playground_main_menu_container, NextLevelFragment())
+            .addToBackStack(null)
+            .commit()
+    }
+
+
 
     private fun initHPRenderables() {
         val renderableFuturePlayer = ViewRenderable.builder()
@@ -374,7 +406,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         hpNode.renderable = renderable
 
         if (node == playerNode) {
-            hpNode.localScale = Vector3(0.5f, 0.5f, 0.5f)
+            hpNode.localScale = Vector3(0.35f, 0.35f, 0.35f)
             hpNode.localPosition = Vector3(0f, 0.5f, 0f)
         } else {
             hpNode.localScale = Vector3(5f, 5f, 5f)
@@ -389,8 +421,10 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         for (anchor in npcAnchors) {
             removeAnchorNode(anchor.anchorNode)
         }
+        spawnedNPCs.clear()
         anchorList.clear()
         npcAnchors.clear()
+        npcsAlive.clear()
         ducksInScene = false
         playerInScene = false
     }
@@ -417,40 +451,45 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             val hits: List<HitResult>
             if (frame != null && renderedPlayer != null) {
                 hits = frame.hitTest(pt.x.toFloat(), pt.y.toFloat() + 400)
+                var trackableWasPlane = false
                 for (hit in hits) {
-                    val trackable = hit.trackable
-                    if (trackable is Plane) {
-                        playerInScene = true
-                        playerAnchorPos = hit!!
-                        val playerAnchor = hit.createAnchor()
-                        playerAnchorNode = AnchorNode(playerAnchor)
+                    if (!trackableWasPlane) {
+                        val trackable = hit.trackable
+                        if (trackable is Plane) {
+                            fragment.arSceneView.planeRenderer.isVisible = false
+                            trackableWasPlane = true
+                            playerInScene = true
+                            playerAnchorPos = hit!!
+                            val playerAnchor = hit.createAnchor()
+                            playerAnchorNode = AnchorNode(playerAnchor)
 //                        playerAnchorNode.localRotation =
 //                            Quaternion.axisAngle(Vector3(1f, 0f, 0f), 180f)
-                        anchorList.add(playerAnchorNode)
-                        playerAnchorNode.setParent(fragment.arSceneView.scene)
-                        playerNode = TransformableNode(fragment.transformationSystem)
-                        val forward = fragment.arSceneView.scene.camera.forward
-                        playerAnchorNode.setLookDirection(
-                            Vector3(
-                                -(forward.x),
-                                -(forward.y),
-                                -(forward.z)
+                            anchorList.add(playerAnchorNode)
+                            playerAnchorNode.setParent(fragment.arSceneView.scene)
+                            playerNode = TransformableNode(fragment.transformationSystem)
+                            val forward = fragment.arSceneView.scene.camera.forward
+                            playerAnchorNode.setLookDirection(
+                                Vector3(
+                                    -(forward.x),
+                                    -(forward.y),
+                                    -(forward.z)
+                                )
                             )
-                        )
-                        playerNode.scaleController.isEnabled = false
-                        playerNode.rotationController.isEnabled = false
-                        playerNode.setParent(playerAnchorNode)
-                        playerNode.renderable = renderedPlayer
-                        createHPBar(playerNode, hpRenderablePlayer, player)
+                            playerNode.scaleController.isEnabled = false
+                            playerNode.rotationController.isEnabled = false
+                            playerNode.setParent(playerAnchorNode)
+                            playerNode.renderable = renderedPlayer
+                            createHPBar(playerNode, hpRenderablePlayer, player)
 
-                        // update player look direction toward target if
-                        // player position changes during 0.5 seconds
-                        playerNode.setOnTouchListener { _, _ ->
-                            val oldPosition = playerNode.worldPosition
-                            Handler().postDelayed({
-                                if (playerNode.worldPosition != oldPosition)
-                                    updatePlayerRotation()
-                            }, 500)
+                            // update player look direction toward target if
+                            // player position changes during 0.5 seconds
+                            playerNode.setOnTouchListener { _, _ ->
+                                val oldPosition = playerNode.worldPosition
+                                Handler().postDelayed({
+                                    if (playerNode.worldPosition != oldPosition)
+                                        updatePlayerRotation()
+                                }, 500)
+                            }
                         }
                     }
                 }
@@ -474,7 +513,10 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         //tv?.text = model.getStatus().currentHealth.toString()
         val parent = tv?.parent as View
         val ratio = model.getStatus().currentHealth / model.getStatus().maxHealth
-        tv.layoutParams = LinearLayout.LayoutParams((parent.width * ratio).toInt(), matchParent)
+        val layOutParams = LinearLayout.LayoutParams((parent.width * ratio).toInt(), matchParent)
+        val currentMargin = tv.marginEnd
+        tv.layoutParams = layOutParams
+        layOutParams.setMargins(currentMargin, currentMargin, currentMargin, currentMargin)
         Log.d("width", " Parent width (${parent.width}) * ratio ($ratio) ${(parent.width * ratio).toInt()}")
         Log.d("width", tv.width.toString())
     }
@@ -548,8 +590,8 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                 //attackLooper(npc, model) TODO: Looping melee attack
                 Handler().postDelayed({
                     // Correct look direction towards player (again)
-                    model.setLookDirection(
-                        Vector3.subtract(
+                    model.setLookDirection(                        Vector3.subtract(
+
                             model.worldPosition,
                             playerAnchorNode.worldPosition
                         )
@@ -597,30 +639,34 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     }
 
     override fun notifyNPCSpawned(type: NPCType, remaining: Int, npcID: Int) {
-        lateinit var renderable: ModelRenderable
-        // get NPC model
-        val renderableFuture = ModelRenderable.builder()
-            .setSource(this, type.modelUri())
-            .build()
-        renderableFuture.thenAccept {
-            renderable = it
-            // create the NPC object when we have a ModelRenderable ready
-            val npcObject = type.getNPCObject(curLevel!!, renderable, npcID, this)
-            // spawn NPC
-            spawnNPC(npcObject, type)
-            // random debugs
-            val time = Time(System.currentTimeMillis())
-            Log.d(
-                "NPCSPAWN",
-                "NPC of type: ${type.name} spawned at: $time. NPC's remaining: $remaining"
-            )
-            for (index in spawnedNPCs.indices) {
-                Log.d("NPCSPAWN", "spawnedNPCs[$index]: ${spawnedNPCs[index]}")
-            }
-            if (remaining > 0) {
-                updateNPCRemainingText("NPCs spawning: $remaining")
-            } else {
-                updateNPCRemainingText("")
+        val ids = spawnedNPCs.filter { it.getID() == npcID }
+        val anchors = npcAnchors.filter { it.npcID == npcID }
+        if (ids.isEmpty() && anchors.isEmpty()) {
+            lateinit var renderable: ModelRenderable
+            // get NPC model
+            val renderableFuture = ModelRenderable.builder()
+                .setSource(this, type.modelUri())
+                .build()
+            renderableFuture.thenAccept {
+                renderable = it
+                // create the NPC object when we have a ModelRenderable ready
+                val npcObject = type.getNPCObject(curLevel!!, renderable, npcID, this)
+                // spawn NPC
+                spawnNPC(npcObject, type)
+                // random debugs
+                val time = Time(System.currentTimeMillis())
+                Log.d(
+                    "NPCSPAWN",
+                    "NPC of type: ${type.name} spawned at: $time. NPC's remaining: $remaining"
+                )
+                for (index in spawnedNPCs.indices) {
+                    Log.d("NPCSPAWN", "spawnedNPCs[$index]: ${spawnedNPCs[index]}")
+                }
+                if (remaining > 0) {
+                    updateNPCRemainingText("NPCs spawning: $remaining")
+                } else {
+                    updateNPCRemainingText("")
+                }
             }
         }
     }
@@ -652,55 +698,59 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                 val hits: List<HitResult>
                 if (frame != null) {
                     hits = frame.hitTest(pt.x.toFloat(), pt.y.toFloat())
+                    var trackableWasPlane = false
                     for (hit in hits) {
-                        val trackable = hit.trackable
-                        if (trackable is Plane) {
-                            val valuePool = (200..1200)
-                            val randX = valuePool.shuffled().first().toFloat()
-                            val randY = valuePool.shuffled().first().toFloat()
-                            Log.d("XYVALUES", randX.toString() + "  " + randY.toString())
-                            val anchor = (frame.hitTest(
-                                (pt.x.toFloat() - randX ),
-                                (pt.y.toFloat() + randY)
-                            ))[0].createAnchor()
-                            val anchorNode = AnchorNode(anchor)
-                            npcAnchors.add(NPCAnchorData(anchorNode, npc.getID()))
-                            npcsAlive.add(npc)
-                            playground_targetTxt.text = "Ducks alive ${npcsAlive.size}"
-                            anchorNode.setParent(fragment.arSceneView.scene)
-                            val node = TransformableNode(fragment.transformationSystem)
-                            node.scaleController.isEnabled = false
-                            node.rotationController.isEnabled = false
-                            node.setParent(anchorNode)
-                            node.renderable = npc.model
-                            node.localScale = Vector3(0.1f, 0.1f, 0.1f)
-                            if (npc.getID() == 100) {
-                                node.localScale = Vector3(0.4f, 0.4f, 0.4f)
-                            }
-                            createHPBar(node, hpRenderable, npc)
-                            randomMove(node, npc, type)
-                            node.setOnTouchListener { _, _ ->
-                                val oldPosition = node.worldPosition
-                                Handler().postDelayed({
-                                    if (node.worldPosition != oldPosition) {
-                                        if (playerTarget != null) {
-                                            val playerTargetNode = playerTarget!!.node
-                                            if (playerTargetNode != node) {
-                                                val playerTargetBar = playerTarget!!.healthBar!!
-                                                updateOldTargetHPBar(playerTargetBar)
+                        if (!trackableWasPlane) {
+                            val trackable = hit.trackable
+                            if (trackable is Plane) {
+                                trackableWasPlane = true
+                                val valuePool = (200..1200)
+                                val randX = valuePool.shuffled().first().toFloat()
+                                val randY = valuePool.shuffled().first().toFloat()
+                                Log.d("XYVALUES", randX.toString() + "  " + randY.toString())
+                                val anchor = (frame.hitTest(
+                                    (pt.x.toFloat() - randX),
+                                    (pt.y.toFloat() + randY)
+                                ))[0].createAnchor()
+                                val anchorNode = AnchorNode(anchor)
+                                npcAnchors.add(NPCAnchorData(anchorNode, npc.getID()))
+                                npcsAlive.add(npc)
+                                playground_targetTxt.text = "Ducks alive ${npcsAlive.size}"
+                                anchorNode.setParent(fragment.arSceneView.scene)
+                                val node = TransformableNode(fragment.transformationSystem)
+                                node.scaleController.isEnabled = false
+                                node.rotationController.isEnabled = false
+                                node.setParent(anchorNode)
+                                node.renderable = npc.model
+                                node.localScale = Vector3(0.1f, 0.1f, 0.1f)
+                                if (npc.getID() == 100) {
+                                    node.localScale = Vector3(0.4f, 0.4f, 0.4f)
+                                }
+                                createHPBar(node, hpRenderable, npc)
+                                randomMove(node, npc, type)
+                                node.setOnTouchListener { _, _ ->
+                                    val oldPosition = node.worldPosition
+                                    Handler().postDelayed({
+                                        if (node.worldPosition != oldPosition) {
+                                            if (playerTarget != null) {
+                                                val playerTargetNode = playerTarget!!.node
+                                                if (playerTargetNode != node) {
+                                                    val playerTargetBar = playerTarget!!.healthBar!!
+                                                    updateOldTargetHPBar(playerTargetBar)
+                                                }
                                             }
+                                            // set new target
+                                            val newTarget = PlayerTargetData(
+                                                node,
+                                                npc,
+                                                hpRenderable.view.textView_healthbar
+                                            )
+                                            playerTarget = newTarget
+                                            updateNewTargetHPBar(newTarget)
+                                            updatePlayerRotation()
                                         }
-                                        // set new target
-                                        val newTarget = PlayerTargetData(
-                                            node,
-                                            npc,
-                                            hpRenderable.view.textView_healthbar
-                                        )
-                                        playerTarget = newTarget
-                                        updateNewTargetHPBar(newTarget)
-                                        updatePlayerRotation()
-                                    }
-                                }, 250)
+                                    }, 250)
+                                }
                             }
                         }
                     }
@@ -761,11 +811,13 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     override fun onCCDeath(cc: CombatControllable) {
         // TODO: Stop any pending animation here
         val totalNpcCount = NPCDataForLevels.getNPCForLevelCount(curLevel!!)
+        Log.d("NPCDED", "curLevel: $curLevel LevelOne.size: ${NPCDataForLevels.getNPCForLevelCount(curLevel!!)}")
         val npcsRemaining = totalNpcCount - spawnedNPCs.size
         if (cc == player) {
             Toast.makeText(this, "YOU DIED", Toast.LENGTH_LONG)
                 .show()
             playerNode.localRotation = Quaternion(0f, 0f, 1f, 0f)
+            callGameOverFragment()
         } else {
             if (cc is NPC) {
                 npcsAlive.forEach {
@@ -798,9 +850,17 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                                 }
                             }
                             // Level completed!
+                            Log.d("NPCDED", "npcAnchors.size: ${npcAnchors.size} npcsRemaining: $npcsRemaining, spawnedNpcs.count: ${spawnedNPCs.size}")
                             if (npcAnchors.size == 0 && npcsRemaining == 0 ) {
                                 Toast.makeText(this, "ALL DUCKS DEAD!", Toast.LENGTH_LONG)
                                     .show()
+                                when (curLevel) {
+                                    1 -> curLevel = 2
+                                    2 -> curLevel = 10
+                                    else -> curLevel = 1
+                                }
+                                saver.edit().putInt("levelNum", curLevel!!).apply()
+                                callNextLevelFragment()
                             }
                             playground_targetTxt.text = "Ducks alive ${npcsAlive.size}"
                             removeAnchorNode(anchor.anchorNode)

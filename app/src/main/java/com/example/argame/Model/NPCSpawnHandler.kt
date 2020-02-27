@@ -18,7 +18,7 @@ import kotlin.math.sign
 class NPCSpawnHandler(context: Context, level: Int, private val handler: Handler) : Runnable {
 
     private var spawnCallback: NPCSpawnCallback
-    private lateinit var npcs: ArrayList<NPCSpawnData>
+    private lateinit var npcs: MutableList<NPCSpawnData>
     private var timer: Long = 0
     private var paused = false
     private var stopped = false
@@ -37,15 +37,15 @@ class NPCSpawnHandler(context: Context, level: Int, private val handler: Handler
         spawnCallback = context as NPCSpawnCallback
         when (level) {
             1 -> {
-                npcs = NPCDataForLevels.LevelOne.npcs
+                npcs = NPCDataForLevels.LevelOne.npcs.toMutableList()
                 first = npcs.first()
             }
             2 -> {
-                npcs = NPCDataForLevels.LevelTwo.npcs
+                npcs = NPCDataForLevels.LevelTwo.npcs.toMutableList()
                 first = npcs.first()
             }
             10 -> {
-                npcs = NPCDataForLevels.LevelTen.npcs
+                npcs = NPCDataForLevels.LevelTen.npcs.toMutableList()
                 first = npcs.first()
             }
         }
@@ -74,22 +74,22 @@ class NPCSpawnHandler(context: Context, level: Int, private val handler: Handler
         Looper.prepare()
         while (!stopped) {
             if (!paused) {
-                try {
-                    if (nextSpawn != null && first.id != previosSpawnId) {
-                        if (nextSpawn!! <= timer) {
-                            spawnNPC(first.type, first.spawnTime, npcs.size - 1, first.id)
+                if (scanning) {
+                    scanning = false
+                    try {
+                        if (nextSpawn != null && first.id != previosSpawnId) {
+                            if (nextSpawn!! <= timer) {
+                                spawnNPC(first.type, first.spawnTime, npcs.size - 1, first.id)
+                            }
                         }
-                        if (scanning) {
-                            scanning = false
-                            handler.postDelayed({
-                                Log.d("SHANDLER", "Timer value: $timer")
-                                scanning = true
-                                timer += 1000
-                            }, 1000)
-                        }
+                        handler.postDelayed({
+                            Log.d("SHANDLER", "Timer value: $timer")
+                            scanning = true
+                            timer += 1000
+                        }, 1000)
+                    } catch (error: Exception) {
+                        Log.d("SHANDLER", "$error")
                     }
-                } catch (error: Exception) {
-                    Log.d("SHANDLER", "$error")
                 }
             }
         }
