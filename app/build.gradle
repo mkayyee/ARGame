@@ -41,7 +41,6 @@ dependencies {
     implementation "org.jetbrains.anko:anko:$anko_version"
     implementation "androidx.preference:preference-ktx:1.1.0"
     implementation 'com.android.support:multidex:1.0.1'
-    implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'androidx.preference:preference:1.1.0'
     implementation "com.google.android.material:material:1.2.0-alpha04"
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -57,6 +56,12 @@ dependencies {
     implementation "com.google.ar.sceneform:animation:1.15.0"
     implementation "org.jetbrains.anko:anko:0.10.8"
 }
+
+sceneform.asset('sampledata/Crystal/Crystal.FBX',
+        'default',
+        'sampledata/Crystal/Crystal.sfa',
+        'src/main/assets/Crystal',
+        ['sampledata/Crystal/Crystal.FBX'])
 
 
 sceneform.asset('sampledata/Duck/duck.obj',
