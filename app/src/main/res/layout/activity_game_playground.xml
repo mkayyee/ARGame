@@ -28,7 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Start level"
-            android:alpha="0.75"
+            android:alpha="0.60"
             android:layout_marginBottom="20dp"/>
         <Button
             android:layout_margin="8dp"
@@ -36,7 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Level 1"
-            android:alpha="0.75"
+            android:alpha="0.60"
             android:layout_marginBottom="20dp"/>
         <Button
             android:layout_margin="8dp"
@@ -44,7 +44,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Clear Level"
-            android:alpha="0.75"
+            android:alpha="0.60"
             android:layout_marginBottom="20dp"/>
 
     </LinearLayout>
@@ -57,12 +57,13 @@
         android:gravity="top|right">
 
         <Button
-            android:layout_margin="8dp"
             android:id="@+id/playground_exitBtn"
-            android:layout_width="wrap_content"
+            android:layout_width="43dp"
             android:layout_height="wrap_content"
-            android:text="Exit"
-            android:alpha="0.75"/>
+            android:layout_margin="8dp"
+            android:alpha="0.60"
+            android:text="x"
+            app:cornerRadius="45dp" />
 
     </LinearLayout>
 
@@ -73,13 +74,13 @@
     android:layout_height="match_parent"
     android:gravity="center|right">
 
-    <Button
-
+    <ImageButton
         android:id="@+id/playground_attackDuckBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Attack"
-        android:alpha="0.75"
+        app:srcCompat="@drawable/attack_icon"
+        android:alpha="0.80"
+        android:background="null"
         android:layout_marginTop="400dp"
         android:layout_marginRight="10dp"/>
 
@@ -91,12 +92,13 @@
     android:layout_height="match_parent"
     android:gravity="center|left">
 
-    <Button
+    <ImageButton
         android:id="@+id/playground_beamDuckBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Beam"
-        android:alpha="0.75"
+        app:srcCompat="@drawable/beam_icon"
+        android:alpha="0.80"
+        android:background="null"
         android:layout_marginTop="400dp"
         android:layout_marginLeft="10dp"/>
 

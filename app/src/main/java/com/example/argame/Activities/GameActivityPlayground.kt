@@ -11,10 +11,7 @@ import android.util.Log
 import android.util.Log.wtf
 import android.view.View
 import android.view.animation.LinearInterpolator
-import android.widget.Button
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.core.content.ContextCompat
 import androidx.core.view.marginEnd
 import androidx.preference.PreferenceManager
@@ -186,8 +183,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         playground_attackDuckBtn.setOnClickListener {
             attackTarget()
         }
-
-        val beamBtn = findViewById<Button>(R.id.playground_beamDuckBtn)
+        val beamBtn = findViewById<ImageButton>(R.id.playground_beamDuckBtn)
         beamBtn.setOnClickListener {
             beamTarget()
         }

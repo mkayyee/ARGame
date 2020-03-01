@@ -3,7 +3,6 @@ package com.example.argame.Interfaces
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
-import com.google.gson.Gson
 
 object PreferenceHelper {
 
