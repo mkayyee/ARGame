@@ -1,14 +1,33 @@
 package com.example.argame.Model
 
 import android.net.Uri
+import androidx.room.TypeConverter
 
 /***
  *  Ability data, and animation name that will be used for calling an animation inside .fbx
  */
 
-enum class Ability {
+object AbilityConverter {
+    @TypeConverter
+    fun fromAbility(ability: Ability) : Int {
+        return ability.ordinal
+    }
+    @TypeConverter
+    fun toAbility(int: Int) : Ability {
+        return Ability.values()[int]
+    }
+}
+
+enum class Ability() {
     TEST,
     BEAM;
+
+    override fun toString(): String {
+        return when (this) {
+            TEST -> "Sphere"
+            BEAM -> "Beam"
+        }
+    }
 
     interface AbilityCallbackListener {
         fun onAbilityCast(caster: CombatControllable, target: CombatControllable, ability: Ability)

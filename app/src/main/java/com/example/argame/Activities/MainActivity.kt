@@ -1,11 +1,16 @@
 package com.example.argame.Activities
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import com.example.argame.Fragments.MenuFragmentController
 import com.example.argame.Interfaces.FragmentCallbackListener
+import com.example.argame.Model.*
 import com.example.argame.R
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.doAsyncResult
 
 class MainActivity : AppCompatActivity(), FragmentCallbackListener {
 
@@ -15,6 +20,7 @@ class MainActivity : AppCompatActivity(), FragmentCallbackListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         initMenuContainer()
+        addTestStuffRoom()
     }
 
     private fun initMenuContainer() {
@@ -22,6 +28,19 @@ class MainActivity : AppCompatActivity(), FragmentCallbackListener {
             .add(R.id.main_menu_container, menuFragController)
             .addToBackStack(null)
             .commit()
+    }
+
+    private fun addTestStuffRoom() {
+        val test = AbilityConverter.fromAbility(Ability.TEST)
+        val beam = AbilityConverter.fromAbility(Ability.BEAM)
+        val context: Context = this
+        val db = AppDatabase.get(context)
+        doAsync {
+            db.userDao().insert(User(1, "mikael"))
+            db.abilitiesDao().insertAbility(Entities.SelectableAbility(test))
+            db.abilitiesDao().insertAbility(Entities.SelectableAbility(beam))
+            db.abilitiesDao().selectAbility(1, test)
+        }
     }
 
 

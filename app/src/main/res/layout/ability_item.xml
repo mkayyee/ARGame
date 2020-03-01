@@ -12,9 +12,22 @@
     <TextView
         android:id="@+id/ability_name"
         android:textSize="20sp"
+        android:layout_centerVertical="true"
         android:gravity="center_horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Ability1" />
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:gravity="end"
+        >
+        <Button
+            android:id="@+id/button_select"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Remove" />
+    </LinearLayout>
 
 </RelativeLayout>
