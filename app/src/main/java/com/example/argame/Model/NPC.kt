@@ -9,7 +9,7 @@ class NPC(ap: Double,
           name: String,
           startHealth: Double,
           model: ModelRenderable? = null,
-          type: NPCType,
+          private var type: NPCType,
           private var id: Int,
           context: Context,
           private var hpBar: ViewRenderable? = null)
@@ -17,6 +17,10 @@ class NPC(ap: Double,
 
     fun getID() : Int{
         return id
+    }
+
+    fun getType() : NPCType{
+        return type
     }
 
     fun setHPRenderable(renderable: ViewRenderable) {
