@@ -92,7 +92,6 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         initHPRenderables()
         playground_targetTxt.text = "Ducks alive ${npcsAlive.size}"
         spawnHandler = NPCSpawnHandler(this, curLevel ?: 1, Handler())
-
     }
 
     override fun onPause() {
@@ -186,22 +185,18 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         levelButton.setOnClickListener {
             when (curLevel) {
                 1 -> {
-                    levelButton.text = "Level 2"
                     curLevel = 2
-                    spawnHandler = NPCSpawnHandler(this, curLevel ?: 1, Handler())
                 }
                 2 -> {
-                    levelButton.text = "Level 10"
                     curLevel = 10
-                    spawnHandler = NPCSpawnHandler(this, curLevel ?: 1, Handler())
                 }
                 else -> {
-                    levelButton.text = "Level 1"
                     curLevel = 1
-                    spawnHandler = NPCSpawnHandler(this, curLevel ?: 1, Handler())
 
                 }
             }
+            spawnHandler = NPCSpawnHandler(this, curLevel ?: 1, Handler())
+            levelButton.text = "Level " + curLevel
         }
         // Update current level view
         findViewById<Button>(R.id.playground_toggleLevel).text = "Level " + curLevel.toString()
