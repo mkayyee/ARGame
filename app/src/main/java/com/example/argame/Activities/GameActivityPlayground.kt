@@ -373,6 +373,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     }
 
     private fun mainSpawner(spawnable: Any) {
+        Log.d("mainSpawner", "CALLED")
 
         // Init vars
         var ableToSpawn = false
@@ -393,19 +394,11 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             ableToSpawn = true
         }
         if (spawnable is NPC) {
-            val renderableFutureNPC = ViewRenderable.builder()
-                .setView(this, R.layout.healthbar)
-                .build()
-            renderableFutureNPC.thenAccept {
-                hpRenderableNPC = it
-            }
             val ids = spawnedNPCs.filter { it.getID() == spawnable.getID() }
             val checkAnchors = npcAnchors.filter { it.npcID == spawnable.getID() }
-            if (ids.isEmpty() && checkAnchors.isEmpty() && hpRenderableNPC != null) {
-                Log.d("mainSpawner", "NPC IS SPAWNABLE")
+            if (ids.isEmpty() && checkAnchors.isEmpty()) {
                 render = spawnable.model!!
                 spawnedNPCs.add(spawnable)
-                hpRenderable = hpRenderableNPC!!
                 ableToSpawn = true
             }
         }
@@ -447,6 +440,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                                 //PLAYER POST SPAWN CODE
                                 playerNode = node
                                 playerAnchorNode = anchorNode
+                                createHPBar(node, hpRenderable)
                                 node.setOnTouchListener { _, _ ->
                                     val oldPosition = playerNode.worldPosition
                                     Handler().postDelayed({
@@ -457,7 +451,16 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                             }
                             if (spawnable is NPC) {
                                 // NPC POST SPAWN CODE
-                                spawnable.setHPRenderable(hpRenderable)
+                                val renderableFutureNPC = ViewRenderable.builder()
+                                    .setView(this, R.layout.healthbar)
+                                    .build()
+                                renderableFutureNPC.thenAccept {
+                                    hpRenderableNPC = it
+                                    hpRenderable = it
+                                    spawnable.setHPRenderable(hpRenderable)
+                                    createHPBar(node, hpRenderable)
+                                    Log.d("mainSpawner", "BUILT")
+                                }
                                 npcAnchors.add(NPCAnchorData(anchorNode, spawnable.getID()))
                                 npcsAlive.add(spawnable)
                                 playground_targetTxt.text = "Ducks alive ${npcsAlive.size}"
@@ -494,7 +497,6 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                                 }
                             }
                             // Create and add HP bars after everything else
-                            createHPBar(node, hpRenderable)
                         }
                     }
                 }
