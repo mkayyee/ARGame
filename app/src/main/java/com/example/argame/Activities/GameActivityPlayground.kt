@@ -66,7 +66,6 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
 
     private lateinit var saver: SharedPreferences
     private var curLevel: Int? = null
-    private var newLevel: Int? = null
 
     // Spawning NPC's
     private lateinit var spawnHandler: NPCSpawnHandler
@@ -86,7 +85,6 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         }
         saver = PreferenceManager.getDefaultSharedPreferences(this)
         curLevel = saver.getInt("levelNum", 1)
-        //newLevel = Level(this).createLevel()
 
         initButtons()
         prepareModels()
@@ -164,7 +162,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     private fun initButtons() {
 
         playground_spawnBtn.setOnClickListener {
-            if (newLevel != null && !playerInScene) {
+            if (curLevel != null && !playerInScene) {
                 spawnObjects()
                 mainSpawner(player)
             }
