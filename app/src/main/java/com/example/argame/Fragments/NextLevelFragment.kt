@@ -1,6 +1,5 @@
 package com.example.argame.Fragments
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,10 +10,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.example.argame.Activities.GameActivityPlayground
 import com.example.argame.Activities.MainActivity
+import com.example.argame.Fragments.Abilities.AbilityMenuFragment
 import com.example.argame.Interfaces.FragmentCallbackListener
 import com.example.argame.R
-import kotlinx.android.synthetic.main.menu_game_over.*
-import kotlinx.android.synthetic.main.profile.*
 
 /***
  *  Fragment for the User profile.
@@ -55,7 +53,8 @@ class NextLevelFragment(val fragManager: FragmentManager) : Fragment(), View.OnC
                 startActivity(intent)
             }
             R.id.button_select_abilities -> {
-                val fragment = AbilityMenuFragment()
+                val fragment =
+                    AbilityMenuFragment(v.context)
                 fragManager.beginTransaction()
                     .replace(R.id.playground_main_menu_container, fragment)
                     .addToBackStack(null)

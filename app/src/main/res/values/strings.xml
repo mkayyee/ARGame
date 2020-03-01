@@ -17,4 +17,6 @@
     <string name="next_level">Next Level</string>
     <string name="game_over">Game Over</string>
     <string name="level_completed">Level Completed!</string>
+    <string name="btn_add">Add</string>
+    <string name="btn_remove">Remove</string>
 </resources>

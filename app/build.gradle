@@ -6,6 +6,8 @@ apply plugin: 'kotlin-android-extensions'
 
 apply plugin: 'com.google.ar.sceneform.plugin'
 
+apply plugin: "kotlin-kapt"
+
 android {
     compileSdkVersion 29
     compileOptions {
@@ -37,6 +39,9 @@ android {
     }
 }
 
+def room_version = "2.2.3"
+def lifecycle_version = "2.1.0"
+
 dependencies {
     implementation "org.jetbrains.anko:anko:$anko_version"
     implementation "androidx.preference:preference-ktx:1.1.0"
@@ -55,6 +60,19 @@ dependencies {
     implementation 'com.google.ar.sceneform.ux:sceneform-ux:1.15.0'
     implementation "com.google.ar.sceneform:animation:1.15.0"
     implementation "org.jetbrains.anko:anko:0.10.8"
+
+    implementation "android.arch.persistence.room:runtime:1.1.1"
+    implementation "android.arch.lifecycle:extensions:1.1.1"
+    kapt "android.arch.persistence.room:compiler:1.1.1"
+    kapt "android.arch.lifecycle:compiler:1.1.1"
+    implementation "androidx.room:room-runtime:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
+    implementation 'androidx.room:room-runtime:2.2.4'
+    annotationProcessor 'androidx.room:room-compiler:2.2.4'
+    implementation "android.arch.lifecycle:extensions:$lifecycle_version"
+    implementation "android.arch.lifecycle:runtime:$lifecycle_version"
+    implementation 'androidx.room:room-runtime:2.2.4'
+    annotationProcessor 'androidx.room:room-compiler:2.2.4'
 }
 
 sceneform.asset('sampledata/Crystal/Crystal.FBX',

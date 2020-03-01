@@ -1,6 +1,7 @@
 package com.example.argame.Activities
 
 import android.animation.ObjectAnimator
+import android.animation.TimeInterpolator
 import android.content.SharedPreferences
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
@@ -354,6 +355,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         anchorList.clear()
         npcAnchors.clear()
         npcsAlive.clear()
+        allNPChaveSpawned = false
         ducksInScene = false
         playerInScene = false
     }
