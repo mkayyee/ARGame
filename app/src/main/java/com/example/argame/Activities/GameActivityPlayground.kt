@@ -86,7 +86,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         }
         saver = PreferenceManager.getDefaultSharedPreferences(this)
         curLevel = saver.getInt("levelNum", 1)
-        newLevel = Level(this).createLevel()
+        //newLevel = Level(this).createLevel()
 
         initButtons()
         prepareModels()
@@ -114,8 +114,8 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         super.onResume()
         curLevel = saver.getInt("levelNum", 1)
         spawnHandler.resume()
-
         // TODO: Restore level and abilities
+
     }
 
     override fun onButtonPressed(btn: Button) {
@@ -163,29 +163,24 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
 
     private fun initButtons() {
 
-        val spawnBtn = findViewById<Button>(R.id.playground_spawnBtn)
-        spawnBtn.setOnClickListener {
+        playground_spawnBtn.setOnClickListener {
             if (newLevel != null && !playerInScene) {
                 spawnObjects()
                 mainSpawner(player)
-                //spawnPlayer()
             }
         }
 
-        val exitBtn = findViewById<Button>(R.id.playground_exitBtn)
-        exitBtn.setOnClickListener {
+        playground_exitBtn.setOnClickListener {
             callFragment("GameOver")
         }
         // MARK: Testing-abilities-related stuff
         playground_attackDuckBtn.setOnClickListener {
             attackTarget()
         }
-        val beamBtn = findViewById<ImageButton>(R.id.playground_beamDuckBtn)
-        beamBtn.setOnClickListener {
+        playground_beamDuckBtn.setOnClickListener {
             beamTarget()
         }
-        val destroyBtn = findViewById<Button>(R.id.playground_destroyBtn)
-        destroyBtn.setOnClickListener {
+        playground_destroyBtn.setOnClickListener {
             clearModels()
         }
 
@@ -345,7 +340,6 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         val hpNode = Node()
         hpNode.setParent(node)
         hpNode.renderable = renderable
-        Log.d("mainSpawner", "Creating HPBar for: " + node.toString())
 
         if (node == playerNode) {
             hpNode.localScale = Vector3(0.35f, 0.35f, 0.35f)
@@ -382,7 +376,6 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             }
             val rotation = AnimationAPI.calculateNewRotation(playerPos, targetPos)
             playerNode.localRotation = Quaternion(0f, rotation.x, 0f, rotation.z)
-
         }
     }
 
@@ -535,7 +528,6 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     }
 
     private fun updateHPBar(tv: TextView?, model: CombatControllable) {
-        //tv?.text = model.getStatus().currentHealth.toString()
         val parent = tv?.parent as View
         val ratio = model.getStatus().currentHealth / model.getStatus().maxHealth
         val layOutParams = LinearLayout.LayoutParams((parent.width * ratio).toInt(), matchParent)
@@ -651,7 +643,6 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             objectAnimation.interpolator = LinearInterpolator()
             objectAnimation.start()
         }, 3500)
-
     }
 
     fun attackLooper(npc: NPC, model: TransformableNode) {
@@ -738,7 +729,6 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         allNPChaveSpawned = true
     }
 
-
     private fun updateOldTargetHPBar(hpBar: TextView) {
         val parent = hpBar.parent as View
         parent.background =
@@ -746,8 +736,6 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                 this,
                 R.drawable.healthbar_nontarget_background
             )
-        // clear old target hp text
-        //hpBar.text = ""
     }
 
     private fun updateNewTargetHPBar(targetData: PlayerTargetData) {
@@ -757,7 +745,6 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                 this,
                 R.drawable.healthbar_background
             )
-        //playerTarget!!.healthBar?.text = targetData.model.getStatus().currentHealth.toString()
     }
 
     private fun updateNPCRemainingText(text: String) {
