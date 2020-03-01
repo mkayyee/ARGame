@@ -80,7 +80,7 @@
         android:layout_height="wrap_content"
         app:srcCompat="@drawable/attack_icon"
         android:alpha="0.80"
-        android:background="null"
+        android:background="@android:color/transparent"
         android:layout_marginTop="400dp"
         android:layout_marginRight="10dp"/>
 
@@ -98,7 +98,7 @@
         android:layout_height="wrap_content"
         app:srcCompat="@drawable/beam_icon"
         android:alpha="0.80"
-        android:background="null"
+        android:background="@android:color/transparent"
         android:layout_marginTop="400dp"
         android:layout_marginLeft="10dp"/>
 

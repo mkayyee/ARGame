@@ -14,6 +14,7 @@ import android.view.animation.LinearInterpolator
 import android.widget.*
 import androidx.core.content.ContextCompat
 import androidx.core.view.marginEnd
+import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import com.example.argame.Fragments.CustomArFragment
 import com.example.argame.Fragments.GameOverFragment
@@ -61,7 +62,6 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     var ducksInScene = false
     var playerInScene = false
 
-
     // SHAREDPREFERENCE
 
     private lateinit var saver: SharedPreferences
@@ -76,12 +76,9 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     private var npcAnchors = arrayListOf<NPCAnchorData>()
     private var allNPChaveSpawned = false
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game_playground)
-
-        this.supportFragmentManager.popBackStack()
         fragment =
             supportFragmentManager.findFragmentById(R.id.playground_sceneform_fragment) as CustomArFragment
         fragment.arSceneView.scene.addOnUpdateListener {
@@ -124,7 +121,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
 
     override fun onButtonPressed(btn: Button) {
         if (btn.id == button_close_ability_menu.id) {
-            callNextLevelFragment()
+            callFragment("NextLevel")
         } else {
             // The callback's are forwarded to MenuFragmentController,
             // that handles all the logic for these events
@@ -177,7 +174,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
 
         val exitBtn = findViewById<Button>(R.id.playground_exitBtn)
         exitBtn.setOnClickListener {
-            callGameOverFragment()
+            callFragment("GameOver")
         }
         // MARK: Testing-abilities-related stuff
         playground_attackDuckBtn.setOnClickListener {
@@ -213,35 +210,23 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                 }
             }
         }
-        //findViewById<Button>(R.id.playground_toggleLevel).text = "Level " + curLevel.toString()
+        // Update current level view
+        findViewById<Button>(R.id.playground_toggleLevel).text = "Level " + curLevel.toString()
     }
 
-    private fun callMenuFragment() {
-        // TODO: Move menu to *betweenlevelsActivity*
+    private fun callFragment(fragmentName: String) {
+        val fragmentToGet = when(fragmentName) {
+            "NextLevel" -> NextLevelFragment(supportFragmentManager)
+            else -> GameOverFragment()
+        } as Fragment
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.playground_main_menu_container, MenuFragmentController())
+            .replace(R.id.playground_main_menu_container, fragmentToGet)
             .addToBackStack(null)
             .commit()
     }
 
-    private fun callGameOverFragment() {
-        // TODO: Move menu to *betweenlevelsActivity*
-        supportFragmentManager
-            .beginTransaction()
-            .replace(R.id.playground_main_menu_container, GameOverFragment())
-            .addToBackStack("game_over")
-            .commit()
-    }
 
-    private fun callNextLevelFragment() {
-        // TODO: Move menu to *betweenlevelsActivity*
-        supportFragmentManager
-            .beginTransaction()
-            .replace(R.id.playground_main_menu_container, NextLevelFragment(supportFragmentManager))
-            .addToBackStack(null)
-            .commit()
-    }
 
 
     private fun initHPRenderables() {
@@ -824,7 +809,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             Toast.makeText(this, "YOU DIED", Toast.LENGTH_LONG)
                 .show()
             playerNode.localRotation = Quaternion(0f, 0f, 1f, 0f)
-            callGameOverFragment()
+            callFragment("GameOver")
         } else {
             if (cc is NPC) {
                 npcsAlive.forEach {
@@ -873,7 +858,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                                 Log.d("CURLEVEL", curLevel.toString())
 
                                 saver.edit().putInt("levelNum", curLevel!!).apply()
-                                callNextLevelFragment()
+                                callFragment("NextLevel")
                             }
                             playground_targetTxt.text = "Ducks alive ${npcsAlive.size}"
                             removeAnchorNode(anchor.anchorNode)
