@@ -2,7 +2,9 @@ package com.example.argame.Activities
 
 import android.animation.ObjectAnimator
 import android.content.SharedPreferences
+import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.opengl.Visibility
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
@@ -13,6 +15,7 @@ import android.view.View
 import android.view.animation.LinearInterpolator
 import android.widget.*
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.core.view.marginEnd
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
@@ -44,7 +47,10 @@ import com.google.ar.sceneform.ux.TransformableNode
 import kotlinx.android.synthetic.main.activity_game_playground.*
 import kotlinx.android.synthetic.main.activity_level_intermission.*
 import kotlinx.android.synthetic.main.healthbar.view.*
+import org.jetbrains.anko.backgroundResource
+import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.matchParent
+import java.net.URI
 import java.sql.Time
 import kotlin.math.pow
 
@@ -68,6 +74,8 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     private lateinit var player: Player
     var ducksInScene = false
     var playerInScene = false
+    val cdHandler = Handler(Looper.getMainLooper())
+
 
     // SHAREDPREFERENCE
 
@@ -255,6 +263,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         // disable attack button for the animation duration
         if (playerTarget != null) {
             playground_attackDuckBtn.isEnabled = false
+            playground_attackDuckBtn_cd.isEnabled = true
             val ability = Ability.TEST
             val animData =
                 ProjectileAnimationData(
@@ -265,6 +274,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                     fragment,
                     ability.uri()
                 )
+            doAsync { doCooldown(playground_attackDuckBtn_cd) }
             // cancel the current animation if any
             cancelAnimator(player)
             // the cast animation data (related to the caster's 3d model, not the projectile)
@@ -273,10 +283,52 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             player.useAbility(ability, playerTarget!!.model, animData) {
                 playground_attackDuckBtn.isEnabled = true
             }
+
+            //playground_beamDuckBtn_cd.visibility = View.
         } else {
             Toast.makeText(this, "You don't have a target", Toast.LENGTH_SHORT).show()
         }
     }
+
+    private fun doCooldown(cdView: TextView) {
+        Log.d("cooldown", "yes")
+        val totalTime = ABILITY_PROJECTILE_SPEED
+        var timePassed = 0.toLong()
+        var cycle = 0.toLong()
+        var update = true
+        var cooldown = true
+        while (cooldown) {
+            if (update) {
+            if (totalTime - timePassed >= cycle) {
+                    Log.d("cooldown", "ROUND")
+                    update = false
+                    cdHandler.postDelayed({
+                      runOnUiThread {
+                            cdView.visibility = View.VISIBLE
+                            cdView.text =
+                                (ABILITY_PROJECTILE_SPEED - timePassed).toString()
+                        }
+                        if (cycle == 0.toLong()) {
+                            cycle = 500.toLong()
+                        }
+                        timePassed += cycle
+                        update = true
+                    }, cycle)
+                } else {
+                Log.d("cooldown", "WHILE OVER")
+
+                cooldown = false
+            }
+            }
+        }
+        cdHandler.postDelayed({
+        runOnUiThread {
+            cdView.visibility = View.INVISIBLE
+            cdView.text = ""
+        }
+        }, cycle)
+        }
+
 
     private fun cancelAnimator(cc: CombatControllable) {
         val animator = cc.getModelAnimator()
@@ -320,6 +372,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                 fragment,
                 beam.uri()
             )
+            doAsync { doCooldown(playground_beamDuckBtn_cd) }
             player.setModelAnimator(ModelAnimator(attackAnimationData, player.model))
             player.useAbility(beam, playerTarget!!.model, data) {
                 // should do code below in onCCDamaged()

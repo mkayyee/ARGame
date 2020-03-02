@@ -68,11 +68,18 @@
     </LinearLayout>
 
 
+
     <LinearLayout
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center|right">
+    android:gravity="center|right"
+    android:layout_marginTop="400dp"
+    android:layout_marginRight="10dp">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
     <ImageButton
         android:id="@+id/playground_attackDuckBtn"
@@ -81,8 +88,23 @@
         app:srcCompat="@drawable/attack_icon"
         android:alpha="0.80"
         android:background="@android:color/transparent"
-        android:layout_marginTop="400dp"
-        android:layout_marginRight="10dp"/>
+       />
+
+        <TextView
+            android:id="@+id/playground_attackDuckBtn_cd"
+            android:layout_alignParentTop="true"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:background="#BF202421"
+            android:visibility="invisible"
+            android:text="10"
+            android:textSize="30dp"
+            android:textStyle="bold"
+            android:textColor="#FFF"
+            android:gravity="center"
+            />
+
+        </RelativeLayout>
 
 </LinearLayout>
 
@@ -90,17 +112,37 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginTop="400dp"
+    android:layout_marginLeft="10dp"
     android:gravity="center|left">
 
-    <ImageButton
-        android:id="@+id/playground_beamDuckBtn"
+    <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@drawable/beam_icon"
-        android:alpha="0.80"
-        android:background="@android:color/transparent"
-        android:layout_marginTop="400dp"
-        android:layout_marginLeft="10dp"/>
+        android:layout_height="wrap_content">
+
+        <ImageButton
+            android:id="@+id/playground_beamDuckBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/beam_icon"
+            android:alpha="0.80"
+         />
+
+        <TextView
+            android:id="@+id/playground_beamDuckBtn_cd"
+            android:visibility="invisible"
+            android:layout_alignParentTop="true"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:background="#BF202421"
+            android:text="10"
+            android:textSize="30dp"
+            android:textStyle="bold"
+            android:textColor="#FFF"
+            android:gravity="center"
+            />
+
+        </RelativeLayout>
 
 </LinearLayout>
 
