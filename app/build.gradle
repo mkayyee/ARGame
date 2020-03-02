@@ -73,6 +73,7 @@ dependencies {
     implementation "android.arch.lifecycle:runtime:$lifecycle_version"
     implementation 'androidx.room:room-runtime:2.2.4'
     annotationProcessor 'androidx.room:room-compiler:2.2.4'
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.17'
 }
 
 sceneform.asset('sampledata/Crystal/Crystal.FBX',

@@ -1,5 +1,6 @@
 package com.example.argame.Interfaces
 
+import android.content.Context
 import android.graphics.Color
 import android.net.Uri
 import android.os.Handler
@@ -8,12 +9,14 @@ import com.example.argame.Model.ABILITY_PROJECTILE_SPEED
 import com.example.argame.Model.Ability.Ability
 import com.example.argame.Model.AnimationAPI
 import com.example.argame.Model.Ability.ProjectileAnimationData
+import com.example.argame.R
 import com.google.ar.sceneform.Scene
 import com.google.ar.sceneform.animation.ModelAnimator
 import com.google.ar.sceneform.math.Vector3
 import com.google.ar.sceneform.rendering.MaterialFactory
 import com.google.ar.sceneform.rendering.ModelRenderable
 import com.google.ar.sceneform.rendering.ShapeFactory
+import com.google.ar.sceneform.rendering.ViewRenderable
 import com.google.ar.sceneform.ux.TransformableNode
 
 /***
@@ -73,36 +76,48 @@ interface ProjectileAnimator {
             }
     }
 
-    private fun instantiateNodeInScene(
-        projAnimData: ProjectileAnimationData,
-        renderable: ModelRenderable,
-        cb: () -> Unit,
-        isBeam: Boolean = false) {
+    private fun initAbilityAnimationRenderable(context: Context, cb: (ViewRenderable) -> Unit) {
+        val renderableFutureAbility = ViewRenderable.builder()
+            .setView(context, R.layout.ability_animation)
+            .build()
+        renderableFutureAbility.thenAccept {
+            cb(it)
+        }
+    }
 
-        val node = TransformableNode(projAnimData.fragment.transformationSystem)
-        val scene = projAnimData.fragment.arSceneView.scene
-        node.renderable = renderable
-        scene.addChild(node)
-        if (!isBeam) {
-            node.localScale = Vector3(0.02f, 0.02f, 0.02f)
-            animateProjectile(projAnimData, node) {
+    private fun instantiateNodeInScene(projAnimData: ProjectileAnimationData, renderable: ModelRenderable,
+        cb: () -> Unit, isBeam: Boolean = false) {
+
+        initAbilityAnimationRenderable(projAnimData.context) {animation ->
+            //val node = TransformableNode(projAnimData.fragment.transformationSystem)
+            val animationNode = TransformableNode(projAnimData.fragment.transformationSystem)
+            val scene = projAnimData.fragment.arSceneView.scene
+            animation.isShadowCaster = false
+            //node.renderable = renderable
+            animationNode.renderable = animation
+            scene.addChild(animationNode)
+            //node.addChild(animationNode)
+            if (!isBeam) {
+                //node.localScale = Vector3(0.02f, 0.02f, 0.02f)
+                animateProjectile(projAnimData, animationNode) {
+                    Handler().postDelayed({
+                        cb()
+                        deleteProjectile(animationNode, projAnimData.fragment.arSceneView.scene)
+                    }, ABILITY_PROJECTILE_SPEED)
+                }
+            } else {
+                val casterPos = projAnimData.startPos
+                val targetPos = projAnimData.endPos
+                AnimationAPI.stretchModel(casterPos, targetPos, animationNode)
+                //val length = (targetPos.y - casterPos.y).pow(2f) + (targetPos.x - casterPos.x).pow(2f)
+                //node.localScale = Vector3(0.1f, 0.1f, length)
+                // node.localPosition = Vector3(targetPos.y - casterPos.y, 0.5f, targetPos.x - casterPos.x)
+                // node.localRotation = Quaternion.rotationBetweenVectors(casterPos, targetPos)
                 Handler().postDelayed({
                     cb()
-                    deleteProjectile(node, projAnimData.fragment.arSceneView.scene)
+                    deleteProjectile(animationNode, projAnimData.fragment.arSceneView.scene)
                 }, ABILITY_PROJECTILE_SPEED)
             }
-        } else {
-            val casterPos = projAnimData.startPos
-            val targetPos = projAnimData.endPos
-            AnimationAPI.stretchModel(casterPos, targetPos, node)
-            //val length = (targetPos.y - casterPos.y).pow(2f) + (targetPos.x - casterPos.x).pow(2f)
-            //node.localScale = Vector3(0.1f, 0.1f, length)
-            // node.localPosition = Vector3(targetPos.y - casterPos.y, 0.5f, targetPos.x - casterPos.x)
-            // node.localRotation = Quaternion.rotationBetweenVectors(casterPos, targetPos)
-            Handler().postDelayed({
-                cb()
-                deleteProjectile(node, projAnimData.fragment.arSceneView.scene)
-            }, ABILITY_PROJECTILE_SPEED)
         }
     }
 
