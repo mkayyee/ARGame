@@ -1,4 +1,4 @@
-package com.example.argame.Model
+package com.example.argame.Model.CombatControllable
 
 data class CombatControllableStatus(
     val isAlive: Boolean,

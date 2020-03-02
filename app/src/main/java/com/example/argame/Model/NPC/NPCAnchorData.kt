@@ -1,4 +1,4 @@
-package com.example.argame.Model
+package com.example.argame.Model.NPC
 
 import com.google.ar.sceneform.AnchorNode
 

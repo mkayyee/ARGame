@@ -1,4 +1,4 @@
-package com.example.argame.Model
+package com.example.argame.Model.Ability
 
 import android.content.Context
 import android.net.Uri

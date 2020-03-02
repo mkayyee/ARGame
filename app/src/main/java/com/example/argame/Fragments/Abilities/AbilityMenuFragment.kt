@@ -1,20 +1,16 @@
 package com.example.argame.Fragments.Abilities
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import androidx.annotation.UiThread
 import androidx.core.view.forEach
 import androidx.fragment.app.Fragment
-import androidx.room.Room
 import com.example.argame.Interfaces.FragmentCallbackListener
-import com.example.argame.Model.AbilityConverter
-import com.example.argame.Model.AppDatabase
+import com.example.argame.Model.Ability.AbilityConverter
+import com.example.argame.Model.Persistence.AppDatabase
 import com.example.argame.R
 import kotlinx.android.synthetic.main.ability_item.view.*
 import kotlinx.android.synthetic.main.activity_level_intermission.*

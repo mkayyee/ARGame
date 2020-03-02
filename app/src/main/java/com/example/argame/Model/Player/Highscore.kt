@@ -1,4 +1,4 @@
-package com.example.argame.Model
+package com.example.argame.Model.Player
 
 data class Highscore(val userID: Int,
                      val username: String,

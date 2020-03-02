@@ -1,7 +1,6 @@
 package com.example.argame.Activities
 
 import android.animation.ObjectAnimator
-import android.animation.TimeInterpolator
 import android.content.SharedPreferences
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
@@ -18,11 +17,17 @@ import androidx.core.view.marginEnd
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import com.example.argame.Fragments.CustomArFragment
-import com.example.argame.Fragments.GameOverFragment
-import com.example.argame.Fragments.MenuFragmentController
-import com.example.argame.Fragments.NextLevelFragment
+import com.example.argame.Fragments.Menu.GameOverFragment
+import com.example.argame.Fragments.Menu.MenuFragmentController
+import com.example.argame.Fragments.Menu.NextLevelFragment
 import com.example.argame.Interfaces.FragmentCallbackListener
 import com.example.argame.Model.*
+import com.example.argame.Model.Ability.Ability
+import com.example.argame.Model.Ability.ProjectileAnimationData
+import com.example.argame.Model.CombatControllable.CombatControllable
+import com.example.argame.Model.NPC.*
+import com.example.argame.Model.Player.Player
+import com.example.argame.Model.Player.PlayerTargetData
 import com.example.argame.R
 import com.google.ar.core.Anchor
 import com.google.ar.core.HitResult
@@ -47,7 +52,8 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     NPCSpawnHandler.NPCSpawnCallback, Ability.AbilityCallbackListener,
     CombatControllable.CombatControllableListener {
 
-    private val menuFragController = MenuFragmentController()
+    private val menuFragController =
+        MenuFragmentController()
     private lateinit var fragment: CustomArFragment
     private lateinit var playerUri: Uri
     private var renderedPlayer: ModelRenderable? = null
@@ -92,7 +98,11 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         // MARK: Testing-abilities-related stuff
         initHPRenderables()
         playground_targetTxt.text = "Ducks alive ${npcsAlive.size}"
-        spawnHandler = NPCSpawnHandler(this, curLevel ?: 1, Handler())
+        spawnHandler = NPCSpawnHandler(
+            this,
+            curLevel ?: 1,
+            Handler()
+        )
     }
 
     override fun onPause() {
@@ -155,7 +165,13 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         renderableFuturePlayer.thenAccept {
             renderedPlayer = it
             // lateinit Player, so it has a reference to the renderable, therefor the cast animation data
-            player = Player(5.0, "player", 5000.0, it, this)
+            player = Player(
+                5.0,
+                "player",
+                5000.0,
+                it,
+                this
+            )
         }
     }
 
@@ -196,7 +212,11 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
 
                 }
             }
-            spawnHandler = NPCSpawnHandler(this, curLevel ?: 1, Handler())
+            spawnHandler = NPCSpawnHandler(
+                this,
+                curLevel ?: 1,
+                Handler()
+            )
             levelButton.text = "Level " + curLevel
         }
         // Update current level view
@@ -205,7 +225,9 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
 
     private fun callFragment(fragmentName: String) {
         val fragmentToGet = when (fragmentName) {
-            "NextLevel" -> NextLevelFragment(supportFragmentManager)
+            "NextLevel" -> NextLevelFragment(
+                supportFragmentManager
+            )
             else -> GameOverFragment()
         } as Fragment
         supportFragmentManager
@@ -234,14 +256,15 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         if (playerTarget != null) {
             playground_attackDuckBtn.isEnabled = false
             val ability = Ability.TEST
-            val animData = ProjectileAnimationData(
-                // TODO make start position relative to screen position
-                playerAnchorNode.worldPosition,
-                playerTarget!!.node.worldPosition,
-                this,
-                fragment,
-                ability.uri()
-            )
+            val animData =
+                ProjectileAnimationData(
+                    // TODO make start position relative to screen position
+                    playerAnchorNode.worldPosition,
+                    playerTarget!!.node.worldPosition,
+                    this,
+                    fragment,
+                    ability.uri()
+                )
             // cancel the current animation if any
             cancelAnimator(player)
             // the cast animation data (related to the caster's 3d model, not the projectile)
@@ -463,7 +486,12 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                                     createHPBar(node, hpRenderable)
                                     Log.d("mainSpawner", "BUILT")
                                 }
-                                npcAnchors.add(NPCAnchorData(anchorNode, spawnable.getID()))
+                                npcAnchors.add(
+                                    NPCAnchorData(
+                                        anchorNode,
+                                        spawnable.getID()
+                                    )
+                                )
                                 npcsAlive.add(spawnable)
                                 playground_targetTxt.text = "Ducks alive ${npcsAlive.size}"
                                 node.localScale = Vector3(0.1f, 0.1f, 0.1f)
@@ -486,11 +514,12 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                                                 }
                                             }
                                             // set new target
-                                            val newTarget = PlayerTargetData(
-                                                node,
-                                                spawnable,
-                                                hpRenderable.view.textView_healthbar
-                                            )
+                                            val newTarget =
+                                                PlayerTargetData(
+                                                    node,
+                                                    spawnable,
+                                                    hpRenderable.view.textView_healthbar
+                                                )
                                             playerTarget = newTarget
                                             updateNewTargetHPBar(newTarget)
                                             updatePlayerRotation()

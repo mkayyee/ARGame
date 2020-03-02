@@ -1,10 +1,11 @@
-package com.example.argame.Model
+package com.example.argame.Model.CombatControllable
 
-import android.animation.Animator
 import android.content.Context
 import android.util.Log.wtf
 import com.example.argame.Interfaces.AbilityUser
 import com.example.argame.Interfaces.ProjectileAnimator
+import com.example.argame.Model.Ability.Ability
+import com.example.argame.Model.Ability.ProjectileAnimationData
 import com.google.ar.sceneform.animation.ModelAnimator
 import com.google.ar.sceneform.rendering.ModelRenderable
 import kotlin.math.sign
@@ -49,7 +50,8 @@ abstract class CombatControllable(
         var notifyInputError = false
 
         if (maxHealth in 0.0..minimumMaxHealth) {
-            maxHealth = minimumMaxHealth
+            maxHealth =
+                minimumMaxHealth
             wtf("CCERROR", "0 or value < minMaxHP as CombatControllable constructor input")
         }
 
@@ -73,7 +75,17 @@ abstract class CombatControllable(
                     "Use positive values in the future. CC Name: $name")
         }
         health = maxHealth
-        status = CombatControllableStatus(isAlive, health, attackPower, name, maxHealth, level, xp, xpRequiredForLevel)
+        status =
+            CombatControllableStatus(
+                isAlive,
+                health,
+                attackPower,
+                name,
+                maxHealth,
+                level,
+                xp,
+                xpRequiredForLevel
+            )
     }
 
     fun setModelAnimator(animator: ModelAnimator) {
@@ -185,7 +197,17 @@ abstract class CombatControllable(
     }
 
     fun getStatus() : CombatControllableStatus {
-        status = CombatControllableStatus(isAlive, health, attackPower, name, maxHealth, level, xp, xpRequiredForLevel)
+        status =
+            CombatControllableStatus(
+                isAlive,
+                health,
+                attackPower,
+                name,
+                maxHealth,
+                level,
+                xp,
+                xpRequiredForLevel
+            )
         return status
     }
 

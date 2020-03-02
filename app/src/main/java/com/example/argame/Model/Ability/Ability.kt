@@ -1,7 +1,9 @@
-package com.example.argame.Model
+package com.example.argame.Model.Ability
 
 import android.net.Uri
 import androidx.room.TypeConverter
+import com.example.argame.Model.CombatControllable.CombatControllable
+import com.example.argame.Model.CombatControllable.CombatControllableStatus
 
 /***
  *  Ability data, and animation name that will be used for calling an animation inside .fbx
@@ -36,7 +38,7 @@ enum class Ability() {
 
     fun uri() : Uri {
         when (this) {
-            TEST-> return Uri.parse("untitledv4.sfb")
+            TEST -> return Uri.parse("untitledv4.sfb")
             BEAM -> return Uri.parse("beam.sfb")
         }
     }

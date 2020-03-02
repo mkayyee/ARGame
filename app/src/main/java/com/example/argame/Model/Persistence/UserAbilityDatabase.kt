@@ -1,4 +1,4 @@
-package com.example.argame.Model
+package com.example.argame.Model.Persistence
 import android.app.Application
 import android.content.Context
 import androidx.lifecycle.AndroidViewModel
@@ -30,16 +30,24 @@ abstract class AppDatabase : RoomDatabase() {
 class AbilitiesLiveModel(application: Application): AndroidViewModel(application) {
 
     fun getSelectableAbilities() =
-        AppDatabase.get(getApplication()).abilitiesDao().getAllUnselectedAbilities()
+        AppDatabase.get(
+            getApplication()
+        ).abilitiesDao().getAllUnselectedAbilities()
 
     fun getSelectedAbilities() =
-        AppDatabase.get(getApplication()).abilitiesDao().getUserSelectedAbilities()
+        AppDatabase.get(
+            getApplication()
+        ).abilitiesDao().getUserSelectedAbilities()
 
     fun selectAbility(aid: Int) =
-        AppDatabase.get(getApplication()).abilitiesDao().selectAbility(aid)
+        AppDatabase.get(
+            getApplication()
+        ).abilitiesDao().selectAbility(aid)
 
     fun deSelectAbility(aid: Int) =
-        AppDatabase.get(getApplication()).abilitiesDao().deselectAbility(aid)
+        AppDatabase.get(
+            getApplication()
+        ).abilitiesDao().deselectAbility(aid)
 }
 
 object Entities {

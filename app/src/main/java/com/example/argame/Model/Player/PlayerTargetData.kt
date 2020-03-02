@@ -1,6 +1,7 @@
-package com.example.argame.Model
+package com.example.argame.Model.Player
 
 import android.widget.TextView
+import com.example.argame.Model.NPC.NPC
 import com.google.ar.sceneform.Node
 
 /***

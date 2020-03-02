@@ -10,12 +10,12 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.argame.Fragments.CustomArFragment
-import com.example.argame.Fragments.MenuFragmentController
+import com.example.argame.Fragments.Menu.MenuFragmentController
 import com.example.argame.Interfaces.FragmentCallbackListener
-import com.example.argame.Model.CombatControllable
-import com.example.argame.Model.NPC
-import com.example.argame.Model.NPCType
-import com.example.argame.Model.Player
+import com.example.argame.Model.CombatControllable.CombatControllable
+import com.example.argame.Model.NPC.NPC
+import com.example.argame.Model.NPC.NPCType
+import com.example.argame.Model.Player.Player
 import com.example.argame.R
 import com.google.ar.core.HitResult
 import com.google.ar.core.Plane
@@ -32,7 +32,8 @@ import kotlinx.android.synthetic.main.healthbar.view.*
 
 class GameActivity : AppCompatActivity(), FragmentCallbackListener, CombatControllable.CombatControllableListener {
 
-    private val menuFragController = MenuFragmentController()
+    private val menuFragController =
+        MenuFragmentController()
     private lateinit var fragment: CustomArFragment
     private lateinit var duckUri: Uri
     private lateinit var tposeUri: Uri
@@ -45,9 +46,28 @@ class GameActivity : AppCompatActivity(), FragmentCallbackListener, CombatContro
     // MARK: Testing-abilities-related stuff
     private var hpRenderableDuck: ViewRenderable? = null
     private var hpRenderableTpose: ViewRenderable? = null
-    private var duckNPC = NPC(1.0, "duck", 5000.0, type = NPCType.MELEE, id = 500, context = this)
-    private var tposeNPC = NPC(1.0, "tposer", 5000.0, type = NPCType.MELEE, id = 600, context = this)
-    private var player = Player(5.0, "player", 5000.0, context = GameActivityPlayground())
+    private var duckNPC = NPC(
+        1.0,
+        "duck",
+        5000.0,
+        type = NPCType.MELEE,
+        id = 500,
+        context = this
+    )
+    private var tposeNPC = NPC(
+        1.0,
+        "tposer",
+        5000.0,
+        type = NPCType.MELEE,
+        id = 600,
+        context = this
+    )
+    private var player = Player(
+        5.0,
+        "player",
+        5000.0,
+        context = GameActivityPlayground()
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -104,7 +124,9 @@ class GameActivity : AppCompatActivity(), FragmentCallbackListener, CombatContro
     private fun callMenuFragment() {
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.main_menu_container, MenuFragmentController())
+            .replace(R.id.main_menu_container,
+                MenuFragmentController()
+            )
             .addToBackStack(null)
             .commit()
 

@@ -1,29 +1,20 @@
 package com.example.argame.Interfaces
 
-import android.content.Context
 import android.graphics.Color
 import android.net.Uri
 import android.os.Handler
 import android.util.Log.wtf
 import com.example.argame.Model.ABILITY_PROJECTILE_SPEED
-import com.example.argame.Model.Ability
+import com.example.argame.Model.Ability.Ability
 import com.example.argame.Model.AnimationAPI
-import com.example.argame.Model.ProjectileAnimationData
-import com.google.ar.core.Anchor
-import com.google.ar.sceneform.AnchorNode
-import com.google.ar.sceneform.Node
+import com.example.argame.Model.Ability.ProjectileAnimationData
 import com.google.ar.sceneform.Scene
 import com.google.ar.sceneform.animation.ModelAnimator
-import com.google.ar.sceneform.math.Quaternion
 import com.google.ar.sceneform.math.Vector3
 import com.google.ar.sceneform.rendering.MaterialFactory
 import com.google.ar.sceneform.rendering.ModelRenderable
 import com.google.ar.sceneform.rendering.ShapeFactory
 import com.google.ar.sceneform.ux.TransformableNode
-import com.google.ar.sceneform.ux.TransformationSystem
-import kotlinx.coroutines.delay
-import kotlin.math.atan
-import kotlin.math.pow
 
 /***
  *  Instantiates a projectile from a 3D model and checks that it has an animation.

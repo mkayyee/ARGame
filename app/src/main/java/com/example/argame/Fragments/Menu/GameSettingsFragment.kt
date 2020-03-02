@@ -1,4 +1,4 @@
-package com.example.argame.Fragments
+package com.example.argame.Fragments.Menu
 
 import android.content.Context
 import android.os.Bundle

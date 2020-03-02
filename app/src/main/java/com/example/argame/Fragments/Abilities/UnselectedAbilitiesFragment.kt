@@ -10,7 +10,10 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.argame.Model.*
+import com.example.argame.Model.Ability.AbilityConverter
+import com.example.argame.Model.Persistence.AbilitiesLiveModel
+import com.example.argame.Model.Persistence.AppDatabase
+import com.example.argame.Model.Persistence.Entities
 import com.example.argame.R
 import kotlinx.android.synthetic.main.ability_item.view.*
 import kotlinx.android.synthetic.main.fragment_unselected_abilities.*

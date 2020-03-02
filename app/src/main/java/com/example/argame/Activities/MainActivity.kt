@@ -3,18 +3,20 @@ package com.example.argame.Activities
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
-import com.example.argame.Fragments.MenuFragmentController
+import com.example.argame.Fragments.Menu.MenuFragmentController
 import com.example.argame.Interfaces.FragmentCallbackListener
-import com.example.argame.Model.*
+import com.example.argame.Model.Ability.Ability
+import com.example.argame.Model.Ability.AbilityConverter
+import com.example.argame.Model.Persistence.AppDatabase
+import com.example.argame.Model.Persistence.Entities
 import com.example.argame.R
 import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.doAsyncResult
 
 class MainActivity : AppCompatActivity(), FragmentCallbackListener {
 
-    private val menuFragController = MenuFragmentController()
+    private val menuFragController =
+        MenuFragmentController()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,8 +33,10 @@ class MainActivity : AppCompatActivity(), FragmentCallbackListener {
     }
 
     private fun addTestStuffRoom() {
-        val test = AbilityConverter.fromAbility(Ability.TEST)
-        val beam = AbilityConverter.fromAbility(Ability.BEAM)
+        val test = AbilityConverter.fromAbility(
+            Ability.TEST)
+        val beam = AbilityConverter.fromAbility(
+            Ability.BEAM)
         val context: Context = this
         val db = AppDatabase.get(context)
         doAsync {

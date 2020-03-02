@@ -1,4 +1,4 @@
-package com.example.argame.Fragments
+package com.example.argame.Fragments.Menu
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
-import com.example.argame.Activities.GameActivity
 import com.example.argame.Activities.GameActivityPlayground
 import com.example.argame.Interfaces.FragmentCallbackListener
 import com.example.argame.R
@@ -20,10 +19,13 @@ import com.example.argame.R
 
 class MenuFragmentController : Fragment(), FragmentCallbackListener {
 
-    private val mainMenuFrag = MainMenuFragment()
-    private val highscoresFrag = HighscoresFragment()
+    private val mainMenuFrag =
+        MainMenuFragment()
+    private val highscoresFrag =
+        HighscoresFragment()
     private val profileFrag = ProfileFragment()
-    private val settingsFrag = GameSettingsFragment()
+    private val settingsFrag =
+        GameSettingsFragment()
 
     override fun onCreateView(
         inflater: LayoutInflater,

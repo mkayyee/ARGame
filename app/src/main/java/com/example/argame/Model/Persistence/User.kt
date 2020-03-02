@@ -1,4 +1,4 @@
-package com.example.argame.Model
+package com.example.argame.Model.Persistence
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel

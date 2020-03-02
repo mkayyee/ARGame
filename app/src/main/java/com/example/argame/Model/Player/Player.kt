@@ -1,7 +1,7 @@
-package com.example.argame.Model
+package com.example.argame.Model.Player
 
 import android.content.Context
-import com.example.argame.Interfaces.AbilityUser
+import com.example.argame.Model.CombatControllable.CombatControllable
 import com.google.ar.sceneform.rendering.ModelRenderable
 import com.google.ar.sceneform.rendering.ViewRenderable
 

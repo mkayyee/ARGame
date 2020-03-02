@@ -1,7 +1,7 @@
-package com.example.argame.Model
+package com.example.argame.Model.NPC
 
 import android.content.Context
-import com.example.argame.Interfaces.AbilityUser
+import com.example.argame.Model.CombatControllable.CombatControllable
 import com.google.ar.sceneform.rendering.ModelRenderable
 import com.google.ar.sceneform.rendering.ViewRenderable
 
@@ -19,7 +19,7 @@ class NPC(ap: Double,
         return id
     }
 
-    fun getType() : NPCType{
+    fun getType() : NPCType {
         return type
     }
 
