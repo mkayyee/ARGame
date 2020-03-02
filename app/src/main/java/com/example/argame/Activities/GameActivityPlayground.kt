@@ -2,6 +2,7 @@ package com.example.argame.Activities
 
 import android.animation.ObjectAnimator
 import android.content.SharedPreferences
+import android.media.Image
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -23,6 +24,7 @@ import com.example.argame.Fragments.Menu.NextLevelFragment
 import com.example.argame.Interfaces.FragmentCallbackListener
 import com.example.argame.Model.*
 import com.example.argame.Model.Ability.Ability
+import com.example.argame.Model.Ability.AbilityHandler
 import com.example.argame.Model.Ability.ProjectileAnimationData
 import com.example.argame.Model.CombatControllable.CombatControllable
 import com.example.argame.Model.NPC.*
@@ -49,8 +51,7 @@ import java.sql.Time
 import kotlin.math.pow
 
 class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
-    NPCSpawnHandler.NPCSpawnCallback, Ability.AbilityCallbackListener,
-    CombatControllable.CombatControllableListener {
+    NPCSpawnHandler.NPCSpawnCallback, CombatControllable.CombatControllableListener {
 
     private val menuFragController =
         MenuFragmentController()
@@ -66,6 +67,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     private var hpRenderableNPC: ViewRenderable? = null
     private var hpRenderablePlayer: ViewRenderable? = null
     private lateinit var player: Player
+    private lateinit var abilityHandler: AbilityHandler
     var ducksInScene = false
     var playerInScene = false
 
@@ -90,6 +92,8 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         fragment.arSceneView.scene.addOnUpdateListener {
             sceneUpdateListener()
         }
+        abilityHandler = AbilityHandler(this, fragment)
+
         saver = PreferenceManager.getDefaultSharedPreferences(this)
         curLevel = saver.getInt("levelNum", 1)
 
@@ -212,10 +216,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
 
                 }
             }
-            spawnHandler = NPCSpawnHandler(
-                this,
-                curLevel ?: 1,
-                Handler()
+            spawnHandler = NPCSpawnHandler(this, curLevel ?: 1, Handler()
             )
             levelButton.text = "Level " + curLevel
         }
@@ -252,26 +253,17 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
 
     // MARK: Testing-abilities-related stuff
     private fun attackTarget() {
-        // disable attack button for the animation duration
+        playerAttack(playground_attackDuckBtn, Ability.TEST)
+    }
+
+    private fun playerAttack(button: ImageButton, ability: Ability) {
         if (playerTarget != null) {
-            playground_attackDuckBtn.isEnabled = false
-            val ability = Ability.TEST
-            val animData =
-                ProjectileAnimationData(
-                    // TODO make start position relative to screen position
-                    playerAnchorNode.worldPosition,
-                    playerTarget!!.node.worldPosition,
-                    this,
-                    fragment,
-                    ability.uri()
-                )
-            // cancel the current animation if any
-            cancelAnimator(player)
-            // the cast animation data (related to the caster's 3d model, not the projectile)
-            val animationData = player.model?.getAnimationData(ability.getCastAnimationString())
-            player.setModelAnimator(ModelAnimator(animationData, player.model))
-            player.useAbility(ability, playerTarget!!.model, animData) {
-                playground_attackDuckBtn.isEnabled = true
+            // disable attack button for the animation duration
+            button.isEnabled = false
+            val startPos = playerAnchorNode.worldPosition
+            val endPos = playerTarget!!.node.worldPosition
+            abilityHandler.useAbility(player, playerTarget!!.model, ability, startPos, endPos) {
+                button.isEnabled = true
             }
         } else {
             Toast.makeText(this, "You don't have a target", Toast.LENGTH_SHORT).show()
@@ -308,26 +300,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
 
     private fun beamTarget() {
         if (playerTarget != null) {
-            cancelAnimator(player)
-            playground_beamDuckBtn.isEnabled = false
-            val beam = Ability.BEAM
-            val attackAnimationData =
-                player.model?.getAnimationData(Ability.BEAM.getCastAnimationString())
-            val data = ProjectileAnimationData(
-                playerNode.worldPosition,
-                playerTarget!!.node.worldPosition,
-                this,
-                fragment,
-                beam.uri()
-            )
-            player.setModelAnimator(ModelAnimator(attackAnimationData, player.model))
-            player.useAbility(beam, playerTarget!!.model, data) {
-                // should do code below in onCCDamaged()
-//                if (playerTarget!!.healthBar != null) {
-//                    updateHPBar(playerTarget!!.healthBar, playerTarget!!.model)
-//                }
-                playground_beamDuckBtn.isEnabled = true
-            }
+            playerAttack(playground_beamDuckBtn, Ability.BEAM)
             npcAnchors.forEach {
                 val npcAnchorPos = it.anchorNode.worldPosition
                 val targetPos = playerTarget!!.node.worldPosition
@@ -777,25 +750,10 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         playground_remaining.text = text
     }
 
-    override fun onAbilityCast(
-        caster: CombatControllable,
-        target: CombatControllable,
-        ability: Ability
-    ) {
-        // create cast animation here
-        // TODO: caster.model!!.getAnimationData("")
-    }
-
-    override fun onAbilityHit(
-        caster: CombatControllable,
-        target: CombatControllable,
-        ability: Ability
-    ) {
-        // create being hit animation here
-        // TODO: target.model!!.getAnimationData("")
-    }
 
     override fun onCCDamaged(cc: CombatControllable) {
+        // create being hit animation here
+        // TODO: target.model!!.getAnimationData("")
         Log.d("CCDMG", "CombatControllable: ${cc.getStatus().name} damaged.")
         if (cc == player) {
             updateHPBar(hpRenderablePlayer?.view?.textView_healthbar, player)
