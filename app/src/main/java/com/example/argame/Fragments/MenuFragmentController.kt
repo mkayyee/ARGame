@@ -71,9 +71,9 @@ class MenuFragmentController : Fragment(), FragmentCallbackListener {
 
     override fun onButtonPressed(btn: Button) {
         when (btn.id) {
-            R.id.settings_button_back -> drawMainMenuFragment()
-            R.id.high_scores_button_back -> drawMainMenuFragment()
-            R.id.profile_button_back -> drawMainMenuFragment()
+            //R.id.settings_button_back -> drawMainMenuFragment()
+            //R.id.high_scores_button_back -> drawMainMenuFragment()
+            //R.id.profile_button_back -> drawMainMenuFragment()
             R.id.button_profile -> drawFragment(profileFrag)
             R.id.button_high_scores -> drawFragment(highscoresFrag)
             R.id.button_game_settings -> drawFragment(settingsFrag)

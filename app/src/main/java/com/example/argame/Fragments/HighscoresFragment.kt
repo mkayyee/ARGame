@@ -41,7 +41,8 @@ class HighscoresFragment : Fragment() {
 
     private fun setupButtonListeners() {
         high_scores_button_back.setOnClickListener {
-            buttonCallbackListener!!.onButtonPressed(it as Button)
+            //buttonCallbackListener!!.onButtonPressed(it as Button)
+            fragmentManager!!.popBackStack()
         }
     }
 }

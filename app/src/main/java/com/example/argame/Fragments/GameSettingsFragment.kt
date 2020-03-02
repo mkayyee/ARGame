@@ -35,7 +35,8 @@ class GameSettingsFragment : Fragment() {
 
     private fun setupButtonListeners() {
         settings_button_back.setOnClickListener {
-            buttonCallbackListener!!.onButtonPressed(it as Button)
+            //buttonCallbackListener!!.onButtonPressed(it as Button)
+            fragmentManager!!.popBackStack()
         }
     }
 }

@@ -41,7 +41,8 @@ class ProfileFragment : Fragment() {
 
     private fun setupButtonListeners() {
         profile_button_back.setOnClickListener {
-            buttonCallbackListener!!.onButtonPressed(it as Button)
+            //buttonCallbackListener!!.onButtonPressed(it as Button)
+            fragmentManager!!.popBackStack()
         }
     }
 }

@@ -36,14 +36,12 @@ class MainActivity : AppCompatActivity(), FragmentCallbackListener {
         val context: Context = this
         val db = AppDatabase.get(context)
         doAsync {
-            db.userDao().insert(User(1, "mikael"))
+            //db.userDao().insert(User(1, "mikael"))
             db.abilitiesDao().insertAbility(Entities.SelectableAbility(test))
             db.abilitiesDao().insertAbility(Entities.SelectableAbility(beam))
-            db.abilitiesDao().selectAbility(1, test)
+            db.abilitiesDao().selectAbility(test)
         }
     }
-
-
 
     // This is a callback fired from every menu's buttons
     override fun onButtonPressed(btn: Button) {

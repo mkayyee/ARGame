@@ -5,7 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.room.*
 
-@Database(entities = arrayOf(User::class, Entities.SelectableAbility::class), version = 2)
+@Database(entities = arrayOf(User::class, Entities.SelectableAbility::class), version = 1)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun userDao(): UserDao
@@ -29,30 +29,26 @@ abstract class AppDatabase : RoomDatabase() {
 
 class AbilitiesLiveModel(application: Application): AndroidViewModel(application) {
 
-    fun getSelectableAbilities(uid: Int) =
+    fun getSelectableAbilities() =
         AppDatabase.get(getApplication()).abilitiesDao().getAllUnselectedAbilities()
 
-    fun getSelectedAbilities(uid: Int) =
-        AppDatabase.get(getApplication()).abilitiesDao().getUserSelectedAbilities(uid)
+    fun getSelectedAbilities() =
+        AppDatabase.get(getApplication()).abilitiesDao().getUserSelectedAbilities()
 
-    fun selectAbility(uid: Int, aid: Int) =
-        AppDatabase.get(getApplication()).abilitiesDao().selectAbility(uid, aid)
+    fun selectAbility(aid: Int) =
+        AppDatabase.get(getApplication()).abilitiesDao().selectAbility(aid)
 
-    fun deSelectAbility(uid: Int, aid: Int) =
-        AppDatabase.get(getApplication()).abilitiesDao().deselectAbility(uid, aid)
+    fun deSelectAbility(aid: Int) =
+        AppDatabase.get(getApplication()).abilitiesDao().deselectAbility(aid)
 }
 
 object Entities {
 
-    @Entity(foreignKeys = [ForeignKey(
-        entity = User::class,
-        parentColumns = ["id"],
-        childColumns = ["userID"]
-    )])
+    @Entity
     data class SelectableAbility(
         @PrimaryKey
         val abilityID: Int,
-        val userID: Int? = null)
+        val isSelected: Int = 0)
 
     // Handles two-way communication between the selected and the unselected abilities
     // callback methods for updates, so we can keep track of how many abilities the user
@@ -60,16 +56,16 @@ object Entities {
 
     @Dao
     interface SelectableAbilityDao {
-        @Query("UPDATE SelectableAbility SET userID = :uid WHERE abilityID = :aid")
-        fun selectAbility(uid: Int, aid: Int)
+        @Query("UPDATE SelectableAbility SET isSelected = 1 WHERE abilityID = :aid")
+        fun selectAbility(aid: Int)
 
-        @Query("UPDATE SelectableAbility SET userID = NULL WHERE userID = :uid AND abilityID = :aid")
-        fun deselectAbility(uid: Int, aid: Int)
+        @Query("UPDATE SelectableAbility SET isSelected = 0 WHERE abilityID = :aid")
+        fun deselectAbility(aid: Int)
 
-        @Query("SELECT * FROM SelectableAbility WHERE userID = :uid")
-        fun getUserSelectedAbilities(uid: Int): LiveData<List<SelectableAbility>>
+        @Query("SELECT * FROM SelectableAbility WHERE isSelected = 1")
+        fun getUserSelectedAbilities(): LiveData<List<SelectableAbility>>
 
-        @Query("SELECT * FROM SelectableAbility WHERE userID IS NULL")
+        @Query("SELECT * FROM SelectableAbility WHERE isSelected = 0")
         fun getAllUnselectedAbilities(): LiveData<List<SelectableAbility>>
 
         @Query("SELECT * FROM SelectableAbility")
@@ -78,7 +74,7 @@ object Entities {
         @Insert(onConflict = OnConflictStrategy.REPLACE)
         fun insertAbility(ability: SelectableAbility): Long
 
-        @Query("SELECT * FROM SelectableAbility WHERE userID IS NULL")
+        @Query("SELECT * FROM SelectableAbility WHERE isSelected = 0")
         fun checkUnselectedAbilities(): List<SelectableAbility>
     }
 }

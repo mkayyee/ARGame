@@ -47,7 +47,7 @@ class UnselectedAbilitiesFragment(
         super.onActivityCreated(savedInstanceState)
         val abilitiesLiveModel
                 = ViewModelProviders.of(this).get(AbilitiesLiveModel::class.java)
-        abilitiesLiveModel.getSelectableAbilities(uid).observe(this, Observer {
+        abilitiesLiveModel.getSelectableAbilities().observe(this, Observer {
             val adapter = UnselectedAbilitiesAdapter(it, cb)
             val layoutManager = LinearLayoutManager(context)
             recycler_unselected_abilities.adapter = adapter

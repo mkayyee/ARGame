@@ -47,7 +47,8 @@ class AbilityMenuFragment(private val mContext: Context) : Fragment(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         button_close_ability_menu.setOnClickListener {
-            fragmentCallbackListener.onButtonPressed(it as Button)
+            //fragmentCallbackListener.onButtonPressed(it as Button)
+            fragmentManager!!.popBackStack()
         }
         initFragments()
     }
@@ -58,7 +59,6 @@ class AbilityMenuFragment(private val mContext: Context) : Fragment(),
             val abilities = db.abilitiesDao().getAllAbilities()
             for (ability in abilities) {
                 Log.d("ABILITY", AbilityConverter.toAbility(ability.abilityID).toString())
-                Log.d("ABILITY", ability.userID.toString())
             }
             val unselected = db.abilitiesDao().checkUnselectedAbilities()
             for (ab in unselected) {
@@ -78,7 +78,7 @@ class AbilityMenuFragment(private val mContext: Context) : Fragment(),
     override fun onAbilityRemove(id: Int) {
         Log.d("ABILITY", "ability: ${AbilityConverter.toAbility(id).toString()} removed")
         doAsync {
-            db.abilitiesDao().deselectAbility(1, id)
+            db.abilitiesDao().deselectAbility(id)
         }
     }
 
@@ -86,7 +86,7 @@ class AbilityMenuFragment(private val mContext: Context) : Fragment(),
         Log.d("ABILITY", "ability: ${AbilityConverter.toAbility(id).toString()} added")
         disableButtons()
         doAsyncResult {
-            db.abilitiesDao().selectAbility(1, id)
+            db.abilitiesDao().selectAbility(id)
             onComplete {
                 enableButtons()
                 uiThread {
