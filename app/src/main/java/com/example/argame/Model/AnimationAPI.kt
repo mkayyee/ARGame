@@ -21,6 +21,8 @@ object AnimationAPI {
 
     fun fireProjectile(model: TransformableNode, startPos: Vector3, endPos: Vector3, callback: () -> Unit) {
         val objectAnimation = ObjectAnimator()
+        val rotation = Quaternion.lookRotation(startPos, endPos)
+        model.localRotation = rotation
         objectAnimation.setAutoCancel(true)
         objectAnimation.target = model
         objectAnimation.setObjectValues(startPos, endPos)
