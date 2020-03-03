@@ -46,6 +46,7 @@ import com.google.ar.sceneform.rendering.ViewRenderable
 import com.google.ar.sceneform.ux.TransformableNode
 import kotlinx.android.synthetic.main.activity_game_playground.*
 import kotlinx.android.synthetic.main.activity_level_intermission.*
+import kotlinx.android.synthetic.main.healthbar.*
 import kotlinx.android.synthetic.main.healthbar.view.*
 import org.jetbrains.anko.backgroundResource
 import org.jetbrains.anko.doAsync
@@ -254,7 +255,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             player.setHPRenderable(it)
             val hpBar = hpRenderablePlayer?.view?.textView_healthbar
             hpBar?.background =
-                ContextCompat.getDrawable(this, R.drawable.gradient_player_hpbar)
+                ContextCompat.getDrawable(this, R.drawable.playerhpbar)
         }
     }
 
@@ -262,6 +263,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     private fun attackTarget() {
         // disable attack button for the animation duration
         if (playerTarget != null) {
+            useBarrier(hpRenderablePlayer)
             playground_attackDuckBtn.isEnabled = false
             playground_attackDuckBtn_cd.isEnabled = true
             val ability = Ability.TEST
@@ -356,6 +358,24 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
 //                    updateHPBar(hpRenderablePlayer?.view?.textView_healthbar, player)
 //                }
         }
+    }
+
+    private fun useBarrier(renderable: ViewRenderable?) {
+//        val renderableFuture = ViewRenderable.builder()
+//            .setView(this, R.layout.ability_barrier)
+//            .build()
+//        renderableFuture.thenAccept {
+//            val node = Node()
+//            it.isShadowCaster = false
+//            node.localScale = Vector3(0.35f, 0.35f, 0.5f)
+//            node.localPosition = Vector3(0f, 0.5f, 0f)
+//            node.setParent(playerNode)
+//            val camForward = fragment.arSceneView.scene.camera.forward
+//            //node.setLookDirection(Vector3(camForward.x - 0.02f, camForward.y -0.5f, camForward.z - 0.02f))
+//            //node.localRotation = Quaternion.lookRotation(fragment.arSceneView.scene.camera.worldPosition, playerNode.worldPosition)
+//            node.renderable = it
+//        }
+        renderable?.view?.textView_barrier?.visibility = View.VISIBLE
     }
 
     private fun beamTarget() {
@@ -609,7 +629,8 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     private fun updateHPBar(tv: TextView?, model: CombatControllable) {
         val parent = tv?.parent as View
         val ratio = model.getStatus().currentHealth / model.getStatus().maxHealth
-        val layOutParams = LinearLayout.LayoutParams((parent.width * ratio).toInt(), matchParent)
+        //val layOutParams = LinearLayout.LayoutParams((parent.width * ratio).toInt(), matchParent)
+        val layOutParams = FrameLayout.LayoutParams((parent.width * ratio).toInt(), matchParent)
         val currentMargin = tv.marginEnd
         tv.layoutParams = layOutParams
         layOutParams.setMargins(currentMargin, currentMargin, currentMargin, currentMargin)
@@ -813,7 +834,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         parent.background =
             ContextCompat.getDrawable(
                 this,
-                R.drawable.healthbar_nontarget_background
+                R.drawable.healthbarbg
             )
     }
 
@@ -822,7 +843,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         parent.background =
             ContextCompat.getDrawable(
                 this,
-                R.drawable.healthbar_background
+                R.drawable.hpbarbgselected
             )
     }
 
