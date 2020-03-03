@@ -1,10 +1,10 @@
 package com.example.argame.Activities
 
+import com.example.argame.Model.BackgroundMusic
 import android.animation.ObjectAnimator
+import android.content.Intent
 import android.content.SharedPreferences
-import android.graphics.drawable.Drawable
 import android.net.Uri
-import android.opengl.Visibility
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
@@ -15,7 +15,6 @@ import android.view.View
 import android.view.animation.LinearInterpolator
 import android.widget.*
 import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
 import androidx.core.view.marginEnd
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
@@ -47,10 +46,8 @@ import com.google.ar.sceneform.ux.TransformableNode
 import kotlinx.android.synthetic.main.activity_game_playground.*
 import kotlinx.android.synthetic.main.activity_level_intermission.*
 import kotlinx.android.synthetic.main.healthbar.view.*
-import org.jetbrains.anko.backgroundResource
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.matchParent
-import java.net.URI
 import java.sql.Time
 import kotlin.math.pow
 
@@ -82,6 +79,8 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     private lateinit var saver: SharedPreferences
     private var curLevel: Int? = null
 
+    private lateinit var intentm : Intent
+
     // Spawning NPC's
     private lateinit var spawnHandler: NPCSpawnHandler
     private lateinit var npcSpawnThread: Thread
@@ -93,6 +92,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game_playground)
+        intentm = Intent(this, BackgroundMusic::class.java)
         fragment =
             supportFragmentManager.findFragmentById(R.id.playground_sceneform_fragment) as CustomArFragment
         fragment.arSceneView.scene.addOnUpdateListener {
@@ -118,16 +118,19 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         saver.edit().putInt("levelNum", curLevel!!).apply()
         Log.d("SAVE", "Saving level " + curLevel.toString())
         spawnHandler.pause()
+        stopService(intentm)
     }
 
     override fun onDestroy() {
         super.onDestroy()
         saver.edit().putInt("levelNum", curLevel!!).apply()
         Log.d("SAVE", "Saving level " + curLevel.toString())
+        stopService(intentm)
     }
 
     override fun onResume() {
         super.onResume()
+        startService(intentm)
         curLevel = saver.getInt("levelNum", 1)
         spawnHandler.resume()
         // TODO: Restore level and abilities

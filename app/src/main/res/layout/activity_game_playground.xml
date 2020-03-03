@@ -126,7 +126,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/beam_icon"
             android:alpha="0.80"
-         />
+            />
 
         <TextView
             android:id="@+id/playground_beamDuckBtn_cd"
@@ -142,10 +142,85 @@
             android:gravity="center"
             />
 
-        </RelativeLayout>
+    </RelativeLayout>
 
 </LinearLayout>
 
+    <LinearLayout
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="200dp"
+    android:layout_marginLeft="10dp"
+    android:gravity="center|left">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageButton
+            android:id="@+id/playground_teleportDuckBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/teleport_icon"
+            android:alpha="0.40"
+            />
+
+        <TextView
+            android:id="@+id/playground_teleportDuckBtn_cd"
+            android:visibility="invisible"
+            android:layout_alignParentTop="true"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:background="#BF202421"
+            android:text="10"
+            android:textSize="30dp"
+            android:textStyle="bold"
+            android:textColor="#FFF"
+            android:gravity="center"
+            />
+
+    </RelativeLayout>
+
+</LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="200dp"
+        android:layout_marginRight="10dp"
+        android:gravity="center|right">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageButton
+                android:id="@+id/playground_shieldDuckBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/shield_icon"
+                android:alpha="0.40"
+                />
+
+            <TextView
+                android:id="@+id/playground_shieldDuckBtn_cd"
+                android:visibility="invisible"
+                android:layout_alignParentTop="true"
+                android:layout_width="55dp"
+                android:layout_height="55dp"
+                android:background="#BF202421"
+                android:text="10"
+                android:textSize="30dp"
+                android:textStyle="bold"
+                android:textColor="#FFF"
+                android:gravity="center"
+                />
+
+        </RelativeLayout>
+
+    </LinearLayout>
 
     <LinearLayout
         android:orientation="vertical"
