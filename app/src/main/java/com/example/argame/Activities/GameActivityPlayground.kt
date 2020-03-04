@@ -3,8 +3,11 @@ package com.example.argame.Activities
 import com.example.argame.Model.BackgroundMusic
 import android.animation.ObjectAnimator
 import android.app.ActionBar
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.hardware.Sensor
+import android.hardware.SensorManager
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -26,7 +29,9 @@ import com.example.argame.Fragments.Menu.NextLevelFragment
 import com.example.argame.Interfaces.FragmentCallbackListener
 import com.example.argame.Model.*
 import com.example.argame.Model.Ability.Ability
+import com.example.argame.Model.Ability.PlayerUltimate
 import com.example.argame.Model.Ability.ProjectileAnimationData
+import com.example.argame.Model.Ability.UltimateHandler
 import com.example.argame.Model.CombatControllable.CombatControllable
 import com.example.argame.Model.NPC.*
 import com.example.argame.Model.Player.Player
@@ -56,7 +61,7 @@ import kotlin.math.pow
 
 class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     NPCSpawnHandler.NPCSpawnCallback, Ability.AbilityCallbackListener,
-    CombatControllable.CombatControllableListener {
+    CombatControllable.CombatControllableListener, UltimateHandler.UltimateHandlerListener {
 
     private val menuFragController =
         MenuFragmentController()
@@ -72,6 +77,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     private var hpRenderableNPC: ViewRenderable? = null
     private var hpRenderablePlayer: ViewRenderable? = null
     private lateinit var player: Player
+    private lateinit var ultimateHandler: UltimateHandler
     var ducksInScene = false
     var playerInScene = false
     val cdHandler = Handler(Looper.getMainLooper())
@@ -118,6 +124,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             curLevel ?: 1,
             Handler()
         )
+        initUltimateHandler()
     }
 
     override fun onPause() {
@@ -152,6 +159,13 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             // that handles all the logic for these events
             menuFragController.onButtonPressed(btn)
         }
+    }
+
+    private fun initUltimateHandler() {
+        val sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        val accel = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION)
+        val light = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT)
+        ultimateHandler = UltimateHandler(accel, light, sensorManager, this)
     }
 
     private fun sceneUpdateListener() {
@@ -217,6 +231,15 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         playground_destroyBtn.setOnClickListener {
             clearModels()
         }
+        playground_killallBtn.setOnClickListener {
+            ultimateHandler.beginMeasuring(PlayerUltimate.KILLALL)
+            // TODO: Hide ultimate bar
+            Toast.makeText(this, "Move phone fast enough in any direction to trigger KILLALL", Toast.LENGTH_LONG).show()
+        }
+        playground_serenityBtn.setOnClickListener {
+            ultimateHandler.beginMeasuring(PlayerUltimate.SERENITY)
+            Toast.makeText(this, "Cover light sensor to trigger Serenity", Toast.LENGTH_LONG).show()
+        }
 
         val levelButton = findViewById<Button>(R.id.playground_toggleLevel)
         levelButton.setOnClickListener {
@@ -268,6 +291,10 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             hpBar?.background =
                 ContextCompat.getDrawable(this, R.drawable.playerhpbar)
         }
+    }
+
+    private fun attemptUltimate(ability: PlayerUltimate) {
+        ultimateHandler.beginMeasuring(ability)
     }
 
     // MARK: Testing-abilities-related stuff
@@ -975,6 +1002,25 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                     }
                 }
             }
+        }
+    }
+
+    // UltimateHandler callback to tell whether the player succeeded in casting the ultimate
+    override fun onMeasured(succeeded: Boolean, ability: PlayerUltimate) {
+        if (succeeded) {
+            if (ability == PlayerUltimate.KILLALL) {
+                npcsAlive.forEach {
+                    val health = it.getStatus().maxHealth
+                    player.dealDamage(health * 2, it)
+                }
+            } else {
+                // Serenity heals player to full health and gives shield?
+                player.restoreFullHealth()
+                useBarrier(hpRenderablePlayer, player)
+                updateShieldBar(hpRenderablePlayer?.view?.textView_barrier, player)
+                updateHPBar(hpRenderablePlayer?.view?.textView_healthbar, player)
+            }
+            // TODO: MAKE ULTIMATE BUTTONS INVISIBLE
         }
     }
 }
