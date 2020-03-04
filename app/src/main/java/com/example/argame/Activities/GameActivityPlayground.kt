@@ -82,7 +82,9 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     private lateinit var saver: SharedPreferences
     private var curLevel: Int? = null
 
+    // MUSIC & SOUNDS
     private lateinit var intentm : Intent
+    private lateinit var effectPlayer : SoundEffectPlayer
 
     // Spawning NPC's
     private lateinit var spawnHandler: NPCSpawnHandler
@@ -96,6 +98,8 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game_playground)
         intentm = Intent(this, BackgroundMusic::class.java)
+        effectPlayer = SoundEffectPlayer(this)
+        effectPlayer.initSoundEffectPlayer()
         fragment =
             supportFragmentManager.findFragmentById(R.id.playground_sceneform_fragment) as CustomArFragment
         fragment.arSceneView.scene.addOnUpdateListener {
@@ -197,7 +201,6 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                 mainSpawner(player)
             }
         }
-
         playground_exitBtn.setOnClickListener {
             callFragment("GameOver")
         }
@@ -284,6 +287,8 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                     ability.uri()
                 )
             doAsync { doCooldown(playground_attackDuckBtn_cd) }
+            effectPlayer.playSound(R.raw.fireball)
+
             // cancel the current animation if any
             cancelAnimator(player)
             // the cast animation data (related to the caster's 3d model, not the projectile)
