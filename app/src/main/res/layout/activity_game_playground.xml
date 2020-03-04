@@ -67,6 +67,33 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/playground_ultimateBar"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_gravity="bottom"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="50dp"
+        android:visibility="visible"
+        android:gravity="bottom|center">
+        <Button
+            android:id="@+id/playground_killallBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:alpha="1"
+            android:text="KILLALL"
+            app:cornerRadius="45dp" />
+        <Button
+            android:id="@+id/playground_serenityBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:alpha="1"
+            android:text="Serenity"
+            app:cornerRadius="45dp" />
+    </LinearLayout>
+
 
 
     <LinearLayout
