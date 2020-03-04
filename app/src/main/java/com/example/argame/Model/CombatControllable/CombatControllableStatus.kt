@@ -8,4 +8,7 @@ data class CombatControllableStatus(
     val maxHealth: Double,
     val level: Int,
     val experience: Double,
-    val xpRequired: Double)
+    val xpRequired: Double,
+    val maxShieldAmount: Double,
+    val shieldAmount: Double,
+    val isShielded: Boolean)

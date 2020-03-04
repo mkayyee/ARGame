@@ -1,10 +1,16 @@
 package com.example.argame.Model
 
 import android.animation.ObjectAnimator
+import android.content.Context
+import android.graphics.Color
 import android.view.animation.LinearInterpolator
 import com.google.ar.sceneform.math.Quaternion
 import com.google.ar.sceneform.math.Vector3
 import com.google.ar.sceneform.math.Vector3Evaluator
+import com.google.ar.sceneform.rendering.Material
+import com.google.ar.sceneform.rendering.MaterialFactory
+import com.google.ar.sceneform.rendering.ModelRenderable
+import com.google.ar.sceneform.rendering.ShapeFactory
 import com.google.ar.sceneform.ux.TransformableNode
 
 
@@ -38,10 +44,22 @@ object AnimationAPI {
 
     // Reference:
     // https://stackoverflow.com/questions/53371583/draw-line-between-location-markers-in-arcore
-    fun stretchModel(startPos: Vector3, endPos: Vector3, node: TransformableNode) {
+    fun stretchModel(startPos: Vector3, endPos: Vector3, node: TransformableNode, context: Context) {
         val rotation = calculateNewRotation(startPos, endPos)
+        val difference = Vector3.subtract(startPos, endPos)
+        var lineRenderable: ModelRenderable
         node.worldPosition = Vector3.add(startPos, endPos).scaled(0.5f)
         node.worldRotation = rotation
+        MaterialFactory.makeTransparentWithColor(context, com.google.ar.sceneform.rendering.Color(Color.BLUE))
+            .thenAccept { material: Material? ->
+                lineRenderable = ShapeFactory.makeCube(
+                    Vector3(.03f, .03f, difference.length()),
+                    Vector3.zero(), material
+                )
+                lineRenderable.isShadowCaster = false
+                node.renderable = lineRenderable
+                node.localPosition = Vector3.add(startPos, endPos).scaled(.5f)
+            }
     }
 
     fun calculateNewRotation(startPos: Vector3, endPos: Vector3) : Quaternion {

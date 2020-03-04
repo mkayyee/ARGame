@@ -2,6 +2,7 @@ package com.example.argame.Activities
 
 import com.example.argame.Model.BackgroundMusic
 import android.animation.ObjectAnimator
+import android.app.ActionBar
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
@@ -49,6 +50,7 @@ import kotlinx.android.synthetic.main.healthbar.*
 import kotlinx.android.synthetic.main.healthbar.view.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.matchParent
+import pl.droidsonroids.gif.GifImageView
 import java.sql.Time
 import kotlin.math.pow
 
@@ -206,6 +208,9 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         playground_beamDuckBtn.setOnClickListener {
             beamTarget()
         }
+        playground_shieldDuckBtn.setOnClickListener {
+            useBarrier(hpRenderablePlayer, player)
+        }
         playground_destroyBtn.setOnClickListener {
             clearModels()
         }
@@ -266,7 +271,6 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     private fun attackTarget() {
         // disable attack button for the animation duration
         if (playerTarget != null) {
-            useBarrier(hpRenderablePlayer)
             playground_attackDuckBtn.isEnabled = false
             playground_attackDuckBtn_cd.isEnabled = true
             val ability = Ability.TEST
@@ -346,7 +350,6 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
 
     private fun attackPlayer(npc: NPC, node: Node) {
         // disable attack button for the animation duration
-        npc.dealDamage(5.0, player)
         val ability = Ability.TEST
         val animData = ProjectileAnimationData(
             // TODO make start position relative to screen position
@@ -363,22 +366,9 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         }
     }
 
-    private fun useBarrier(renderable: ViewRenderable?) {
-//        val renderableFuture = ViewRenderable.builder()
-//            .setView(this, R.layout.ability_barrier)
-//            .build()
-//        renderableFuture.thenAccept {
-//            val node = Node()
-//            it.isShadowCaster = false
-//            node.localScale = Vector3(0.35f, 0.35f, 0.5f)
-//            node.localPosition = Vector3(0f, 0.5f, 0f)
-//            node.setParent(playerNode)
-//            val camForward = fragment.arSceneView.scene.camera.forward
-//            //node.setLookDirection(Vector3(camForward.x - 0.02f, camForward.y -0.5f, camForward.z - 0.02f))
-//            //node.localRotation = Quaternion.lookRotation(fragment.arSceneView.scene.camera.worldPosition, playerNode.worldPosition)
-//            node.renderable = it
-//        }
+    private fun useBarrier(renderable: ViewRenderable?, cc: CombatControllable) {
         renderable?.view?.textView_barrier?.visibility = View.VISIBLE
+        cc.useShield()
     }
 
     private fun beamTarget() {
@@ -637,11 +627,23 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         val currentMargin = tv.marginEnd
         tv.layoutParams = layOutParams
         layOutParams.setMargins(currentMargin, currentMargin, currentMargin, currentMargin)
-        Log.d(
-            "width",
-            " Parent width (${parent.width}) * ratio ($ratio) ${(parent.width * ratio).toInt()}"
-        )
-        Log.d("width", tv.width.toString())
+        Log.d("SHIELD", "shield amount (updateHpBar): ${model.getStatus().shieldAmount}, hp: ${model.getStatus().currentHealth}")
+    }
+
+    private fun updateShieldBar(tv: GifImageView?, model: CombatControllable) {
+        val parent = tv?.parent as View
+        val ratio = model.getStatus().shieldAmount / model.getStatus().maxShieldAmount
+        val layoutParams: FrameLayout.LayoutParams
+        if (model.getStatus().shieldAmount == 0.0) {
+            layoutParams = FrameLayout.LayoutParams((parent.width ), matchParent)
+            tv.visibility = View.INVISIBLE
+        } else {
+            layoutParams = FrameLayout.LayoutParams((parent.width * ratio).toInt(), matchParent)
+        }
+        val currentMargin = tv.marginEnd
+        tv.layoutParams = layoutParams
+        layoutParams.setMargins(currentMargin, currentMargin, currentMargin, currentMargin)
+        Log.d("SHIELD", "shield amount: ${model.getStatus().shieldAmount}")
     }
 
     private fun getScreenCenter(): android.graphics.Point {
@@ -873,14 +875,27 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     }
 
     override fun onCCDamaged(cc: CombatControllable) {
-        Log.d("CCDMG", "CombatControllable: ${cc.getStatus().name} damaged.")
+        Log.d("CCDMG", "isShielded: ${cc.getStatus().isShielded} amount: ${cc.getStatus().shieldAmount}")
         if (cc == player) {
-            updateHPBar(hpRenderablePlayer?.view?.textView_healthbar, player)
+            if (cc.getStatus().isShielded) {
+                updateShieldBar(hpRenderablePlayer?.view?.textView_barrier, player)
+            } else {
+                // for clearing the view
+                // TODO: come up with a smarter implementation
+                if (player.getHPBar()?.view?.textView_barrier?.visibility == View.VISIBLE) {
+                    updateShieldBar(hpRenderablePlayer?.view?.textView_barrier, player)
+                }
+                updateHPBar(hpRenderablePlayer?.view?.textView_healthbar, player)
+            }
         } else {
             if (cc is NPC) {
-                Log.d("CCDMG", "NPC damaged. ID: ${cc.getID()}")
-                if (cc.getHPBar() != null) {
-                    updateHPBar(cc.getHPBar()!!.view.textView_healthbar, cc)
+                if (cc.getStatus().isShielded) {
+                    updateShieldBar(cc.getHPBar()?.view?.textView_barrier, cc)
+                } else {
+                    Log.d("CCDMG", "NPC damaged. ID: ${cc.getID()}")
+                    if (cc.getHPBar() != null) {
+                        updateHPBar(cc.getHPBar()!!.view.textView_healthbar, cc)
+                    }
                 }
             }
         }

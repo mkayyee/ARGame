@@ -1,6 +1,7 @@
 package com.example.argame.Model.CombatControllable
 
 import android.content.Context
+import android.util.Log
 import android.util.Log.wtf
 import com.example.argame.Interfaces.AbilityUser
 import com.example.argame.Interfaces.ProjectileAnimator
@@ -32,6 +33,9 @@ abstract class CombatControllable(
     private var health: Double
     private var maxHealth = baseHealth
     private var isAlive: Boolean = true
+    private var isShielded = false
+    private var maxShieldAmount = 600.0
+    private var shieldAmount = 600.0
     private var status: CombatControllableStatus
     private var level = 1
     private var xp = 0.0
@@ -84,7 +88,10 @@ abstract class CombatControllable(
                 maxHealth,
                 level,
                 xp,
-                xpRequiredForLevel
+                xpRequiredForLevel,
+                maxShieldAmount,
+                shieldAmount,
+                isShielded
             )
     }
 
@@ -116,6 +123,44 @@ abstract class CombatControllable(
         } else {
             wtf("CCERROR", "trying to restore health of a fallen CombatControllable")
         }
+    }
+
+    fun useShield() {
+        restoreShieldAmountFull()
+        isShielded = true
+    }
+
+    fun increaseMaxShieldAmount(multiplier: Double) {
+        val newMax = maxShieldAmount * multiplier
+        // do something only if the multiplier is greater than 1
+        if (newMax > maxShieldAmount) {
+            maxShieldAmount = newMax
+        } else {
+            wtf("CCERROR", "Negative value or value less than 1 as increaseMaxHealth() input")
+        }
+    }
+
+    fun restoreShieldAmountFull() {
+        shieldAmount = maxShieldAmount
+    }
+
+    private fun reduceShield(amount: Double, cb: (Double) -> Unit) {
+        val difference = shieldAmount - amount
+        if (difference in 0.0..shieldAmount) {
+            if (difference == 0.0) {
+                shieldAmount = 0.0
+                isShielded = false
+                cb(0.0)
+            } else {
+                shieldAmount -= amount
+                cb(0.0)
+            }
+        }  else if (difference.sign == -1.0) {
+            shieldAmount = 0.0
+            isShielded = false
+            cb(difference * -1.0)
+        }
+        callback.onCCDamaged(this)
     }
 
     fun increaseMaxHealth(multiplier: Double) {
@@ -164,20 +209,32 @@ abstract class CombatControllable(
     // Make public, if the CombatControllable may take damage
     // from sources other than another CombatControllable
     private fun takeDamage(damage: Double) {
-        when {
-            // Not allowing negative input values
-            health - damage in 0.0..health -> {
-                health -= damage
-                callback.onCCDamaged(this)
+        Log.d("CCDMG", "$name damaged for $damage. isShielded: $isShielded shieldAmount: $shieldAmount health: $health")
+        if (!isShielded) {
+            when {
+                // Not allowing negative input values
+                health - damage in 0.0..health -> {
+                    health -= damage
+                    callback.onCCDamaged(this)
+                }
+                health - damage <= 0 -> {
+                    health = 0.0
+                    isAlive = false
+                    callback.onCCDeath(this)
+                }
+                else -> {
+                    wtf("CCERROR", "Negative value as takeDamage() input")
+                }
             }
-            health - damage <= 0 -> {
-                health = 0.0
-                isAlive = false
-                callback.onCCDeath(this)
+        } else {
+            reduceShield(damage) {difference ->
+                if (difference != 0.0) {
+                    // difference not being 0 means that the shield
+                    // was destroyed and there was some leftover damage
+                    takeDamage(difference)
+                }
             }
-            else -> {
-                wtf("CCERROR", "Negative value as takeDamage() input")
-            }
+
         }
     }
 
@@ -206,7 +263,10 @@ abstract class CombatControllable(
                 maxHealth,
                 level,
                 xp,
-                xpRequiredForLevel
+                xpRequiredForLevel,
+                maxShieldAmount,
+                shieldAmount,
+                isShielded
             )
         return status
     }

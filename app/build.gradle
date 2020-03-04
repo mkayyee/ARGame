@@ -121,3 +121,4 @@ sceneform.asset('sampledata/Player/playermodeltwithend.fbx',
         'default',
         'sampledata/Player/playermodeltwithend.sfa',
         'src/main/assets/playermodeltwithend')
+

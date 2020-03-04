@@ -87,7 +87,6 @@ interface ProjectileAnimator {
 
     private fun instantiateNodeInScene(projAnimData: ProjectileAnimationData, renderable: ModelRenderable,
         cb: () -> Unit, isBeam: Boolean = false) {
-
         initAbilityAnimationRenderable(projAnimData.context) {animation ->
             //val node = TransformableNode(projAnimData.fragment.transformationSystem)
             val animationNode = TransformableNode(projAnimData.fragment.transformationSystem)
@@ -98,7 +97,6 @@ interface ProjectileAnimator {
             scene.addChild(animationNode)
             //node.addChild(animationNode)
             if (!isBeam) {
-                //node.localScale = Vector3(0.02f, 0.02f, 0.02f)
                 animateProjectile(projAnimData, animationNode) {
                     Handler().postDelayed({
                         cb()
@@ -108,11 +106,7 @@ interface ProjectileAnimator {
             } else {
                 val casterPos = projAnimData.startPos
                 val targetPos = projAnimData.endPos
-                AnimationAPI.stretchModel(casterPos, targetPos, animationNode)
-                //val length = (targetPos.y - casterPos.y).pow(2f) + (targetPos.x - casterPos.x).pow(2f)
-                //node.localScale = Vector3(0.1f, 0.1f, length)
-                // node.localPosition = Vector3(targetPos.y - casterPos.y, 0.5f, targetPos.x - casterPos.x)
-                // node.localRotation = Quaternion.rotationBetweenVectors(casterPos, targetPos)
+                AnimationAPI.stretchModel(casterPos, targetPos, animationNode, projAnimData.context)
                 Handler().postDelayed({
                     cb()
                     deleteProjectile(animationNode, projAnimData.fragment.arSceneView.scene)
@@ -132,8 +126,6 @@ interface ProjectileAnimator {
         }
     }
 
-    // TODO
-    // needs a reference to fragment.arSceneView.scene
     fun deleteProjectile(node: TransformableNode, scene: Scene) {
         scene.removeChild(node)
         node.setParent(null)
