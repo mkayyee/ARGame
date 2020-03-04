@@ -19,4 +19,6 @@
     <string name="level_completed">Level Completed!</string>
     <string name="btn_add">Add</string>
     <string name="btn_remove">Remove</string>
+    <string name="remove">Remove</string>
+    <string name="minus">-</string>
 </resources>

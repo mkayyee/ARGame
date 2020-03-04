@@ -33,17 +33,19 @@ class MainActivity : AppCompatActivity(), FragmentCallbackListener {
     }
 
     private fun addTestStuffRoom() {
-        val test = AbilityConverter.fromAbility(
-            Ability.TEST)
-        val beam = AbilityConverter.fromAbility(
-            Ability.BEAM)
+        val test = AbilityConverter.fromAbility(Ability.TEST)
+        val beam = AbilityConverter.fromAbility(Ability.BEAM)
+        val teleport = AbilityConverter.fromAbility(Ability.TELEPORT)
+        val shield = AbilityConverter.fromAbility(Ability.SHIELD)
         val context: Context = this
         val db = AppDatabase.get(context)
         doAsync {
             //db.userDao().insert(User(1, "mikael"))
             db.abilitiesDao().insertAbility(Entities.SelectableAbility(test))
             db.abilitiesDao().insertAbility(Entities.SelectableAbility(beam))
-            db.abilitiesDao().selectAbility(test)
+            db.abilitiesDao().insertAbility(Entities.SelectableAbility(teleport))
+            db.abilitiesDao().insertAbility(Entities.SelectableAbility(shield))
+            //db.abilitiesDao().selectAbility(test)
         }
     }
 

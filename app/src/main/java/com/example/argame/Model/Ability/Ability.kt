@@ -1,9 +1,13 @@
 package com.example.argame.Model.Ability
 
+import android.content.Context
+import android.graphics.drawable.Drawable
 import android.net.Uri
+import androidx.core.content.ContextCompat
 import androidx.room.TypeConverter
 import com.example.argame.Model.CombatControllable.CombatControllable
 import com.example.argame.Model.CombatControllable.CombatControllableStatus
+import com.example.argame.R
 
 /***
  *  Ability data, and animation name that will be used for calling an animation inside .fbx
@@ -22,12 +26,16 @@ object AbilityConverter {
 
 enum class Ability() {
     TEST,
-    BEAM;
+    BEAM,
+    SHIELD,
+    TELEPORT;
 
     override fun toString(): String {
         return when (this) {
-            TEST -> "Sphere"
+            TEST -> "Fireball"
             BEAM -> "Beam"
+            SHIELD -> "Shield"
+            TELEPORT -> "Teleport"
         }
     }
 
@@ -36,10 +44,21 @@ enum class Ability() {
         fun onAbilityHit(caster: CombatControllable, target: CombatControllable, ability: Ability)
     }
 
+    fun getImage(context: Context) : Drawable? {
+        return when (this) {
+            TEST -> ContextCompat.getDrawable(context, R.drawable.attack_icon)
+            BEAM -> ContextCompat.getDrawable(context, R.drawable.beam_icon)
+            SHIELD -> ContextCompat.getDrawable(context, R.drawable.shield_icon)
+            TELEPORT -> ContextCompat.getDrawable(context, R.drawable.teleport_icon)
+        }
+    }
+
     fun uri() : Uri {
-        when (this) {
-            TEST -> return Uri.parse("untitledv4.sfb")
-            BEAM -> return Uri.parse("beam.sfb")
+        return when (this) {
+            TEST -> Uri.parse("untitledv4.sfb")
+            BEAM -> Uri.parse("beam.sfb")
+            SHIELD -> throw Error("shield doesn't have uri")
+            TELEPORT -> throw Error("teleport doesn't have uri")
         }
     }
 
@@ -50,6 +69,8 @@ enum class Ability() {
         return when (this) {
             TEST -> caster.level * 0.5 + 200 + caster.attackPower
             BEAM -> caster.level * 0.25 + 200 + caster.attackPower
+            SHIELD -> throw Error("ability Shield does not support getDamage casted by $caster")
+            TELEPORT -> throw Error("ability Teleport does not support getDamage casted by $caster")
         }
     }
 
@@ -57,6 +78,8 @@ enum class Ability() {
         return when (this) {
             TEST -> "PlayerAttack"
             BEAM -> "PlayerAttack"
+            SHIELD -> "PlayerAttack"
+            TELEPORT -> "PlayerAttack"
         }
     }
 }

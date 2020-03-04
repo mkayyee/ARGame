@@ -74,11 +74,16 @@ class SelectedAbilitiesAdapter(
     }
 
     override fun onBindViewHolder(holder: SelectedViewHolder, position: Int) {
-        var name = "select new ability"
+        var name = "Empty"
         if (abilities != null) {
             if (abilities!!.count() >= position + 1) {
                 val ability = AbilityConverter.toAbility(abilities!![position].abilityID)
+                val image = ability.getImage(holder.itemView.context)
                 name = ability.toString()
+                holder.itemView.alpha = 1f
+                if (image != null) {
+                    holder.itemView.ability_image.setImageDrawable(image)
+                }
                 // create a callback that the ability should be removed from selected abilities
                 holder.itemView.button_select.setOnClickListener {
                     cbListener.onAbilityRemove(AbilityConverter.fromAbility(ability))

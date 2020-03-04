@@ -76,12 +76,17 @@ class UnselectedAbilitiesAdapter(
     override fun onBindViewHolder(holder: UnselectedViewHolder, position: Int) {
         val ability = AbilityConverter.toAbility(abilities!![position].abilityID)
         val name = ability.toString()
-        val btnText = "Add"
+        val btnText = "+"
         holder.itemView.ability_name.text = name
         holder.itemView.button_select.text = btnText
+        holder.itemView.alpha = 1f
         // Callback for updating the selected abilities
         holder.itemView.button_select.setOnClickListener {
             cb.onAbilityAdd(AbilityConverter.fromAbility(ability))
+        }
+        val image = ability.getImage(holder.itemView.context)
+        if (image != null) {
+            holder.itemView.ability_image.setImageDrawable(image)
         }
     }
 }
