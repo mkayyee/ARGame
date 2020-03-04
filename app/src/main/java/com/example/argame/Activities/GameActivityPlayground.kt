@@ -47,6 +47,7 @@ import com.google.ar.sceneform.math.Quaternion
 import com.google.ar.sceneform.math.Vector3
 import com.google.ar.sceneform.math.Vector3Evaluator
 import com.google.ar.sceneform.rendering.ModelRenderable
+import com.google.ar.sceneform.rendering.Renderable
 import com.google.ar.sceneform.rendering.ViewRenderable
 import com.google.ar.sceneform.ux.TransformableNode
 import kotlinx.android.synthetic.main.activity_game_playground.*
@@ -104,8 +105,10 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game_playground)
         intentm = Intent(this, BackgroundMusic::class.java)
+
         effectPlayer = SoundEffectPlayer(this)
         effectPlayer.initSoundEffectPlayer()
+
         fragment =
             supportFragmentManager.findFragmentById(R.id.playground_sceneform_fragment) as CustomArFragment
         fragment.arSceneView.scene.addOnUpdateListener {
@@ -230,6 +233,10 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         }
         playground_destroyBtn.setOnClickListener {
             clearModels()
+        }
+        playground_teleportDuckBtn.setOnClickListener {
+            Log.d("Teleport", "button pressed")
+            doAsync { teleportPlayer() }
         }
         playground_killallBtn.setOnClickListener {
             ultimateHandler.beginMeasuring(PlayerUltimate.KILLALL)
@@ -386,7 +393,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         val animData = ProjectileAnimationData(
             // TODO make start position relative to screen position
             node.worldPosition,
-            playerAnchorNode.worldPosition,
+            playerNode.worldPosition,
             this,
             fragment,
             ability.uri()
@@ -440,6 +447,36 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                     //it.anchorNode.localScale = Vector3(0.4f, 0.4f, 0.4f)
                 }
             }
+        }
+    }
+
+    private fun teleportPlayer() {
+        Log.d("Teleport", "function")
+        fragment.setOnTapArPlaneListener{hitResult, plane, motionEvent ->
+            Log.d("Teleport", "tap")
+            doAsync { effectPlayer.playSound(R.raw.swoosh) }
+            val newAnchor = hitResult.createAnchor()
+            val node = AnchorNode(newAnchor)
+            val objectAnimation = ObjectAnimator()
+            Log.d("Teleport", node.worldPosition.toString())
+            objectAnimation.setAutoCancel(true)
+            objectAnimation.target = playerNode
+            objectAnimation.setObjectValues(playerNode.worldPosition, node.worldPosition)
+            objectAnimation.setPropertyName("worldPosition")
+            objectAnimation.setEvaluator(Vector3Evaluator())
+            objectAnimation.interpolator =LinearInterpolator()
+            objectAnimation.duration = 0
+            objectAnimation.start()
+            fragment.setOnTapArPlaneListener(null)
+/*            val savedRenderable = playerNode.renderable
+            val savedHp = playerNode.children[0].renderable
+            playerNode.renderable = null
+            playerNode.children[0].renderable = null
+            hpRenderablePlayer = null
+            Handler().postDelayed({
+                playerNode.renderable = savedRenderable
+                playerNode.children[0].renderable = savedHp
+            },150)*/
         }
     }
 
@@ -740,11 +777,11 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             model.setLookDirection(
                 Vector3.subtract(
                     model.worldPosition,
-                    playerAnchorNode.worldPosition
+                    playerNode.worldPosition
                 )
             )
-            val stopX = playerAnchorNode.worldPosition.x
-            val stopZ = playerAnchorNode.worldPosition.z
+            val stopX = playerNode.worldPosition.x
+            val stopZ = playerNode.worldPosition.z
             val startX = model.worldPosition.x
             val startZ = model.worldPosition.z
             when (type) {
@@ -755,8 +792,8 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                     val newX = (stopX + randomifier)
                     val stop = Vector3(
                         newX,
-                        playerAnchorNode.worldPosition.y,
-                        playerAnchorNode.worldPosition.z
+                        playerNode.worldPosition.y,
+                        playerNode.worldPosition.z
                     )
                     objectAnimation.setObjectValues(model.worldPosition, stop)
                     objectAnimation.duration = 15000
@@ -918,6 +955,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                     updateShieldBar(hpRenderablePlayer?.view?.textView_barrier, player)
                 }
                 updateHPBar(hpRenderablePlayer?.view?.textView_healthbar, player)
+                doAsync { effectPlayer.playSound(R.raw.gothit) }
             }
         } else {
             if (cc is NPC) {
@@ -936,6 +974,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     override fun onCCDeath(cc: CombatControllable) {
         // TODO: Stop any pending animation here
         val totalNpcCount = NPCDataForLevels.getNPCForLevelCount(curLevel!!)
+        doAsync { effectPlayer.playSound(R.raw.gothit) }
         Log.d(
             "NPCDED",
             "curLevel: $curLevel LevelOne.size: ${NPCDataForLevels.getNPCForLevelCount(curLevel!!)}"
