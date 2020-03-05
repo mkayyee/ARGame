@@ -46,10 +46,10 @@ enum class Ability() {
 
     fun getImage(context: Context) : Drawable? {
         return when (this) {
-            TEST -> ContextCompat.getDrawable(context, R.drawable.attack_icon)
-            BEAM -> ContextCompat.getDrawable(context, R.drawable.beam_icon)
-            SHIELD -> ContextCompat.getDrawable(context, R.drawable.shield_icon)
-            TELEPORT -> ContextCompat.getDrawable(context, R.drawable.teleport_icon)
+            TEST -> ContextCompat.getDrawable(context, R.drawable.icon_attack)
+            BEAM -> ContextCompat.getDrawable(context, R.drawable.icon_beam)
+            SHIELD -> ContextCompat.getDrawable(context, R.drawable.icon_shield)
+            TELEPORT -> ContextCompat.getDrawable(context, R.drawable.icon_teleport)
         }
     }
 

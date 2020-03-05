@@ -17,7 +17,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MaterialComponents.Light.DarkActionBar">
         <service android:name=".Model.BackgroundMusic" />
-        <activity android:name=".Activities.GameActivityPlayground" android:launchMode="singleInstance"></activity>
+        <activity android:name=".Activities.GameActivityPlayground" android:launchMode="singleInstance" android:configChanges="orientation|screenSize"></activity>
         <activity android:name=".Activities.MenuActivity" android:launchMode="singleInstance"/>
         <activity android:name=".Activities.MainActivity" android:launchMode="singleInstance">
             <intent-filter>
