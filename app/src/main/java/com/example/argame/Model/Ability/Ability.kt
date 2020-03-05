@@ -53,6 +53,15 @@ enum class Ability() {
         }
     }
 
+    fun getCooldown() : Long {
+        return when (this) {
+            TEST -> 1000
+            BEAM -> 3000
+            SHIELD -> 10000
+            TELEPORT -> 15000
+        }
+    }
+
     fun uri() : Uri {
         return when (this) {
             TEST -> Uri.parse("untitledv4.sfb")
