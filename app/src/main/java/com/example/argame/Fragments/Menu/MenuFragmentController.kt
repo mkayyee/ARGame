@@ -1,15 +1,22 @@
 package com.example.argame.Fragments.Menu
 
+import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
+import androidx.preference.PreferenceManager
 import com.example.argame.Activities.GameActivityPlayground
 import com.example.argame.Interfaces.FragmentCallbackListener
 import com.example.argame.R
+import com.google.android.material.button.MaterialButton
+import kotlinx.android.synthetic.main.menu_main.*
 
 /***
  *  The class responsible for drawing all the menus over any activity.
@@ -19,6 +26,7 @@ import com.example.argame.R
 
 class MenuFragmentController : Fragment(), FragmentCallbackListener {
 
+    var saver : SharedPreferences? = null
     private val mainMenuFrag =
         MainMenuFragment()
     private val highscoresFrag =
@@ -32,6 +40,7 @@ class MenuFragmentController : Fragment(), FragmentCallbackListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        saver = PreferenceManager.getDefaultSharedPreferences(activity)
         return layoutInflater.inflate(R.layout.menu_container, container, false)
     }
 
@@ -59,7 +68,6 @@ class MenuFragmentController : Fragment(), FragmentCallbackListener {
         //val intent = Intent(activity, GameActivity::class.java)
         val intent = Intent(activity, GameActivityPlayground::class.java)  // HUOMIO !!!!
         startActivity(intent)
-        enableResume()
     }
 
     private fun resumeGame() {
@@ -67,9 +75,6 @@ class MenuFragmentController : Fragment(), FragmentCallbackListener {
         onResume()
     }
 
-    private fun enableResume() {
-        activity?.findViewById<Button>(R.id.button_resume_game)?.isEnabled = true
-    }
 
     override fun onButtonPressed(btn: Button) {
         when (btn.id) {
@@ -79,8 +84,11 @@ class MenuFragmentController : Fragment(), FragmentCallbackListener {
             R.id.button_profile -> drawFragment(profileFrag)
             R.id.button_high_scores -> drawFragment(highscoresFrag)
             R.id.button_game_settings -> drawFragment(settingsFrag)
-            R.id.button_new_game -> launchGameActivity()
-            R.id.button_resume_game -> resumeGame()
+            R.id.button_new_game -> {
+                saver?.edit()?.putInt("levelNum", 1)?.apply()
+                launchGameActivity()
+            }
+            R.id.button_resume_game -> launchGameActivity()
         }
     }
 }

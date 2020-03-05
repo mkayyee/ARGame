@@ -38,17 +38,36 @@ class NPCSpawnHandler(context: Context, level: Int, private val handler: Handler
         when (level) {
             1 -> {
                 npcs = NPCDataForLevels.LevelOne.npcs.toMutableList()
-                first = npcs.first()
             }
             2 -> {
                 npcs = NPCDataForLevels.LevelTwo.npcs.toMutableList()
-                first = npcs.first()
+            }
+            3 -> {
+                npcs = NPCDataForLevels.LevelThree.npcs.toMutableList()
+            }
+            4 -> {
+                npcs = NPCDataForLevels.LevelFour.npcs.toMutableList()
+            }
+            5 -> {
+                npcs = NPCDataForLevels.LevelFive.npcs.toMutableList()
+            }
+            6-> {
+                npcs = NPCDataForLevels.LevelSix.npcs.toMutableList()
+            }
+            7 -> {
+                npcs = NPCDataForLevels.LevelSeven.npcs.toMutableList()
+            }
+            8 -> {
+                npcs = NPCDataForLevels.LevelEight.npcs.toMutableList()
+            }
+            9 -> {
+                npcs = NPCDataForLevels.LevelNine.npcs.toMutableList()
             }
             10 -> {
                 npcs = NPCDataForLevels.LevelTen.npcs.toMutableList()
-                first = npcs.first()
             }
         }
+        first = npcs.first()
     }
 
     fun isRunning() : Boolean {

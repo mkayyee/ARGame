@@ -1,9 +1,14 @@
 package com.example.argame.Activities
 
 import android.content.Context
+import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.AttributeSet
+import android.util.Log
+import android.view.View
 import android.widget.Button
+import androidx.preference.PreferenceManager
 import com.example.argame.Fragments.Menu.MenuFragmentController
 import com.example.argame.Interfaces.FragmentCallbackListener
 import com.example.argame.Model.Ability.Ability
@@ -11,6 +16,7 @@ import com.example.argame.Model.Ability.AbilityConverter
 import com.example.argame.Model.Persistence.AppDatabase
 import com.example.argame.Model.Persistence.Entities
 import com.example.argame.R
+import kotlinx.android.synthetic.main.menu_main.*
 import org.jetbrains.anko.doAsync
 
 class MainActivity : AppCompatActivity(), FragmentCallbackListener {
@@ -24,6 +30,8 @@ class MainActivity : AppCompatActivity(), FragmentCallbackListener {
         initMenuContainer()
         addTestStuffRoom()
     }
+
+
 
     private fun initMenuContainer() {
         supportFragmentManager.beginTransaction()

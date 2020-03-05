@@ -305,17 +305,11 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
 
         val levelButton = findViewById<Button>(R.id.playground_toggleLevel)
         levelButton.setOnClickListener {
-            when (curLevel) {
-                1 -> {
-                    curLevel = 2
-                }
-                2 -> {
-                    curLevel = 10
-                }
-                else -> {
-                    curLevel = 1
-
-                }
+            if (curLevel==10) {
+                curLevel=1
+            }
+            else {
+                curLevel = curLevel!! +1
             }
             spawnHandler = NPCSpawnHandler(
                 this,
@@ -1195,11 +1189,13 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                                             .show()
                                         Log.d("CURLEVEL", curLevel.toString())
                                     }
-                                    when (curLevel) {
-                                        1 -> curLevel = 2
-                                        2 -> curLevel = 10
-                                        else -> curLevel = 1
+                                    if (curLevel==10) {
+                                        curLevel=1
                                     }
+                                    else {
+                                        curLevel!! +1
+                                    }
+
                                     Log.d("CURLEVEL", curLevel.toString())
                                     saver.edit().putInt("levelNum", curLevel!!).apply()
                                     onComplete {
