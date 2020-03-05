@@ -472,6 +472,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     }
 
     private fun useBarrier(renderable: ViewRenderable?, cc: CombatControllable) {
+        animateCast(Ability.TELEPORT.getCastAnimationString()!!)
         player.incrementAbilitiesUsed()
         playground_beamDuckBtn.isEnabled = false
         doAsync { doCooldown(playground_shieldDuckBtn_cd, Ability.SHIELD.getCooldown(), playground_shieldDuckBtn) }
@@ -522,6 +523,18 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         }
     }
 
+    private fun animateCast(abilityStr: String) {
+        val animData
+                = renderedPlayer!!.getAnimationData(abilityStr)
+        val animator = ModelAnimator(animData, renderedPlayer)
+        val currentAnimator = player.getModelAnimator()
+        if (currentAnimator != null) {
+            if (currentAnimator.isRunning) currentAnimator.end()
+        }
+        player.setModelAnimator(animator)
+        animator.start()
+    }
+
     private fun teleportPlayer() {
         Log.d("Teleport", "function")
         playground_teleportDuckBtn.isEnabled = false
@@ -541,6 +554,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             objectAnimation.interpolator =LinearInterpolator()
             objectAnimation.duration = 0
             objectAnimation.start()
+            animateCast(Ability.TELEPORT.getCastAnimationString()!!)
             doAsync { doCooldown(playground_teleportDuckBtn_cd, Ability.TELEPORT.getCooldown(), playground_teleportDuckBtn) }
             forceStop = true
             fragment.setOnTapArPlaneListener(null)
@@ -572,8 +586,8 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         val ultNode = Node()
         ultNode.setParent(node)
         ultNode.renderable = renderable
-        ultNode.localScale = Vector3(0.35f, 0.25f, 0.25f)
-        ultNode.localPosition = Vector3(0f, 0.49f, 0f)
+        ultNode.localScale = Vector3(4f, 2.85f, 2.85f)
+        ultNode.localPosition = Vector3(0f, 3.4f, 0f)
     }
 
     // MARK: Testing-abilities-related stuff
@@ -583,11 +597,11 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         hpNode.renderable = renderable
 
         if (node == playerNode) {
-            hpNode.localScale = Vector3(0.35f, 0.35f, 0.35f)
-            hpNode.localPosition = Vector3(0f, 0.5f, 0f)
+            hpNode.localScale = Vector3(4f, 4f, 4f)
+            hpNode.localPosition = Vector3(0f, 3.5f, 0f)
         } else {
-            hpNode.localScale = Vector3(5f, 5f, 5f)
-            hpNode.localPosition = Vector3(0f, 5f, 0f)
+            hpNode.localScale = Vector3(8f, 8f, 8f)
+            hpNode.localPosition = Vector3(0f, 10f, 0f)
         }
     }
 
@@ -680,6 +694,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                             anchorList.add(anchorNode)
                             anchorNode.setParent(fragment.arSceneView.scene)
                             val node = TransformableNode(fragment.transformationSystem)
+                            node.localScale = Vector3(0.1f, 0.1f, 0.1f)
                             anchorNode.setLookDirection(Vector3.forward())
                             node.scaleController.isEnabled = false
                             node.rotationController.isEnabled = false
@@ -687,6 +702,10 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                             node.renderable = render
                             if (spawnable is Player) {
                                 //PLAYER POST SPAWN CODE
+                                val animData= render.getAnimationData("AlienArmature|Alien_Idle")
+                                val animator = ModelAnimator(animData, render)
+                                player.setModelAnimator(animator)
+                                animator.start()
                                 playerNode = node
                                 playerAnchorNode = anchorNode
                                 createHPBar(node, hpRenderable)
@@ -725,9 +744,9 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                                 )
                                 npcsAlive.add(spawnable)
                                 playground_targetTxt.text = "Ducks alive ${npcsAlive.size}"
-                                node.localScale = Vector3(0.1f, 0.1f, 0.1f)
+                                node.localScale = Vector3(0.05f, 0.05f, 0.05f)
                                 if (spawnable.getID() == 100) {
-                                    node.localScale = Vector3(0.3f, 0.3f, 0.3f)
+                                    node.localScale = Vector3(0.6f, 0.6f, 0.6f)
                                 }
 
                                 val newTargetNode = randomMove(node)
@@ -1135,7 +1154,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             doAsyncResult {
                 newHighScore(player.calculateScore())
                 uiThread {
-                    playerNode.localRotation = Quaternion(0f, 0f, 1f, 0f)
+                    animateCast("AlienArmature|Alien_Death")
                     Toast.makeText(this@GameActivityPlayground, "YOU DIED", Toast.LENGTH_LONG)
                         .show()
                 }

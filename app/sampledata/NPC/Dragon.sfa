@@ -1,0 +1,234 @@
+{
+  animations: [
+    {
+      clips: [
+        {
+          name: 'DragonArmature|Dragon_Attack',
+        },
+        {
+          name: 'DragonArmature|Dragon_Attack2',
+        },
+        {
+          name: 'DragonArmature|Dragon_Death',
+        },
+        {
+          name: 'DragonArmature|Dragon_Flying',
+        },
+        {
+          name: 'DragonArmature|Dragon_Hit',
+        },
+      ],
+      path: 'sampledata/NPC/Dragon.fbx',
+    },
+    {
+      path: 'ssampledata/NPC/Dragon.fbx',
+    },
+  ],
+  materials: [
+    {
+      name: 'Main',
+      parameters: [
+        {
+          baseColor: [
+            0.049707000000000001,
+            0.011612000000000001,
+            0.014444,
+            1,
+          ],
+        },
+        {
+          baseColorMap: null,
+        },
+        {
+          normalMap: null,
+        },
+        {
+          interpolatedColor: null,
+        },
+        {
+          metallic: 0,
+        },
+        {
+          metallicMap: null,
+        },
+        {
+          roughness: 1,
+        },
+        {
+          roughnessMap: null,
+        },
+        {
+          opacity: null,
+        },
+      ],
+      source: 'build/sceneform_sdk/default_materials/fbx_material.sfm',
+    },
+    {
+      name: 'Wings',
+      parameters: [
+        {
+          baseColor: [
+            0.01341,
+            0.01341,
+            0.01341,
+            1,
+          ],
+        },
+        {
+          baseColorMap: null,
+        },
+        {
+          normalMap: null,
+        },
+        {
+          interpolatedColor: null,
+        },
+        {
+          metallic: 0,
+        },
+        {
+          metallicMap: null,
+        },
+        {
+          roughness: 1,
+        },
+        {
+          roughnessMap: null,
+        },
+        {
+          opacity: null,
+        },
+      ],
+      source: 'build/sceneform_sdk/default_materials/fbx_material.sfm',
+    },
+    {
+      name: 'Belly',
+      parameters: [
+        {
+          baseColor: [
+            0.326376,
+            0.22614100000000001,
+            0.023456999999999999,
+            1,
+          ],
+        },
+        {
+          baseColorMap: null,
+        },
+        {
+          normalMap: null,
+        },
+        {
+          interpolatedColor: null,
+        },
+        {
+          metallic: 0,
+        },
+        {
+          metallicMap: null,
+        },
+        {
+          roughness: 1,
+        },
+        {
+          roughnessMap: null,
+        },
+        {
+          opacity: null,
+        },
+      ],
+      source: 'build/sceneform_sdk/default_materials/fbx_material.sfm',
+    },
+    {
+      name: 'Claws',
+      parameters: [
+        {
+          baseColor: [
+            0.009018,
+            0.009018,
+            0.009018,
+            1,
+          ],
+        },
+        {
+          baseColorMap: null,
+        },
+        {
+          normalMap: null,
+        },
+        {
+          interpolatedColor: null,
+        },
+        {
+          metallic: 0,
+        },
+        {
+          metallicMap: null,
+        },
+        {
+          roughness: 1,
+        },
+        {
+          roughnessMap: null,
+        },
+        {
+          opacity: null,
+        },
+      ],
+      source: 'build/sceneform_sdk/default_materials/fbx_material.sfm',
+    },
+    {
+      name: 'Eyes',
+      parameters: [
+        {
+          baseColor: [
+            0.01341,
+            0.01341,
+            0.01341,
+            1,
+          ],
+        },
+        {
+          baseColorMap: null,
+        },
+        {
+          normalMap: null,
+        },
+        {
+          interpolatedColor: null,
+        },
+        {
+          metallic: 0,
+        },
+        {
+          metallicMap: null,
+        },
+        {
+          roughness: 1,
+        },
+        {
+          roughnessMap: null,
+        },
+        {
+          opacity: null,
+        },
+      ],
+      source: 'build/sceneform_sdk/default_materials/fbx_material.sfm',
+    },
+  ],
+  model: {
+    attributes: [
+      'Position',
+      'TexCoord',
+      'Orientation',
+      'BoneIndices',
+      'BoneWeights',
+    ],
+    collision: {},
+    file: 'sampledata/NPC/Dragon.fbx',
+    name: 'Dragon',
+    recenter: 'root',
+    scale: 0.29328199999999999,
+  },
+  version: '0.54:2',
+}
