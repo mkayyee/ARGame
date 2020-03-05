@@ -82,8 +82,9 @@ enum class NPCType {
 
     fun modelUri() : Uri {
         return when (this) {
-            MELEE -> Uri.parse("duck.sfb")
-            // TODO more models
+            MELEE -> Uri.parse("Slime.sfb")
+            RANGED -> Uri.parse("Skeleton.sfb")
+            BOSSLVL10 -> Uri.parse("Dragon.sfb")
             else -> Uri.parse("duck.sfb")
         }
     }

@@ -76,10 +76,10 @@ enum class Ability() {
 
     fun getCastAnimationString() : String?{
         return when (this) {
-            TEST -> "PlayerAttack"
-            BEAM -> "PlayerAttack"
-            SHIELD -> "PlayerAttack"
-            TELEPORT -> "PlayerAttack"
+            TEST -> "AlienArmature|Alien_SwordSlash"
+            BEAM -> "AlienArmature|Alien_Punch"
+            SHIELD -> "AlienArmature|Alien_Clapping"
+            TELEPORT -> "AlienArmature|Alien_Jump"
         }
     }
 }
