@@ -382,7 +382,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                     fragment,
                     ability.uri()
                 )
-            doAsync { doCooldown(playground_attackDuckBtn_cd) }
+            doAsync { doCooldown(playground_attackDuckBtn_cd, Ability.TEST.getCooldown(), playground_attackDuckBtn) }
             effectPlayer.playSound(R.raw.fireball)
 
             // cancel the current animation if any
@@ -395,7 +395,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             player.increaseUltProgress(ability.getDamage(player.getStatus()).toInt())
             updateUltBar(player.getUltBar()?.view?.textView_ultbar, player)
             player.useAbility(ability, playerTarget!!.model, animData) {
-                playground_attackDuckBtn.isEnabled = true
+
             }
 
             //playground_beamDuckBtn_cd.visibility = View.
@@ -404,26 +404,25 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         }
     }
 
-    private fun doCooldown(cdView: TextView) {
+    private fun doCooldown(cdView: TextView, cdTime: Long, skillBtn : ImageButton) {
         Log.d("cooldown", "yes")
-        val totalTime = ABILITY_PROJECTILE_SPEED
         var timePassed = 0.toLong()
         var cycle = 0.toLong()
         var update = true
         var cooldown = true
         while (cooldown) {
             if (update) {
-            if (totalTime - timePassed >= cycle) {
+            if (cdTime - timePassed >= cycle) {
                     Log.d("cooldown", "ROUND")
                     update = false
                     cdHandler.postDelayed({
                       runOnUiThread {
                             cdView.visibility = View.VISIBLE
                             cdView.text =
-                                (ABILITY_PROJECTILE_SPEED - timePassed).toString()
+                                (((cdTime - timePassed).toInt())/1000).toString()
                         }
                         if (cycle == 0.toLong()) {
-                            cycle = 500.toLong()
+                            cycle = 1000.toLong()
                         }
                         timePassed += cycle
                         update = true
@@ -439,6 +438,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         runOnUiThread {
             cdView.visibility = View.INVISIBLE
             cdView.text = ""
+            skillBtn.isEnabled = true
         }
         }, cycle)
         }
@@ -474,7 +474,8 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     private fun useBarrier(renderable: ViewRenderable?, cc: CombatControllable) {
         animateCast(Ability.TELEPORT.getCastAnimationString()!!)
         player.incrementAbilitiesUsed()
-        doAsync { doCooldown(playground_shieldDuckBtn_cd) }
+        playground_beamDuckBtn.isEnabled = false
+        doAsync { doCooldown(playground_shieldDuckBtn_cd, Ability.SHIELD.getCooldown(), playground_shieldDuckBtn) }
         renderable?.view?.textView_barrier?.visibility = View.VISIBLE
         cc.useShield()
     }
@@ -493,7 +494,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                 fragment,
                 beam.uri()
             )
-            doAsync { doCooldown(playground_beamDuckBtn_cd) }
+            doAsync { doCooldown(playground_beamDuckBtn_cd, Ability.BEAM.getCooldown(), playground_beamDuckBtn) }
             player.setModelAnimator(ModelAnimator(attackAnimationData, player.model))
             player.incrementAbilitiesUsed()
             player.increaseUltProgress(beam.getDamage(player.getStatus()).toInt())
@@ -503,7 +504,6 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
 //                if (playerTarget!!.healthBar != null) {
 //                    updateHPBar(playerTarget!!.healthBar, playerTarget!!.model)
 //                }
-                playground_beamDuckBtn.isEnabled = true
             }
             npcAnchors.forEach {
                 val npcAnchorPos = it.anchorNode.worldPosition
@@ -517,6 +517,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                 if (result < 0.8) {
                     Log.d("BEAM", "HIT NPC  " + npcAnchors.indexOf(it))
                     //it.anchorNode.localScale = Vector3(0.4f, 0.4f, 0.4f)
+
                 }
             }
         }
@@ -536,6 +537,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
 
     private fun teleportPlayer() {
         Log.d("Teleport", "function")
+        playground_teleportDuckBtn.isEnabled = false
         player.incrementAbilitiesUsed()
         fragment.setOnTapArPlaneListener{hitResult, plane, motionEvent ->
             Log.d("Teleport", "tap")
@@ -553,7 +555,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             objectAnimation.duration = 0
             objectAnimation.start()
             animateCast(Ability.TELEPORT.getCastAnimationString()!!)
-            doAsync { doCooldown(playground_teleportDuckBtn_cd) }
+            doAsync { doCooldown(playground_teleportDuckBtn_cd, Ability.TELEPORT.getCooldown(), playground_teleportDuckBtn) }
             forceStop = true
             fragment.setOnTapArPlaneListener(null)
             npcAnchors.forEach {
@@ -708,6 +710,12 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                                 playerAnchorNode = anchorNode
                                 createHPBar(node, hpRenderable)
                                 createUltBarPlayer(node, ultRenderablePlayer)
+                                playground_shieldDuckBtn.isEnabled = false
+                                playground_teleportDuckBtn.isEnabled = false
+                                playground_beamDuckBtn.isEnabled = false
+                                doAsync { doCooldown(playground_teleportDuckBtn_cd, Ability.TELEPORT.getCooldown(), playground_teleportDuckBtn) }
+                                doAsync { doCooldown(playground_beamDuckBtn_cd, Ability.BEAM.getCooldown(), playground_beamDuckBtn) }
+                                doAsync { doCooldown(playground_shieldDuckBtn_cd, Ability.SHIELD.getCooldown(), playground_shieldDuckBtn) }
                                 node.setOnTouchListener { _, _ ->
                                     val oldPosition = playerNode.worldPosition
                                     Handler().postDelayed({
