@@ -58,6 +58,7 @@ import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.matchParent
 import pl.droidsonroids.gif.GifImageView
 import java.sql.Time
+import kotlin.concurrent.thread
 import kotlin.math.pow
 
 class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
@@ -100,6 +101,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     private var npcsAlive = arrayListOf<NPC>()
     private var npcAnchors = arrayListOf<NPCAnchorData>()
     private var allNPChaveSpawned = false
+    private var forceStop = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -314,7 +316,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             val animData =
                 ProjectileAnimationData(
                     // TODO make start position relative to screen position
-                    playerAnchorNode.worldPosition,
+                    playerNode.worldPosition,
                     playerTarget!!.node.worldPosition,
                     this,
                     fragment,
@@ -467,7 +469,15 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             objectAnimation.interpolator =LinearInterpolator()
             objectAnimation.duration = 0
             objectAnimation.start()
+            forceStop = true
             fragment.setOnTapArPlaneListener(null)
+            npcAnchors.forEach {
+                if (it.npc.getType() == NPCType.MELEE) {
+                    attackInitializer(it.npc.getType(),it.npc,
+                        it.anchorNode.children[0] as TransformableNode
+                    )
+                }
+            }
 /*            val savedRenderable = playerNode.renderable
             val savedHp = playerNode.children[0].renderable
             playerNode.renderable = null
@@ -555,7 +565,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         }
         if (spawnable is NPC) {
             val ids = spawnedNPCs.filter { it.getID() == spawnable.getID() }
-            val checkAnchors = npcAnchors.filter { it.npcID == spawnable.getID() }
+            val checkAnchors = npcAnchors.filter { it.npc.getID() == spawnable.getID() }
             if (ids.isEmpty() && checkAnchors.isEmpty()) {
                 render = spawnable.model!!
                 spawnedNPCs.add(spawnable)
@@ -624,7 +634,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                                 npcAnchors.add(
                                     NPCAnchorData(
                                         anchorNode,
-                                        spawnable.getID()
+                                        spawnable
                                     )
                                 )
                                 npcsAlive.add(spawnable)
@@ -800,14 +810,14 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                     Handler().postDelayed({
                         // Attack until attacker or target is dead
                         attackLooperMelee(npc, model)
-                    }, 15000)
+                    }, 8000)
                 }
                 else -> {
                     val newX = ((stopX + startX) / 2)
                     val newZ = ((stopZ + startZ) / 2)
                     val stop = Vector3(newX, model.worldPosition.y, newZ)
                     objectAnimation.setObjectValues(model.worldPosition, stop)
-                    objectAnimation.duration = 7000
+                    objectAnimation.duration = 6000
                     // Attack until attacker or target is dead
                     attackLooper(npc, model)
                 }
@@ -838,10 +848,10 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     fun attackLooperMelee(npc: NPC, model: TransformableNode) {
 
         // TODO: Redo properly with ability and animation
-
+        forceStop = false
         var cooldown = false
         val thread = Thread {
-            while (npc.getStatus().isAlive && player.getStatus().isAlive) {
+            while (npc.getStatus().isAlive && player.getStatus().isAlive && !forceStop) {
                 if (!cooldown) {
                     cooldown = true
                     model.setLookDirection(Vector3.forward())
@@ -851,7 +861,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                             model.setLookDirection(
                                 Vector3.subtract(
                                     model.worldPosition,
-                                    playerAnchorNode.worldPosition
+                                    playerNode.worldPosition
                                 )
                             )
                             npc.dealDamage(100.0, player)
@@ -866,7 +876,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
 
     override fun notifyNPCSpawned(type: NPCType, remaining: Int, npcID: Int) {
         val ids = spawnedNPCs.filter { it.getID() == npcID }
-        val anchors = npcAnchors.filter { it.npcID == npcID }
+        val anchors = npcAnchors.filter { it.npc.getID() == npcID }
         if (ids.isEmpty() && anchors.isEmpty()) {
             lateinit var renderable: ModelRenderable
             // get NPC model
@@ -993,7 +1003,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                         // might need to change this to a safer approach
                         val anchor = npcAnchors[npcsAlive.indexOf(it)]
                         // check that the correct anchor was indeed picked
-                        if (anchor.npcID == it.getID()) {
+                        if (anchor.npc.getID() == it.getID()) {
                             val hpBar = cc.getHPBar()
                             hpBar?.view?.visibility = View.GONE
                             updateHPBar(hpBar!!.view.textView_healthbar, cc)
