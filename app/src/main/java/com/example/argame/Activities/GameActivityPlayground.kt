@@ -54,6 +54,8 @@ import kotlinx.android.synthetic.main.activity_game_playground.*
 import kotlinx.android.synthetic.main.activity_level_intermission.*
 import kotlinx.android.synthetic.main.healthbar.*
 import kotlinx.android.synthetic.main.healthbar.view.*
+import kotlinx.android.synthetic.main.healthbar.view.textView_barrier
+import kotlinx.android.synthetic.main.ultimatebar.view.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.matchParent
 import pl.droidsonroids.gif.GifImageView
@@ -78,6 +80,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     private var playerTarget: PlayerTargetData? = null
     private var hpRenderableNPC: ViewRenderable? = null
     private var hpRenderablePlayer: ViewRenderable? = null
+    private var ultRenderablePlayer: ViewRenderable? = null
     private lateinit var player: Player
     private lateinit var ultimateHandler: UltimateHandler
     var ducksInScene = false
@@ -200,14 +203,15 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             .setSource(this, playerUri)
             .build()
         renderableFuturePlayer.thenAccept {
+            val prevScore = saver.getInt("SCORE", 0)
             renderedPlayer = it
-            // lateinit Player, so it has a reference to the renderable, therefor the cast animation data
             player = Player(
                 5.0,
                 "player",
                 5000.0,
                 it,
-                this
+                this,
+                score = prevScore
             )
         }
     }
@@ -300,6 +304,13 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             hpBar?.background =
                 ContextCompat.getDrawable(this, R.drawable.playerhpbar)
         }
+        val renderableFuture2 = ViewRenderable.builder()
+            .setView(this, R.layout.ultimatebar)
+            .build()
+        renderableFuture2.thenAccept {
+            ultRenderablePlayer = it
+            player.setUltRenderable(it)
+        }
     }
 
     private fun attemptUltimate(ability: PlayerUltimate) {
@@ -330,6 +341,10 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             // the cast animation data (related to the caster's 3d model, not the projectile)
             val animationData = player.model?.getAnimationData(ability.getCastAnimationString())
             player.setModelAnimator(ModelAnimator(animationData, player.model))
+            // TODO: put 3 lines below in onCCDamaged and modify it to return the ability as well
+            player.incrementAbilitiesUsed()
+            player.increaseUltProgress(ability.getDamage(player.getStatus()).toInt())
+            updateUltBar(player.getUltBar()?.view?.textView_ultbar, player)
             player.useAbility(ability, playerTarget!!.model, animData) {
                 playground_attackDuckBtn.isEnabled = true
             }
@@ -408,6 +423,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     }
 
     private fun useBarrier(renderable: ViewRenderable?, cc: CombatControllable) {
+        player.incrementAbilitiesUsed()
         renderable?.view?.textView_barrier?.visibility = View.VISIBLE
         cc.useShield()
     }
@@ -428,6 +444,9 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             )
             doAsync { doCooldown(playground_beamDuckBtn_cd) }
             player.setModelAnimator(ModelAnimator(attackAnimationData, player.model))
+            player.incrementAbilitiesUsed()
+            player.increaseUltProgress(beam.getDamage(player.getStatus()).toInt())
+            updateUltBar(player.getUltBar()?.view?.textView_ultbar, player)
             player.useAbility(beam, playerTarget!!.model, data) {
                 // should do code below in onCCDamaged()
 //                if (playerTarget!!.healthBar != null) {
@@ -454,6 +473,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
 
     private fun teleportPlayer() {
         Log.d("Teleport", "function")
+        player.incrementAbilitiesUsed()
         fragment.setOnTapArPlaneListener{hitResult, plane, motionEvent ->
             Log.d("Teleport", "tap")
             doAsync { effectPlayer.playSound(R.raw.swoosh) }
@@ -494,11 +514,17 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         playerTarget = null
     }
 
+    // The player is currently the only one who has an ultimate
+    private fun createUltBarPlayer(node: TransformableNode, renderable: ViewRenderable?) {
+        val ultNode = Node()
+        ultNode.setParent(node)
+        ultNode.renderable = renderable
+        ultNode.localScale = Vector3(0.35f, 0.25f, 0.25f)
+        ultNode.localPosition = Vector3(0f, 0.49f, 0f)
+    }
+
     // MARK: Testing-abilities-related stuff
-    private fun createHPBar(
-        node: TransformableNode,
-        renderable: ViewRenderable?
-    ) {
+    private fun createHPBar(node: TransformableNode, renderable: ViewRenderable?) {
         val hpNode = Node()
         hpNode.setParent(node)
         hpNode.renderable = renderable
@@ -611,6 +637,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                                 playerNode = node
                                 playerAnchorNode = anchorNode
                                 createHPBar(node, hpRenderable)
+                                createUltBarPlayer(node, ultRenderablePlayer)
                                 node.setOnTouchListener { _, _ ->
                                     val oldPosition = playerNode.worldPosition
                                     Handler().postDelayed({
@@ -707,6 +734,19 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         tv.layoutParams = layOutParams
         layOutParams.setMargins(currentMargin, currentMargin, currentMargin, currentMargin)
         Log.d("SHIELD", "shield amount (updateHpBar): ${model.getStatus().shieldAmount}, hp: ${model.getStatus().currentHealth}")
+    }
+
+    private fun updateUltBar(tv: TextView?, player: Player) {
+        val parent = tv?.parent as View
+        val ratio = (player.getUltProgress().toFloat() / player.getMaxUlt().toFloat())
+        //val layOutParams = LinearLayout.LayoutParams((parent.width * ratio).toInt(), matchParent)
+        val layOutParams = FrameLayout.LayoutParams((parent.width * ratio).toInt(), matchParent)
+        val currentMargin = tv.marginEnd
+        tv.layoutParams = layOutParams
+        layOutParams.setMargins(currentMargin, currentMargin, currentMargin, currentMargin)
+        if (ratio == 1f) {
+            playground_ultimateBar.visibility = View.VISIBLE
+        }
     }
 
     private fun updateShieldBar(tv: GifImageView?, model: CombatControllable) {
@@ -991,12 +1031,16 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         )
         val npcsRemaining = totalNpcCount - spawnedNPCs.size
         if (cc == player) {
+            saver.edit().putInt("SCORE", 0).apply()
+            player.clearPoints()
+            player.clearStatus()
             Toast.makeText(this, "YOU DIED", Toast.LENGTH_LONG)
                 .show()
             playerNode.localRotation = Quaternion(0f, 0f, 1f, 0f)
             callFragment("GameOver")
         } else {
             if (cc is NPC) {
+                player.addPoints(cc.getStatus().maxHealth.toInt())
                 npcsAlive.forEach {
                     if (cc == it) {
                         // the indices should be the same..?
@@ -1032,7 +1076,8 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                                 "npcAnchors.size: ${npcAnchors.size} npcsRemaining: $npcsRemaining, spawnedNpcs.count: ${spawnedNPCs.size}"
                             )
                             if (npcAnchors.size == 0 && npcsRemaining == 0) {
-                                Toast.makeText(this, "ALL DUCKS DEAD!", Toast.LENGTH_LONG)
+                                saver.edit().putInt("SCORE", player.calculateScore()).apply()
+                                Toast.makeText(this, "Score: ${player.calculateScore()}", Toast.LENGTH_LONG)
                                     .show()
                                 Log.d("CURLEVEL", curLevel.toString())
                                 when (curLevel) {
@@ -1057,6 +1102,9 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     // UltimateHandler callback to tell whether the player succeeded in casting the ultimate
     override fun onMeasured(succeeded: Boolean, ability: PlayerUltimate) {
         if (succeeded) {
+            player.ultUsed()
+            playground_ultimateBar.visibility = View.GONE
+            updateUltBar(player.getUltBar()?.view?.textView_ultbar, player)
             if (ability == PlayerUltimate.KILLALL) {
                 npcsAlive.forEach {
                     val health = it.getStatus().maxHealth

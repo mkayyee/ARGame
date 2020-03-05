@@ -6,30 +6,40 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/button_new_game"
+        android:textSize="30sp"
+        android:textAllCaps="false"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/new_game"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/button_profile"
+        android:textSize="30sp"
+        android:textAllCaps="false"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/profile"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/button_high_scores"
+        android:textSize="30sp"
+        android:textAllCaps="false"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/high_scores"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/button_game_settings"
+        android:textSize="30sp"
+        android:textAllCaps="false"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/game_settings"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/button_resume_game"
+        android:textSize="30sp"
+        android:textAllCaps="false"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:enabled="false"

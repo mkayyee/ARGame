@@ -9,6 +9,7 @@
     </style>
 
     <style name="AppTheme.Button" parent="Widget.MaterialComponents.Button">
+        <item name="elevation">8dp</item>
         <item name="colorButtonNormal">@color/colorButtonBackground</item>
         <item name="android:backgroundTint">@color/colorButtonBackground</item>
         <item name="background">@drawable/hpmaterial</item>

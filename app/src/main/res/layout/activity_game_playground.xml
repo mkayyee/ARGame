@@ -74,7 +74,7 @@
         android:layout_gravity="bottom"
         android:layout_height="wrap_content"
         android:layout_marginBottom="50dp"
-        android:visibility="visible"
+        android:visibility="gone"
         android:gravity="bottom|center">
         <Button
             android:id="@+id/playground_killallBtn"

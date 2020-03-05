@@ -89,6 +89,7 @@ class SelectedAbilitiesAdapter(
                     cbListener.onAbilityRemove(AbilityConverter.fromAbility(ability))
                 }
             } else {
+                name = "Slot ${position + 1}"
                 holder.itemView.button_select.visibility = View.GONE
             }
         }
