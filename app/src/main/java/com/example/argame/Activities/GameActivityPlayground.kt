@@ -34,6 +34,10 @@ import com.example.argame.Model.Ability.ProjectileAnimationData
 import com.example.argame.Model.Ability.UltimateHandler
 import com.example.argame.Model.CombatControllable.CombatControllable
 import com.example.argame.Model.NPC.*
+import com.example.argame.Model.Persistence.AppDatabase
+import com.example.argame.Model.Persistence.User
+import com.example.argame.Model.Persistence.UserDao
+import com.example.argame.Model.Player.Highscore
 import com.example.argame.Model.Player.Player
 import com.example.argame.Model.Player.PlayerTargetData
 import com.example.argame.R
@@ -56,8 +60,7 @@ import kotlinx.android.synthetic.main.healthbar.*
 import kotlinx.android.synthetic.main.healthbar.view.*
 import kotlinx.android.synthetic.main.healthbar.view.textView_barrier
 import kotlinx.android.synthetic.main.ultimatebar.view.*
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.matchParent
+import org.jetbrains.anko.*
 import pl.droidsonroids.gif.GifImageView
 import java.sql.Time
 import kotlin.concurrent.thread
@@ -91,6 +94,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     // SHAREDPREFERENCE
 
     private lateinit var saver: SharedPreferences
+    private var userId: Int? = null
     private var curLevel: Int? = null
 
     // MUSIC & SOUNDS
@@ -121,6 +125,10 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         }
         saver = PreferenceManager.getDefaultSharedPreferences(this)
         curLevel = saver.getInt("levelNum", 1)
+        val uid = saver.getInt("USER", -1)
+        if (uid != -1) {
+            userId = uid
+        }
 
         initButtons()
         prepareModels()
@@ -208,7 +216,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             player = Player(
                 5.0,
                 "player",
-                5000.0,
+                500.0,
                 it,
                 this,
                 score = prevScore
@@ -1021,6 +1029,48 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         }
     }
 
+    // Adds 1 to numberOfGames and updates user high score if needed
+    private fun newHighScore(score: Int) {
+        Log.d("POINTS", "user id: $userId")
+        if (userId != null) {
+            val db = AppDatabase.get(this).userDao()
+            getUser(db, userId!!) {
+                val savedScore = saver.getInt("SCORE", 0)
+                val totalScore = score + savedScore
+                doAsync {
+                    // only increment number of games if player is dead
+                    if (!player.getStatus().isAlive) db.incrementNumOfGames(userId!!)
+                    Log.d(
+                        "POINTS", "totalScore ($totalScore) > it.highScore " +
+                                "(${it.highScore} : ${totalScore > it.highScore}"
+                    )
+                    if (totalScore > it.highScore) {
+                        //val highscore = Highscore(userId!!, user.username, totalScore)
+                        db.updateHighScore(totalScore, it.id)
+                        Log.d("POINTS", "New highscore: $totalScore")
+                        // TODO: NetworkAPI.postNewHighScore(highScore)
+                        uiThread {
+                            Toast.makeText(
+                                this@GameActivityPlayground,
+                                "NEW HIGHSCORE!\nScore: $totalScore",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun getUser(db: UserDao, id: Int, cb: (User) -> Unit) {
+        doAsyncResult {
+            val user = db.getUser(id)
+            onComplete {
+                cb(user)
+            }
+        }
+    }
+
     override fun onCCDeath(cc: CombatControllable) {
         // TODO: Stop any pending animation here
         val totalNpcCount = NPCDataForLevels.getNPCForLevelCount(curLevel!!)
@@ -1031,13 +1081,19 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         )
         val npcsRemaining = totalNpcCount - spawnedNPCs.size
         if (cc == player) {
-            saver.edit().putInt("SCORE", 0).apply()
-            player.clearPoints()
-            player.clearStatus()
-            Toast.makeText(this, "YOU DIED", Toast.LENGTH_LONG)
-                .show()
-            playerNode.localRotation = Quaternion(0f, 0f, 1f, 0f)
-            callFragment("GameOver")
+            doAsyncResult {
+                newHighScore(player.calculateScore())
+                uiThread {
+                    playerNode.localRotation = Quaternion(0f, 0f, 1f, 0f)
+                    Toast.makeText(this@GameActivityPlayground, "YOU DIED", Toast.LENGTH_LONG)
+                        .show()
+                }
+                onComplete {
+                    saver.edit().putInt("SCORE", 0).apply()
+                    player.clearStatus()
+                    callFragment("GameOver")
+                }
+            }
         } else {
             if (cc is NPC) {
                 player.addPoints(cc.getStatus().maxHealth.toInt())
@@ -1076,19 +1132,27 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                                 "npcAnchors.size: ${npcAnchors.size} npcsRemaining: $npcsRemaining, spawnedNpcs.count: ${spawnedNPCs.size}"
                             )
                             if (npcAnchors.size == 0 && npcsRemaining == 0) {
-                                saver.edit().putInt("SCORE", player.calculateScore()).apply()
-                                Toast.makeText(this, "Score: ${player.calculateScore()}", Toast.LENGTH_LONG)
-                                    .show()
-                                Log.d("CURLEVEL", curLevel.toString())
-                                when (curLevel) {
-                                    1 -> curLevel = 2
-                                    2 -> curLevel = 10
-                                    else -> curLevel = 1
-                                }
-                                Log.d("CURLEVEL", curLevel.toString())
-
-                                saver.edit().putInt("levelNum", curLevel!!).apply()
-                                callFragment("NextLevel")
+                                doAsyncResult {
+                                    newHighScore(player.calculateScore())
+                                    saver.edit().putInt("SCORE", player.calculateScore()).apply()
+                                    uiThread {
+                                        Toast.makeText(
+                                            this@GameActivityPlayground,
+                                            "Score: ${player.calculateScore()}",
+                                            Toast.LENGTH_LONG
+                                        )
+                                            .show()
+                                        Log.d("CURLEVEL", curLevel.toString())
+                                    }
+                                    when (curLevel) {
+                                        1 -> curLevel = 2
+                                        2 -> curLevel = 10
+                                        else -> curLevel = 1
+                                    }
+                                    Log.d("CURLEVEL", curLevel.toString())
+                                    saver.edit().putInt("levelNum", curLevel!!).apply()
+                                    onComplete {
+                                        callFragment("NextLevel") } }
                             }
                             playground_targetTxt.text = "Ducks alive ${npcsAlive.size}"
                             removeAnchorNode(anchor.anchorNode)

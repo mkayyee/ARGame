@@ -5,7 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.room.*
 
-@Database(entities = arrayOf(User::class, Entities.SelectableAbility::class), version = 1)
+@Database(entities = arrayOf(User::class, Entities.SelectableAbility::class), version = 2)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun userDao(): UserDao
