@@ -6,6 +6,7 @@ import android.app.ActionBar
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.res.Configuration
 import android.hardware.Sensor
 import android.hardware.SensorManager
 import android.net.Uri
@@ -13,13 +14,17 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.AttributeSet
 import android.util.Log
 import android.util.Log.wtf
+import android.view.InflateException
 import android.view.View
+import android.view.ViewGroup
 import android.view.animation.LinearInterpolator
 import android.widget.*
 import androidx.core.content.ContextCompat
 import androidx.core.view.marginEnd
+import androidx.core.view.marginTop
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import com.example.argame.Fragments.CustomArFragment
@@ -55,7 +60,9 @@ import kotlinx.android.synthetic.main.activity_level_intermission.*
 import kotlinx.android.synthetic.main.healthbar.*
 import kotlinx.android.synthetic.main.healthbar.view.*
 import kotlinx.android.synthetic.main.healthbar.view.textView_barrier
+import kotlinx.android.synthetic.main.menu_container.*
 import kotlinx.android.synthetic.main.ultimatebar.view.*
+import org.jetbrains.anko.displayMetrics
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.matchParent
 import pl.droidsonroids.gif.GifImageView
@@ -70,6 +77,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     private val menuFragController =
         MenuFragmentController()
     private lateinit var fragment: CustomArFragment
+    private var rootView : View? = null
     private lateinit var playerUri: Uri
     private var renderedPlayer: ModelRenderable? = null
     private var anchorList = ArrayList<AnchorNode>()
@@ -133,6 +141,37 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             Handler()
         )
         initUltimateHandler()
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        val layoutParamsTop = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
+        val layoutParamsBot = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
+        var marginTopTop = 0
+        var marginTopBot = 0
+        var marginRight = 0
+        var marginLeft = 0
+
+        when (newConfig.orientation) {
+            Configuration.ORIENTATION_PORTRAIT -> {
+                marginTopTop = 300*displayMetrics.density.toInt()
+                marginTopBot = 500*displayMetrics.density.toInt()
+                marginRight = 10*displayMetrics.density.toInt()
+                marginLeft = 10*displayMetrics.density.toInt()
+            }
+            Configuration.ORIENTATION_LANDSCAPE -> {
+                marginTopTop = 150*displayMetrics.density.toInt()
+                marginTopBot = 320*displayMetrics.density.toInt()
+                marginRight = 20*displayMetrics.density.toInt()
+                marginLeft = 20*displayMetrics.density.toInt()
+            }
+        }
+        layoutParamsTop.setMargins(marginLeft,marginTopTop,marginRight,0)
+        layoutParamsBot.setMargins(marginLeft,marginTopBot,marginRight,0)
+        teleportLayout.layoutParams = layoutParamsTop
+        shieldLayout.layoutParams = layoutParamsTop
+        beamLayout.layoutParams = layoutParamsBot
+        attackLayout.layoutParams = layoutParamsBot
     }
 
     override fun onPause() {
