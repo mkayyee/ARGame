@@ -247,7 +247,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     }
 
     private fun prepareModels() {
-        playerUri = Uri.parse("playermodeltwithend.sfb")
+        playerUri = Uri.parse("Alien.sfb")
         val renderableFuturePlayer = ModelRenderable.builder()
             .setSource(this, playerUri)
             .build()

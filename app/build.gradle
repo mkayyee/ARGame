@@ -122,3 +122,9 @@ sceneform.asset('sampledata/Player/playermodeltwithend.fbx',
         'sampledata/Player/playermodeltwithend.sfa',
         'src/main/assets/playermodeltwithend')
 
+sceneform.asset('sampledata/Player/Alien.fbx',
+        'default',
+        'sampledata/Player/Alien.sfa',
+        'src/main/assets/Alien',
+        ['ssampledata/Player/Alien.fbx'])
+
