@@ -126,5 +126,23 @@ sceneform.asset('sampledata/Player/Alien.fbx',
         'default',
         'sampledata/Player/Alien.sfa',
         'src/main/assets/Alien',
-        ['ssampledata/Player/Alien.fbx'])
+        ['sampledata/Player/Alien.fbx'])
+
+sceneform.asset('sampledata/NPC/Skeleton.fbx',
+        'default',
+        'sampledata/NPC/Skeleton.sfa',
+        'src/main/assets/Skeleton',
+        ['sampledata/NPC/Skeleton.fbx'])
+
+sceneform.asset('sampledata/NPC/Slime.fbx',
+        'default',
+        'sampledata/NPC/Slime.sfa',
+        'src/main/assets/Slime',
+        ['sampledata/NPC/Slime.fbx'])
+
+sceneform.asset('sampledata/NPC/Dragon.fbx',
+        'default',
+        'sampledata/NPC/Dragon.sfa',
+        'src/main/assets/Dragon',
+        ['sampledata/NPC/Dragon.fbx'])
 
