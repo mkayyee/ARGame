@@ -58,25 +58,23 @@
         android:layout_width="match_parent"
         android:layout_gravity="bottom"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="50dp"
+        android:layout_marginBottom="65dp"
         android:visibility="gone"
         android:gravity="bottom|center">
-        <Button
+        <ImageButton
             android:id="@+id/playground_killallBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:alpha="1"
-            android:text="KILLALL"
-            app:cornerRadius="45dp" />
-        <Button
+            android:alpha="0.8"
+            android:background="@drawable/icon_killall"/>
+        <ImageButton
             android:id="@+id/playground_serenityBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:alpha="1"
-            android:text="Serenity"
-            app:cornerRadius="45dp" />
+            android:background="@drawable/icon_serenity"
+            android:alpha="0.8" />
     </LinearLayout>
 
 
@@ -99,7 +97,7 @@
         android:layout_width="62dp"
         android:layout_height="62dp"
         android:alpha="0.80"
-        android:background="@drawable/attack_icon"
+        android:background="@drawable/icon_attack"
        />
 
         <TextView
@@ -137,7 +135,7 @@
             android:id="@+id/playground_beamDuckBtn"
             android:layout_width="62dp"
             android:layout_height="62dp"
-            android:background="@drawable/beam_icon"
+            android:background="@drawable/icon_beam"
             android:alpha="0.80"
             />
 
@@ -176,7 +174,7 @@
             android:id="@+id/playground_teleportDuckBtn"
             android:layout_width="62dp"
             android:layout_height="62dp"
-            android:background="@drawable/teleport_icon"
+            android:background="@drawable/icon_teleport"
             android:alpha="0.80"
             />
 
@@ -216,7 +214,7 @@
                 android:layout_width="62dp"
                 android:layout_height="62dp"
                 android:alpha="0.80"
-                android:background="@drawable/shield_icon" />
+                android:background="@drawable/icon_shield" />
 
             <TextView
                 android:id="@+id/playground_shieldDuckBtn_cd"
@@ -294,7 +292,7 @@
             android:layout_marginBottom="25dp"/>
 
     </LinearLayout>
-    
+
 </FrameLayout>
 
 

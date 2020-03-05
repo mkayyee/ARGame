@@ -463,6 +463,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
 
     private fun useBarrier(renderable: ViewRenderable?, cc: CombatControllable) {
         player.incrementAbilitiesUsed()
+        doAsync { doCooldown(playground_shieldDuckBtn_cd) }
         renderable?.view?.textView_barrier?.visibility = View.VISIBLE
         cc.useShield()
     }
@@ -528,6 +529,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             objectAnimation.interpolator =LinearInterpolator()
             objectAnimation.duration = 0
             objectAnimation.start()
+            doAsync { doCooldown(playground_teleportDuckBtn_cd) }
             forceStop = true
             fragment.setOnTapArPlaneListener(null)
             npcAnchors.forEach {

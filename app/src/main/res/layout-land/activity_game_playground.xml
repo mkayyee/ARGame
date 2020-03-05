@@ -107,7 +107,7 @@
         android:layout_width="62dp"
         android:layout_height="62dp"
         android:alpha="0.80"
-        android:background="@drawable/attack_icon"
+        android:background="@drawable/icon_attack"
        />
 
         <TextView
@@ -144,7 +144,7 @@
             android:id="@+id/playground_beamDuckBtn"
             android:layout_width="62dp"
             android:layout_height="62dp"
-            android:background="@drawable/beam_icon"
+            android:background="@drawable/icon_beam"
             android:alpha="0.80"
             />
 
@@ -182,7 +182,7 @@
             android:id="@+id/playground_teleportDuckBtn"
             android:layout_width="62dp"
             android:layout_height="62dp"
-            android:background="@drawable/teleport_icon"
+            android:background="@drawable/icon_teleport"
             android:alpha="0.80"
             />
 
@@ -221,7 +221,7 @@
                 android:layout_width="62dp"
                 android:layout_height="62dp"
                 android:alpha="0.80"
-                android:background="@drawable/shield_icon" />
+                android:background="@drawable/icon_shield" />
 
             <TextView
                 android:id="@+id/playground_shieldDuckBtn_cd"
