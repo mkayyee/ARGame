@@ -1,0 +1,261 @@
+{
+  animations: [
+    {
+      clips: [
+        {
+          name: 'AlienArmature|Alien_Clapping',
+        },
+        {
+          name: 'AlienArmature|Alien_Death',
+        },
+        {
+          name: 'AlienArmature|Alien_Idle',
+        },
+        {
+          name: 'AlienArmature|Alien_IdleHold',
+        },
+        {
+          name: 'AlienArmature|Alien_Jump',
+        },
+        {
+          name: 'AlienArmature|Alien_Punch',
+        },
+        {
+          name: 'AlienArmature|Alien_Run',
+        },
+        {
+          name: 'AlienArmature|Alien_RunHold',
+        },
+        {
+          name: 'AlienArmature|Alien_RunningJump',
+        },
+        {
+          name: 'AlienArmature|Alien_Sitting',
+        },
+        {
+          name: 'AlienArmature|Alien_Standing',
+        },
+        {
+          name: 'AlienArmature|Alien_Swimming',
+        },
+        {
+          name: 'AlienArmature|Alien_SwordSlash',
+        },
+        {
+          name: 'AlienArmature|Alien_Walk',
+        },
+      ],
+      path: 'sampledata/Player/Alien.fbx',
+    },
+    {
+      path: 'ssampledata/Player/Alien.fbx',
+    },
+  ],
+  materials: [
+    {
+      name: 'Main',
+      parameters: [
+        {
+          baseColor: [
+            0.076180999999999999,
+            0.23455000000000001,
+            0.22811799999999999,
+            1,
+          ],
+        },
+        {
+          baseColorMap: null,
+        },
+        {
+          normalMap: null,
+        },
+        {
+          interpolatedColor: null,
+        },
+        {
+          metallic: 0,
+        },
+        {
+          metallicMap: null,
+        },
+        {
+          roughness: 1,
+        },
+        {
+          roughnessMap: null,
+        },
+        {
+          opacity: null,
+        },
+      ],
+      source: 'build/sceneform_sdk/default_materials/fbx_material.sfm',
+    },
+    {
+      name: 'Stripe',
+      parameters: [
+        {
+          baseColor: [
+            0.037408999999999998,
+            0.037408999999999998,
+            0.037408999999999998,
+            1,
+          ],
+        },
+        {
+          baseColorMap: null,
+        },
+        {
+          normalMap: null,
+        },
+        {
+          interpolatedColor: null,
+        },
+        {
+          metallic: 0,
+        },
+        {
+          metallicMap: null,
+        },
+        {
+          roughness: 1,
+        },
+        {
+          roughnessMap: null,
+        },
+        {
+          opacity: null,
+        },
+      ],
+      source: 'build/sceneform_sdk/default_materials/fbx_material.sfm',
+    },
+    {
+      name: 'Eyes',
+      parameters: [
+        {
+          baseColor: [
+            0.025392999999999999,
+            0.025392999999999999,
+            0.025392999999999999,
+            1,
+          ],
+        },
+        {
+          baseColorMap: null,
+        },
+        {
+          normalMap: null,
+        },
+        {
+          interpolatedColor: null,
+        },
+        {
+          metallic: 0,
+        },
+        {
+          metallicMap: null,
+        },
+        {
+          roughness: 1,
+        },
+        {
+          roughnessMap: null,
+        },
+        {
+          opacity: null,
+        },
+      ],
+      source: 'build/sceneform_sdk/default_materials/fbx_material.sfm',
+    },
+    {
+      name: 'Nails',
+      parameters: [
+        {
+          baseColor: [
+            0.052215999999999999,
+            0.034974999999999999,
+            0.036022999999999999,
+            1,
+          ],
+        },
+        {
+          baseColorMap: null,
+        },
+        {
+          normalMap: null,
+        },
+        {
+          interpolatedColor: null,
+        },
+        {
+          metallic: 0,
+        },
+        {
+          metallicMap: null,
+        },
+        {
+          roughness: 1,
+        },
+        {
+          roughnessMap: null,
+        },
+        {
+          opacity: null,
+        },
+      ],
+      source: 'build/sceneform_sdk/default_materials/fbx_material.sfm',
+    },
+    {
+      name: 'White',
+      parameters: [
+        {
+          baseColor: [
+            0.81403499999999995,
+            0.81403499999999995,
+            0.81403499999999995,
+            1,
+          ],
+        },
+        {
+          baseColorMap: null,
+        },
+        {
+          normalMap: null,
+        },
+        {
+          interpolatedColor: null,
+        },
+        {
+          metallic: 0,
+        },
+        {
+          metallicMap: null,
+        },
+        {
+          roughness: 1,
+        },
+        {
+          roughnessMap: null,
+        },
+        {
+          opacity: null,
+        },
+      ],
+      source: 'build/sceneform_sdk/default_materials/fbx_material.sfm',
+    },
+  ],
+  model: {
+    attributes: [
+      'Position',
+      'TexCoord',
+      'Orientation',
+      'BoneIndices',
+      'BoneWeights',
+    ],
+    collision: {},
+    file: 'sampledata/Player/Alien.fbx',
+    name: 'Alien',
+    recenter: 'root',
+    scale: 0.81014399999999998,
+  },
+  version: '0.54:2',
+}
