@@ -68,10 +68,6 @@ class Player(
         return (points / abilitiesUsed) + score
     }
 
-    fun clearPoints() {
-        points = 0
-    }
-
     fun getPoints() : Int {
         return points
     }

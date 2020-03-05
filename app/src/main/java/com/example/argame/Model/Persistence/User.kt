@@ -10,8 +10,8 @@ data class User(
     @PrimaryKey
     val id: Int,
     val username: String,
-    val highScore: Int? = null,
-    var numberOfGames: Int = 0,
+    val highScore: Int = 0,
+    val numberOfGames: Int = 0,
     val avatar: String? = null)
 
 @Dao
@@ -25,11 +25,11 @@ interface UserDao {
     @Query("SELECT * FROM user WHERE user.id = :uid")
     fun getUser(uid: Int): User
 
-    @Query("UPDATE User SET highScore = :new")
-    fun updateHighScore(new: Int)
+    @Query("UPDATE User SET highScore = :new WHERE id = :uid")
+    fun updateHighScore(new: Int, uid: Int)
 
-    @Query("UPDATE User SET highScore = highScore + 1")
-    fun incrementNumOfGames()
+    @Query("UPDATE User SET numberOfGames = (numberOfGames + 1) where id = :uid")
+    fun incrementNumOfGames(uid: Int)
 }
 
 class UserLiveModel(application: Application):

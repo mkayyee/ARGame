@@ -22,4 +22,8 @@
     <string name="remove">Remove</string>
     <string name="minus">-</string>
     <string name="close">Close</string>
+    <string name="username">Username</string>
+    <string name="create">Create</string>
+    <string name="create_new_user">Create new user</string>
+    <string name="new_username">New username</string>
 </resources>

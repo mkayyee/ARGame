@@ -36,6 +36,15 @@
             android:text="@string/default_username" />
     </LinearLayout>
 
+    <com.google.android.material.button.MaterialButton
+        android:padding="8dp"
+        android:textSize="20sp"
+        android:id="@+id/btn_change_username"
+        android:textAllCaps="false"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/new_username"/>
+
     <TextView
         android:padding="8dp"
         android:id="@+id/profile_textView_games_played"
@@ -55,6 +64,7 @@
     <com.google.android.material.button.MaterialButton
         android:padding="8dp"
         android:textSize="20sp"
+        android:textAllCaps="false"
         android:id="@+id/profile_button_back"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
