@@ -1214,7 +1214,9 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                                         curLevel=1
                                     }
                                     else {
-                                        curLevel!! +1
+                                        if (curLevel != null) {
+                                            curLevel = curLevel!! + 1
+                                        }
                                     }
 
                                     Log.d("CURLEVEL", curLevel.toString())

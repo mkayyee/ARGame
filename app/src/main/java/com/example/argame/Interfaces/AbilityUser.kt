@@ -33,8 +33,10 @@ interface AbilityUser {
             caster.instantiateProjectile(projectileData, ability) {
                 // retrieved callback that the projectile was fired, so probably safe to deal damage
                 caster.dealDamage(ability.getDamage(casterStatus), target)
+                animator?.end()
                 cb()
             }
+
         } else {
             cb()
         }
