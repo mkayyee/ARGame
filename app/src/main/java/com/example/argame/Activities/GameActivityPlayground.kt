@@ -468,7 +468,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     private fun useBarrier(renderable: ViewRenderable?, cc: CombatControllable) {
         animateCast(Ability.TELEPORT.getCastAnimationString()!!)
         player.incrementAbilitiesUsed()
-        playground_beamDuckBtn.isEnabled = false
+        playground_shieldDuckBtn.isEnabled = false
         doAsync { effectPlayer.playSound(R.raw.shield) }
         doAsync { doCooldown(playground_shieldDuckBtn_cd, Ability.SHIELD.getCooldown(), playground_shieldDuckBtn) }
         renderable?.view?.textView_barrier?.visibility = View.VISIBLE
