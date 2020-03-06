@@ -257,7 +257,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             player = Player(
                 5.0,
                 "player",
-                500.0,
+                1300.0,
                 it,
                 this,
                 score = prevScore
@@ -469,6 +469,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         animateCast(Ability.TELEPORT.getCastAnimationString()!!)
         player.incrementAbilitiesUsed()
         playground_beamDuckBtn.isEnabled = false
+        doAsync { effectPlayer.playSound(R.raw.shield) }
         doAsync { doCooldown(playground_shieldDuckBtn_cd, Ability.SHIELD.getCooldown(), playground_shieldDuckBtn) }
         renderable?.view?.textView_barrier?.visibility = View.VISIBLE
         cc.useShield()
@@ -488,6 +489,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                 fragment,
                 beam.uri()
             )
+            doAsync { effectPlayer.playSound(R.raw.beam) }
             doAsync { doCooldown(playground_beamDuckBtn_cd, Ability.BEAM.getCooldown(), playground_beamDuckBtn) }
             player.setModelAnimator(ModelAnimator(attackAnimationData, player.model))
             player.incrementAbilitiesUsed()
