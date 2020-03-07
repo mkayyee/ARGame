@@ -629,7 +629,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         hpBarNodes.add(hpNode)
         hpNode.setParent(node)
         hpNode.renderable = renderable
-        renderable.isShadowCaster = false
+        renderable?.isShadowCaster = false
 
         if (node == playerNode) {
             hpNode.localScale = Vector3(4f, 4f, 4f)
@@ -689,6 +689,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         ) {
             playerInScene = true
             render = renderedPlayer!!
+            render.isShadowCaster = false
             hpRenderable = hpRenderablePlayer!!
             ableToSpawn = true
         }
@@ -697,6 +698,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             val checkAnchors = npcAnchors.filter { it.npc.getID() == spawnable.getID() }
             if (ids.isEmpty() && checkAnchors.isEmpty()) {
                 render = spawnable.model!!
+                render.isShadowCaster = false
                 spawnedNPCs.add(spawnable)
                 ableToSpawn = true
             }
