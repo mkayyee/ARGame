@@ -1,0 +1,251 @@
+{
+  animations: [
+    {
+      clips: [
+        {
+          name: 'BatArmature|Bat_Attack',
+        },
+        {
+          name: 'BatArmature|Bat_Attack2',
+        },
+        {
+          name: 'BatArmature|Bat_Death',
+        },
+        {
+          name: 'BatArmature|Bat_Flying',
+        },
+        {
+          name: 'BatArmature|Bat_Hit',
+        },
+      ],
+      path: 'sampledata/NPC/Bat.fbx',
+    },
+    {
+      clips: [
+        {
+          name: 'BatArmature|Bat_Attack',
+        },
+        {
+          name: 'BatArmature|Bat_Attack2',
+        },
+        {
+          name: 'BatArmature|Bat_Death',
+        },
+        {
+          name: 'BatArmature|Bat_Flying',
+        },
+        {
+          name: 'BatArmature|Bat_Hit',
+        },
+      ],
+      path: 'sampledata/NPC/Bat.fbx',
+    },
+  ],
+  materials: [
+    {
+      name: 'Main',
+      parameters: [
+        {
+          baseColor: [
+            0.021218999999999998,
+            0.010959999999999999,
+            0.049707000000000001,
+            1,
+          ],
+        },
+        {
+          baseColorMap: null,
+        },
+        {
+          normalMap: null,
+        },
+        {
+          interpolatedColor: null,
+        },
+        {
+          metallic: 0,
+        },
+        {
+          metallicMap: null,
+        },
+        {
+          roughness: 1,
+        },
+        {
+          roughnessMap: null,
+        },
+        {
+          opacity: null,
+        },
+      ],
+      source: 'build/sceneform_sdk/default_materials/fbx_material.sfm',
+    },
+    {
+      name: 'Black',
+      parameters: [
+        {
+          baseColor: [
+            0.0036419999999999998,
+            0.0036419999999999998,
+            0.0036419999999999998,
+            1,
+          ],
+        },
+        {
+          baseColorMap: null,
+        },
+        {
+          normalMap: null,
+        },
+        {
+          interpolatedColor: null,
+        },
+        {
+          metallic: 0,
+        },
+        {
+          metallicMap: null,
+        },
+        {
+          roughness: 1,
+        },
+        {
+          roughnessMap: null,
+        },
+        {
+          opacity: null,
+        },
+      ],
+      source: 'build/sceneform_sdk/default_materials/fbx_material.sfm',
+    },
+    {
+      name: 'Belly',
+      parameters: [
+        {
+          baseColor: [
+            0.80000000000000004,
+            0.53038700000000005,
+            0.091078000000000006,
+            1,
+          ],
+        },
+        {
+          baseColorMap: null,
+        },
+        {
+          normalMap: null,
+        },
+        {
+          interpolatedColor: null,
+        },
+        {
+          metallic: 0,
+        },
+        {
+          metallicMap: null,
+        },
+        {
+          roughness: 1,
+        },
+        {
+          roughnessMap: null,
+        },
+        {
+          opacity: null,
+        },
+      ],
+      source: 'build/sceneform_sdk/default_materials/fbx_material.sfm',
+    },
+    {
+      name: 'Nose',
+      parameters: [
+        {
+          baseColor: [
+            0.15292600000000001,
+            0.045185999999999997,
+            0.102242,
+            1,
+          ],
+        },
+        {
+          baseColorMap: null,
+        },
+        {
+          normalMap: null,
+        },
+        {
+          interpolatedColor: null,
+        },
+        {
+          metallic: 0,
+        },
+        {
+          metallicMap: null,
+        },
+        {
+          roughness: 1,
+        },
+        {
+          roughnessMap: null,
+        },
+        {
+          opacity: null,
+        },
+      ],
+      source: 'build/sceneform_sdk/default_materials/fbx_material.sfm',
+    },
+    {
+      name: 'Eyes',
+      parameters: [
+        {
+          baseColor: [
+            0,
+            0,
+            0,
+            1,
+          ],
+        },
+        {
+          baseColorMap: null,
+        },
+        {
+          normalMap: null,
+        },
+        {
+          interpolatedColor: null,
+        },
+        {
+          metallic: 0,
+        },
+        {
+          metallicMap: null,
+        },
+        {
+          roughness: 1,
+        },
+        {
+          roughnessMap: null,
+        },
+        {
+          opacity: null,
+        },
+      ],
+      source: 'build/sceneform_sdk/default_materials/fbx_material.sfm',
+    },
+  ],
+  model: {
+    attributes: [
+      'Position',
+      'TexCoord',
+      'Orientation',
+      'BoneIndices',
+      'BoneWeights',
+    ],
+    collision: {},
+    file: 'sampledata/NPC/Bat.fbx',
+    name: 'Bat',
+    recenter: 'root',
+    scale: 0.365873,
+  },
+  version: '0.54:2',
+}

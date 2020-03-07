@@ -146,3 +146,21 @@ sceneform.asset('sampledata/NPC/Dragon.fbx',
         'src/main/assets/Dragon',
         ['sampledata/NPC/Dragon.fbx'])
 
+sceneform.asset('sampledata/NPC/ZombieSmooth.fbx',
+        'default',
+        'sampledata/NPC/ZombieSmooth.sfa',
+        'src/main/assets/ZombieSmooth',
+        ['sampledata/NPC/ZombieSmooth.fbx'])
+
+sceneform.asset('sampledata/NPC/Spider.fbx',
+        'default',
+        'sampledata/NPC/Spider.sfa',
+        'src/main/assets/Spider',
+        ['sampledata/NPC/Spider.fbx'])
+
+sceneform.asset('sampledata/NPC/Bat.fbx',
+        'default',
+        'sampledata/NPC/Bat.sfa',
+        'src/main/assets/Bat',
+        ['sampledata/NPC/Bat.fbx'])
+

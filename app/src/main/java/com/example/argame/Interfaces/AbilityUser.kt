@@ -5,6 +5,7 @@ import com.example.argame.Model.ABILITY_PROJECTILE_SPEED
 import com.example.argame.Model.Ability.Ability
 import com.example.argame.Model.CombatControllable.CombatControllable
 import com.example.argame.Model.Ability.ProjectileAnimationData
+import com.google.ar.sceneform.rendering.ModelRenderable
 
 /***
  *  An Interface for casting abilities, that both, the NPC and the Player implement.
@@ -24,12 +25,6 @@ interface AbilityUser {
 
         if (targetStatus.isAlive && casterStatus.isAlive) {
             val animator = caster.getModelAnimator()
-            if (animator != null) {
-                // TODO(?) A completion callback parameter to end the animation, or make some completion animation.
-                animator.duration = ABILITY_PROJECTILE_SPEED
-                animator.start()
-                Handler().postDelayed({animator.end()}, ABILITY_PROJECTILE_SPEED)
-            }
             caster.instantiateProjectile(projectileData, ability) {
                 // retrieved callback that the projectile was fired, so probably safe to deal damage
                 caster.dealDamage(ability.getDamage(casterStatus), target)
