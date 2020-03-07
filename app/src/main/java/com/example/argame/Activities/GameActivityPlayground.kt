@@ -619,7 +619,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         hpBarNodes.add(ultNode)
         ultNode.setParent(node)
         ultNode.renderable = renderable
-        ultNode.localScale = Vector3(4f, 2.85f, 2.85f)
+        ultNode.localScale = Vector3(4f / 1.25f, 2.85f / 1.25f, 2.85f / 1.25f)
         ultNode.localPosition = Vector3(0f, 3.4f, 0f)
     }
 
@@ -632,11 +632,11 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         renderable?.isShadowCaster = false
 
         if (node == playerNode) {
-            hpNode.localScale = Vector3(4f, 4f, 4f)
+            hpNode.localScale = Vector3(4f / 1.25f, 4f / 1.25f, 4f / 1.25f)
             hpNode.localPosition = Vector3(0f, 3.5f, 0f)
         } else {
-            hpNode.localScale = Vector3(8f, 8f, 8f)
-            hpNode.localPosition = Vector3(0f, 10f, 0f)
+            hpNode.localScale = Vector3(8f / 1.25f, 8f / 1.25f, 8f / 1.25f)
+            hpNode.localPosition = Vector3(0f, 5f, 0f)
         }
     }
 
@@ -666,8 +666,16 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             } else {
                 targetPos = playerTarget!!.node.worldPosition
             }
-            val rotation = AnimationAPI.calculateNewRotation(playerPos, targetPos)
-            playerNode.localRotation = Quaternion(0f, rotation.x, 0f, rotation.z)
+            playerNode.localRotation = AnimationAPI.calculateNewRotation(playerPos, targetPos)
+        }
+    }
+
+    private fun updateNpcRotation(npcNode: TransformableNode) {
+        if (player.getStatus().isAlive) {
+            val q1 = AnimationAPI.calculateNewRotation(npcNode.worldPosition, playerNode.worldPosition)
+            val q2 = Quaternion.axisAngle(Vector3(0f, 1f, 0f), -80f)
+            val rotation = Quaternion.multiply(q1, q2)
+            npcNode.localRotation = rotation
         }
     }
 
@@ -732,7 +740,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                             anchorList.add(anchorNode)
                             anchorNode.setParent(fragment.arSceneView.scene)
                             val node = TransformableNode(fragment.transformationSystem)
-                            node.localScale = Vector3(0.1f, 0.1f, 0.1f)
+                            node.localScale = Vector3(0.15f, 0.15f, 0.15f)
                             anchorNode.setLookDirection(Vector3.forward())
                             node.scaleController.isEnabled = false
                             node.rotationController.isEnabled = false
@@ -740,6 +748,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                             node.setParent(anchorNode)
                             node.renderable = render
                             if (spawnable is Player) {
+                                node.localScale = Vector3(0.07f, 0.07f, 0.07f)
                                 //PLAYER POST SPAWN CODE
                                 val animData= render.getAnimationData("AlienArmature|Alien_Idle")
                                 val animator = ModelAnimator(animData, render)
@@ -791,7 +800,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
 
                                 val newTargetNode = randomMove(node)
                                 animateCast(spawnable.getType().walkAnimationString(), spawnable.model!!, spawnable)
-                                moveToTarget(node, newTargetNode)
+                                moveToTarget(node, newTargetNode, spawnable)
                                 attackInitializer(spawnable.getType(), spawnable, node)
                                 node.setOnTouchListener { _, _ ->
                                     val oldPosition = node.worldPosition
@@ -922,13 +931,14 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         return newNode
     }
 
-    private fun moveToTarget(model: TransformableNode, targetNode: Node) {
+    private fun moveToTarget(model: TransformableNode, targetNode: Node, npc: NPC){
         Log.d("RMOVE", "3")
         // Move to previously randomized location
+        animateCast(npc.getType().walkAnimationString(), npc.model!!, npc)
         val objectAnimation = ObjectAnimator()
         objectAnimation.setAutoCancel(true)
         objectAnimation.target = model
-        model.setLookDirection(Vector3.subtract(model.worldPosition, targetNode.worldPosition))
+        updateNpcRotation(model)
         objectAnimation.setObjectValues(model.worldPosition, targetNode.worldPosition)
         objectAnimation.setPropertyName("worldPosition")
         objectAnimation.setEvaluator(Vector3Evaluator())
@@ -943,12 +953,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             val objectAnimation = ObjectAnimator()
             objectAnimation.setAutoCancel(true)
             objectAnimation.target = model
-            model.setLookDirection(
-                Vector3.subtract(
-                    model.worldPosition,
-                    playerNode.worldPosition
-                )
-            )
+            updateNpcRotation(model)
             val stopX = playerNode.worldPosition.x
             val stopZ = playerNode.worldPosition.z
             val startX = model.worldPosition.x
@@ -994,9 +999,8 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             while (npc.getStatus().isAlive && player.getStatus().isAlive) {
                 if (!cooldown) {
                     cooldown = true
-                    animateCast(npc.getType().idleAnimationString(), npc.model!!, npc)
                     Handler(Looper.getMainLooper()).postDelayed({
-                        cancelAnimator(npc)
+                        updateNpcRotation(model)
                         attackPlayer(npc, model)
                         cooldown = false
                     }, 7100)
@@ -1015,13 +1019,11 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             while (npc.getStatus().isAlive && player.getStatus().isAlive && !forceStop) {
                 if (!cooldown) {
                     cooldown = true
-                    val rotation = AnimationAPI.calculateNewRotation(playerNode.worldPosition, model.worldPosition)
-                    model.localRotation = Quaternion(0f, rotation.x, 0f, rotation.z)
                     Handler(Looper.getMainLooper()).postDelayed({
-                        model.localRotation = Quaternion(0f, rotation.x, 0f, rotation.z)
                         Handler(Looper.getMainLooper()).postDelayed({
                             val animDataStr = npc.getType().attackAnimationString()
                             cancelAnimator(npc)
+                            updateNpcRotation(model)
                             animateCast(animDataStr, npc.model!!, npc)
                             npc.dealDamage(100.0, player)
                         }, 1500)
