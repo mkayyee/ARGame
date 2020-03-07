@@ -670,6 +670,15 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         }
     }
 
+    private fun updateNpcRotation(npcNode: TransformableNode) {
+        if (player.getStatus().isAlive) {
+            val q1 = AnimationAPI.calculateNewRotation(npcNode.worldPosition, playerNode.worldPosition)
+            val q2 = Quaternion.axisAngle(Vector3(0f, 1f, 0f), -80f)
+            val rotation = Quaternion.multiply(q1, q2)
+            npcNode.localRotation = rotation
+        }
+    }
+
     private fun mainSpawner(spawnable: Any) {
         Log.d("mainSpawner", "CALLED")
 
@@ -929,7 +938,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         val objectAnimation = ObjectAnimator()
         objectAnimation.setAutoCancel(true)
         objectAnimation.target = model
-        model.setLookDirection(Vector3.subtract(model.worldPosition, targetNode.worldPosition))
+        updateNpcRotation(model)
         objectAnimation.setObjectValues(model.worldPosition, targetNode.worldPosition)
         objectAnimation.setPropertyName("worldPosition")
         objectAnimation.setEvaluator(Vector3Evaluator())
@@ -944,7 +953,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             val objectAnimation = ObjectAnimator()
             objectAnimation.setAutoCancel(true)
             objectAnimation.target = model
-            model.localRotation = AnimationAPI.calculateNewRotation(model.worldPosition, playerNode.worldPosition)
+            updateNpcRotation(model)
             val stopX = playerNode.worldPosition.x
             val stopZ = playerNode.worldPosition.z
             val startX = model.worldPosition.x
@@ -991,6 +1000,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                 if (!cooldown) {
                     cooldown = true
                     Handler(Looper.getMainLooper()).postDelayed({
+                        updateNpcRotation(model)
                         attackPlayer(npc, model)
                         cooldown = false
                     }, 7100)
@@ -1009,12 +1019,11 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             while (npc.getStatus().isAlive && player.getStatus().isAlive && !forceStop) {
                 if (!cooldown) {
                     cooldown = true
-                    model.localRotation = AnimationAPI.calculateNewRotation(model.worldPosition, playerNode.worldPosition)
                     Handler(Looper.getMainLooper()).postDelayed({
-                        model.localRotation = AnimationAPI.calculateNewRotation(model.worldPosition, playerNode.worldPosition)
                         Handler(Looper.getMainLooper()).postDelayed({
                             val animDataStr = npc.getType().attackAnimationString()
                             cancelAnimator(npc)
+                            updateNpcRotation(model)
                             animateCast(animDataStr, npc.model!!, npc)
                             npc.dealDamage(100.0, player)
                         }, 1500)
