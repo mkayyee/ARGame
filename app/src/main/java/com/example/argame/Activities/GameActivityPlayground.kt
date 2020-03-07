@@ -629,6 +629,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         hpBarNodes.add(hpNode)
         hpNode.setParent(node)
         hpNode.renderable = renderable
+        renderable.isShadowCaster = false
 
         if (node == playerNode) {
             hpNode.localScale = Vector3(4f, 4f, 4f)
