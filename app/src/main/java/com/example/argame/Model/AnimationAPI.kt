@@ -23,7 +23,7 @@ import com.google.ar.sceneform.ux.TransformableNode
  */
 
 // TODO make enum or something for different abilities
-const val ABILITY_PROJECTILE_SPEED: Long = 600
+const val ABILITY_PROJECTILE_SPEED: Long = 1000
 
 object AnimationAPI {
 
@@ -75,7 +75,8 @@ object AnimationAPI {
     fun calculateNewRotation(startPos: Vector3, endPos: Vector3) : Quaternion {
         val difference = Vector3.subtract(startPos, endPos)
         val directionFromTopToBottom = difference.normalized()
-        return Quaternion.lookRotation(directionFromTopToBottom, Vector3.up())
+        val lookRotation = Quaternion.lookRotation(directionFromTopToBottom, Vector3.up())
+        return Quaternion(0f, lookRotation.x, 0f, lookRotation.z)
     }
 
 

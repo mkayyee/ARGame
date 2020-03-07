@@ -36,7 +36,7 @@ import com.google.ar.sceneform.ux.TransformableNode
  */
 
 // The delay before instantiating the projectile
-const val CAST_TIME: Long = 100
+const val CAST_TIME: Long = 350
 
 interface ProjectileAnimator {
 

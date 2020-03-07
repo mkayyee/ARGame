@@ -11,6 +11,8 @@
       <w>renderable</w>
       <w>renderables</w>
       <w>shandler</w>
+      <w>spawnable</w>
+      <w>spawner</w>
     </words>
   </dictionary>
 </component>
