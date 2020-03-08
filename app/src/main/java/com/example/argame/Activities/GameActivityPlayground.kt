@@ -2,13 +2,10 @@ package com.example.argame.Activities
 
 import com.example.argame.Model.BackgroundMusic
 import android.animation.ObjectAnimator
-import android.app.ActionBar
-import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.res.Configuration
-import android.graphics.Color
 import android.hardware.Sensor
 import android.hardware.SensorManager
 import android.net.Uri
@@ -16,17 +13,13 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.AttributeSet
 import android.util.Log
 import android.util.Log.wtf
-import android.view.InflateException
 import android.view.View
-import android.view.ViewGroup
 import android.view.animation.LinearInterpolator
 import android.widget.*
 import androidx.core.content.ContextCompat
 import androidx.core.view.marginEnd
-import androidx.core.view.marginTop
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import com.example.argame.Fragments.CustomArFragment
@@ -45,7 +38,6 @@ import com.example.argame.Model.NPC.*
 import com.example.argame.Model.Persistence.AppDatabase
 import com.example.argame.Model.Persistence.User
 import com.example.argame.Model.Persistence.UserDao
-import com.example.argame.Model.Player.Highscore
 import com.example.argame.Model.Player.Player
 import com.example.argame.Model.Player.PlayerTargetData
 import com.example.argame.R
@@ -62,20 +54,15 @@ import com.google.ar.sceneform.rendering.*
 import com.google.ar.sceneform.ux.TransformableNode
 import kotlinx.android.synthetic.main.activity_game_playground.*
 import kotlinx.android.synthetic.main.activity_level_intermission.*
-import kotlinx.android.synthetic.main.healthbar.*
 import kotlinx.android.synthetic.main.healthbar.view.*
 import kotlinx.android.synthetic.main.healthbar.view.textView_barrier
-import kotlinx.android.synthetic.main.menu_container.*
 import kotlinx.android.synthetic.main.ultimatebar.view.*
 import org.jetbrains.anko.displayMetrics
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.matchParent
 import org.jetbrains.anko.*
-import org.jetbrains.anko.db.INTEGER
 import pl.droidsonroids.gif.GifImageView
 import java.sql.Time
-import kotlin.concurrent.thread
-import kotlin.math.pow
 
 class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     NPCSpawnHandler.NPCSpawnCallback, Ability.AbilityCallbackListener,
@@ -103,6 +90,8 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     var ducksInScene = false
     var playerInScene = false
     val cdHandler = Handler(Looper.getMainLooper())
+    val threadList = mutableListOf<Thread>()
+    var threadStop = false
 
 
     // SHAREDPREFERENCE
@@ -212,6 +201,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         saver.edit().putInt("levelNum", curLevel!!).apply()
         Log.d("SAVE", "Saving level " + curLevel.toString())
         spawnHandler.pause()
+        threadStop = true
         stopService(intentm)
     }
 
@@ -221,18 +211,37 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         saver.edit().putInt("levelNum", curLevel!!).apply()
         Log.d("SAVE", "Saving level " + curLevel.toString())
         //stopService(intentm)
+        threadStop = true
+        threadList.forEach {
+            it.interrupt()
+        }
     }
 
     override fun onResume() {
         super.onResume()
+        threadStop = false
         curLevel = saver.getInt("levelNum", 1)
         spawnHandler.resume()
+        if (npcsAlive.size > 0) {
+            Log.d("RESATK", "Yes")
+            var npcNode : TransformableNode? = null
+            npcsAlive.forEach { curNpc ->
+                npcAnchors.forEach {
+                    if (it.npc == curNpc) {
+                        npcNode = it.anchorNode.children[0] as TransformableNode
+                        if (npcNode != null) {
+                            Log.d("RESATK", "atk")
+                            attackInitializer(curNpc.getType(), curNpc, npcNode!!)
+                        }
+                    }
+                }
+            }
+        }
         if (!BackgroundMusic().isBackgroundMusicRunning()) {
             startService(intentm)
         }
         Log.d("MUSIC", "Running?: " + BackgroundMusic().isBackgroundMusicRunning().toString())
         // TODO: Restore level and abilities
-
     }
 
     override fun onButtonPressed(btn: Button) {
@@ -318,6 +327,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             }
         }
         playground_exitBtn.setOnClickListener {
+            threadStop = true
             callFragment("GameOver")
         }
         // MARK: Testing-abilities-related stuff
@@ -959,7 +969,6 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     private fun moveToTarget(model: TransformableNode, targetNode: Node, npc: NPC){
         Log.d("RMOVE", "3")
         // Move to previously randomized location
-        animateCast(npc.getType().walkAnimationString(), npc.model!!, npc)
         val objectAnimation = ObjectAnimator()
         objectAnimation.setAutoCancel(true)
         objectAnimation.target = model
@@ -970,19 +979,21 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         objectAnimation.interpolator = LinearInterpolator()
         objectAnimation.duration = 3000
         objectAnimation.start()
+        animateCast(npc.getType().walkAnimationString(), npc.model!!, npc)
     }
 
-    fun attackInitializer(type: NPCType, npc: NPC, model: TransformableNode) {
+    fun attackInitializer(type: NPCType, npc: NPC, npcNode: TransformableNode) {
         // Move to player and start attacking. Movement and attack pattern are received from NPCTYPE
+        Log.d("RESATK", "atkinit")
         Handler().postDelayed({
             val objectAnimation = ObjectAnimator()
             objectAnimation.setAutoCancel(true)
-            objectAnimation.target = model
-            updateNpcRotation(model)
+            objectAnimation.target = npcNode
+            updateNpcRotation(npcNode)
             val stopX = playerNode.worldPosition.x
             val stopZ = playerNode.worldPosition.z
-            val startX = model.worldPosition.x
-            val startZ = model.worldPosition.z
+            val startX = npcNode.worldPosition.x
+            val startZ = npcNode.worldPosition.z
             when (type) {
                 NPCType.MELEE -> {
                     val valuePool =
@@ -994,21 +1005,21 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                         playerNode.worldPosition.y,
                         playerNode.worldPosition.z
                     )
-                    objectAnimation.setObjectValues(model.worldPosition, stop)
-                    objectAnimation.duration = 15000
+                    objectAnimation.setObjectValues(npcNode.worldPosition, stop)
+                    objectAnimation.duration = 6000
                     Handler().postDelayed({
                         // Attack until attacker or target is dead
-                        attackLooperMelee(npc, model)
-                    }, 8000)
+                        attackLooperMelee(npc, npcNode)
+                    }, 6000)
                 }
                 else -> {
                     val newX = ((stopX + startX) / 2)
                     val newZ = ((stopZ + startZ) / 2)
-                    val stop = Vector3(newX, model.worldPosition.y, newZ)
-                    objectAnimation.setObjectValues(model.worldPosition, stop)
-                    objectAnimation.duration = 6000
+                    val stop = Vector3(newX, npcNode.worldPosition.y, newZ)
+                    objectAnimation.setObjectValues(npcNode.worldPosition, stop)
+                    objectAnimation.duration = 2000
                     // Attack until attacker or target is dead
-                    attackLooper(npc, model)
+                    attackLooper(npc, npcNode)
                 }
             }
             objectAnimation.setPropertyName("worldPosition")
@@ -1021,17 +1032,20 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     fun attackLooper(npc: NPC, model: TransformableNode) {
         var cooldown = false
         val thread = Thread {
-            while (npc.getStatus().isAlive && player.getStatus().isAlive) {
+            while (npc.getStatus().isAlive && player.getStatus().isAlive && !threadStop) {
                 if (!cooldown) {
                     cooldown = true
                     Handler(Looper.getMainLooper()).postDelayed({
+                        if (!threadStop) {
                         updateNpcRotation(model)
                         attackPlayer(npc, model)
                         cooldown = false
+                    }
                     }, 7100)
                 }
             }
         }
+        threadList.add(thread)
         thread.start()
     }
 
@@ -1041,22 +1055,25 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         forceStop = false
         var cooldown = false
         val thread = Thread {
-            while (npc.getStatus().isAlive && player.getStatus().isAlive && !forceStop) {
+            while (npc.getStatus().isAlive && player.getStatus().isAlive && !forceStop && !threadStop) {
                 if (!cooldown) {
                     cooldown = true
                     Handler(Looper.getMainLooper()).postDelayed({
                         Handler(Looper.getMainLooper()).postDelayed({
-                            val animDataStr = npc.getType().attackAnimationString()
-                            cancelAnimator(npc)
-                            updateNpcRotation(model)
-                            animateCast(animDataStr, npc.model!!, npc)
-                            npc.dealDamage(100.0, player)
+                            if (!threadStop) {
+                                val animDataStr = npc.getType().attackAnimationString()
+                                cancelAnimator(npc)
+                                updateNpcRotation(model)
+                                animateCast(animDataStr, npc.model!!, npc)
+                                npc.dealDamage(100.0, player)
+                            }
                         }, 1500)
                         cooldown = false
                     }, 6000)
                 }
             }
         }
+        threadList.add(thread)
         thread.start()
     }
 
