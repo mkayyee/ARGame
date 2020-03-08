@@ -70,7 +70,6 @@ class HighscoresFragment : Fragment() {
                 Log.d("RETROFIT", "Failed to fetch high scores")
                 Log.d("RETROFIT", t.localizedMessage ?: "no message but error")
             }
-
             override fun onResponse(
                 call: Call<List<NetworkAPI.HighScoreModel.HighScore>>,
                 response: Response<List<NetworkAPI.HighScoreModel.HighScore>>
@@ -82,11 +81,10 @@ class HighscoresFragment : Fragment() {
                 }
                 if (scores != null) {
                     val lm = LinearLayoutManager(context)
-                    recycler_highScores.adapter = HighScoreAdapter(scores)
+                    recycler_highScores.adapter = HighScoreAdapter(scores.sorted())
                     recycler_highScores.layoutManager = lm
                 }
             }
-
         })
     }
 }
