@@ -520,7 +520,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     }
 
     // beams a target npc and will call itself from that npc position if another npc nearby
-    private fun beamTarget(startPos: Vector3, npcData: PlayerTargetData?, subStartIdx: Int? = null) {
+    private fun beamTarget(startPos: Vector3, npcData: PlayerTargetData?, subStartIdx: Int? = null, isRecursive : Boolean = false) {
         if (npcData != null) {
             // Prevent indexOutOfBoundsException when calling recursively
             if (subStartIdx != null && subStartIdx + 1 > npcAnchors.size) return
@@ -545,13 +545,15 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                 player.increaseUltProgress(beam.getDamage(player.getStatus()).toInt())
                 updateUltBar(player.getUltBar()?.view?.textView_ultbar, player)
             }
-            doAsync { effectPlayerPlayer.playSound(R.raw.beam) }
-            doAsync {
-                doCooldown(
-                    playground_beamDuckBtn_cd,
-                    Ability.BEAM.getCooldown(),
-                    playground_beamDuckBtn
-                )
+            if (!isRecursive) {
+                doAsync { effectPlayerPlayer.playSound(R.raw.beam) }
+                doAsync {
+                    doCooldown(
+                        playground_beamDuckBtn_cd,
+                        Ability.BEAM.getCooldown(),
+                        playground_beamDuckBtn
+                    )
+                }
             }
             // split the list if the function is called recursively, so it won't loop infinitely
             val subList = npcAnchors.subList(subStartIdx ?: 0, npcAnchors.size)
@@ -567,7 +569,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                             it.anchorNode.children[0],
                             it.npc,
                             it.npc.getHPBar()?.view?.textView_healthbar),
-                        npcAnchors.indexOf(it) + 1)
+                        npcAnchors.indexOf(it) + 1, isRecursive = true)
                     Log.d("BEAM", "HIT NPC  " + npcAnchors.indexOf(it))
                     //it.anchorNode.localScale = Vector3(0.4f, 0.4f, 0.4f)
                 }
