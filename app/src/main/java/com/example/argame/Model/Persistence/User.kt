@@ -25,6 +25,9 @@ interface UserDao {
     @Query("SELECT * FROM user WHERE user.id = :uid")
     fun getUser(uid: Int): User
 
+    @Query("UPDATE User SET username = :uName WHERE id = :uid")
+    fun changeUsername(uid: Int, uName: String)
+
     @Query("UPDATE User SET highScore = :new WHERE id = :uid")
     fun updateHighScore(new: Int, uid: Int)
 

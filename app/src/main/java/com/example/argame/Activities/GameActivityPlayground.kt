@@ -40,6 +40,9 @@ import com.example.argame.Model.Persistence.User
 import com.example.argame.Model.Persistence.UserDao
 import com.example.argame.Model.Player.Player
 import com.example.argame.Model.Player.PlayerTargetData
+import com.example.argame.Networking.HighscoreService
+import com.example.argame.Networking.NetworkAPI
+import com.example.argame.Networking.RetrofitClientInstance
 import com.example.argame.R
 import com.google.ar.core.Anchor
 import com.google.ar.core.HitResult
@@ -57,11 +60,15 @@ import kotlinx.android.synthetic.main.activity_level_intermission.*
 import kotlinx.android.synthetic.main.healthbar.view.*
 import kotlinx.android.synthetic.main.healthbar.view.textView_barrier
 import kotlinx.android.synthetic.main.ultimatebar.view.*
+import okhttp3.ResponseBody
 import org.jetbrains.anko.displayMetrics
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.matchParent
 import org.jetbrains.anko.*
 import pl.droidsonroids.gif.GifImageView
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.sql.Time
 
 class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
@@ -1171,6 +1178,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                     if (totalScore > it.highScore) {
                         //val highscore = Highscore(userId!!, user.username, totalScore)
                         db.updateHighScore(totalScore, it.id)
+                        postNewHighScore(userId!!, totalScore)
                         Log.d("POINTS", "New highscore: $totalScore")
                         // TODO: NetworkAPI.postNewHighScore(highScore)
                         uiThread {
@@ -1312,6 +1320,27 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                 updateHPBar(hpRenderablePlayer?.view?.textView_healthbar, player)
             }
             // TODO: MAKE ULTIMATE BUTTONS INVISIBLE
+        }
+    }
+
+    private fun postNewHighScore(uid: Int, score: Int) {
+        if (userId != null) {
+            val service = RetrofitClientInstance.retrofitInstance?.create(HighscoreService::class.java)
+            val body = NetworkAPI.HighScoreModel.PostHSBody(uid, score)
+            val call = service?.newHighScore(body)
+            call?.enqueue(object : Callback<ResponseBody>{
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    Toast.makeText(this@GameActivityPlayground, "Error updating highscore", Toast.LENGTH_LONG).show()
+                    Log.d("RETROFIT", "Error updating highscore: ${t.localizedMessage}")
+                }
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    if (response.code() == 200) {
+                        Log.d("RETROFIT", "New high score saved to back end")
+                    } else {
+                        Log.d("RETROFIT", "High score not saved into back end")
+                    }
+                }
+            })
         }
     }
 }
