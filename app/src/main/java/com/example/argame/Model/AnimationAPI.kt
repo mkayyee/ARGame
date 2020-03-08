@@ -4,6 +4,8 @@ import android.animation.ObjectAnimator
 import android.content.Context
 import android.graphics.Color
 import android.view.animation.LinearInterpolator
+import com.example.argame.Activities.GameActivityPlayground
+import com.example.argame.Model.Ability.ProjectileAnimationData
 import com.google.ar.sceneform.math.Quaternion
 import com.google.ar.sceneform.math.Vector3
 import com.google.ar.sceneform.math.Vector3Evaluator
@@ -21,7 +23,7 @@ import com.google.ar.sceneform.ux.TransformableNode
  */
 
 // TODO make enum or something for different abilities
-const val ABILITY_PROJECTILE_SPEED: Long = 1500
+const val ABILITY_PROJECTILE_SPEED: Long = 1000
 
 object AnimationAPI {
 
@@ -42,30 +44,39 @@ object AnimationAPI {
         callback()
     }
 
+//    MaterialFactory.makeTransparentWithColor(context, com.google.ar.sceneform.rendering.Color(Color.BLUE))
+//    .thenAccept { material: Material? ->
+//        lineRenderable = ShapeFactory.makeCube(
+//            Vector3(.01f, .01f, difference.length() * 0.9f),
+//            Vector3.zero(), material
+//        )
+//        lineRenderable.isShadowCaster = false
+//        node.renderable = lineRenderable
+//        node.localPosition = Vector3.add(startPos, endPos).scaled(.5f)
+//    }
+
     // Reference:
     // https://stackoverflow.com/questions/53371583/draw-line-between-location-markers-in-arcore
-    fun stretchModel(startPos: Vector3, endPos: Vector3, node: TransformableNode, context: Context) {
+    fun stretchModel(startPos: Vector3, endPos: Vector3, node: TransformableNode, projAnimData: ProjectileAnimationData) {
         val rotation = calculateNewRotation(startPos, endPos)
         val difference = Vector3.subtract(startPos, endPos)
-        var lineRenderable: ModelRenderable
+        node.rotationController.isEnabled = false
+        node.scaleController.isEnabled = false
+        node.rotationController.isEnabled = false
         node.worldPosition = Vector3.add(startPos, endPos).scaled(0.5f)
         node.worldRotation = rotation
-        MaterialFactory.makeTransparentWithColor(context, com.google.ar.sceneform.rendering.Color(Color.BLUE))
-            .thenAccept { material: Material? ->
-                lineRenderable = ShapeFactory.makeCube(
-                    Vector3(.03f, .03f, difference.length()),
-                    Vector3.zero(), material
-                )
-                lineRenderable.isShadowCaster = false
-                node.renderable = lineRenderable
-                node.localPosition = Vector3.add(startPos, endPos).scaled(.5f)
-            }
+        node.localScale = Vector3(0.03f, 0.03f, difference.length() * 0.9f)
+        node.localPosition = Vector3.add(startPos, endPos).scaled(.5f)
+        node.setParent(projAnimData.fragment.arSceneView.scene)
+        node.renderable = projAnimData.abilityRenderable
+        node.renderable?.isShadowCaster = false
     }
 
     fun calculateNewRotation(startPos: Vector3, endPos: Vector3) : Quaternion {
         val difference = Vector3.subtract(startPos, endPos)
         val directionFromTopToBottom = difference.normalized()
-        return Quaternion.lookRotation(directionFromTopToBottom, Vector3.up())
+        val lookRotation = Quaternion.lookRotation(directionFromTopToBottom, Vector3.up())
+        return Quaternion(0f, lookRotation.x, 0f, lookRotation.z)
     }
 
 

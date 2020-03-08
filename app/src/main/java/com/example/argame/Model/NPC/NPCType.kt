@@ -80,10 +80,61 @@ enum class NPCType {
         }
     }
 
+    fun hitAnimationString() : String {
+        return when (this) {
+            MELEE -> "SpiderArmature|Spider_Jump"
+            RANGED -> "DragonArmature|Dragon_Hit"
+            SUPPORT -> "BatArmature|Bat_Hit"
+            BOSSLVL10 -> "DragonArmature|Dragon_Hit"
+            else -> "No animation"
+        }
+    }
+
+    fun idleAnimationString() : String {
+        return when (this) {
+            MELEE -> "SpiderArmature|Spider_Idle"
+            RANGED -> "DragonArmature|Dragon_Flying"
+            SUPPORT -> "BatArmature|Bat_Flying"
+            BOSSLVL10 -> "DragonArmature|Dragon_Flying"
+            else -> "No animation"
+        }
+    }
+
+    fun walkAnimationString() : String {
+        return when (this) {
+            MELEE -> "SpiderArmature|Spider_Walk"
+            RANGED -> "DragonArmature|Dragon_Flying"
+            SUPPORT -> "BatArmature|Bat_Flying"
+            BOSSLVL10 -> "DragonArmature|Dragon_Flying"
+            else -> "No animation"
+        }
+    }
+
+    fun deathAnimationString() : String {
+        return when (this) {
+            MELEE -> "SpiderArmature|Spider_Death"
+            RANGED -> "DragonArmature|Dragon_Death"
+            SUPPORT -> "BatArmature|Bat_Death"
+            BOSSLVL10 -> "DragonArmature|Dragon_Death"
+            else -> "No animation"
+        }
+    }
+
+    fun attackAnimationString() : String {
+        return when (this) {
+            MELEE -> "SpiderArmature|Spider_Attack"
+            RANGED -> "DragonArmature|Dragon_Hit"
+            SUPPORT -> "BatArmature|Bat_Hit"
+            BOSSLVL10 -> "DragonArmature|Dragon_Hit"
+            else -> "No animation"
+        }
+    }
+
     fun modelUri() : Uri {
         return when (this) {
-            MELEE -> Uri.parse("Slime.sfb")
-            RANGED -> Uri.parse("Skeleton.sfb")
+            MELEE -> Uri.parse("Spider.sfb")
+            RANGED -> Uri.parse("Dragon.sfb")
+            SUPPORT -> Uri.parse("Bat.sfb")
             BOSSLVL10 -> Uri.parse("Dragon.sfb")
             else -> Uri.parse("duck.sfb")
         }

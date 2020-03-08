@@ -18,7 +18,6 @@ import com.example.argame.Model.Persistence.Entities
 import com.example.argame.R
 import kotlinx.android.synthetic.main.menu_main.*
 import org.jetbrains.anko.doAsync
-
 class MainActivity : AppCompatActivity(), FragmentCallbackListener {
 
     private val menuFragController =

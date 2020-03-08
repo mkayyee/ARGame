@@ -1,0 +1,99 @@
+{
+  animations: [
+    {
+      clips: [
+        {
+          name: 'Zombie|ZombieBite',
+        },
+        {
+          name: 'Zombie|ZombieCrawl',
+        },
+        {
+          name: 'Zombie|ZombieIdle',
+        },
+        {
+          name: 'Zombie|ZombieRun',
+        },
+        {
+          name: 'Zombie|ZombieWalk',
+        },
+      ],
+      path: 'sampledata/NPC/ZombieSmooth.fbx',
+    },
+    {
+      clips: [
+        {
+          name: 'Zombie|ZombieBite',
+        },
+        {
+          name: 'Zombie|ZombieCrawl',
+        },
+        {
+          name: 'Zombie|ZombieIdle',
+        },
+        {
+          name: 'Zombie|ZombieRun',
+        },
+        {
+          name: 'Zombie|ZombieWalk',
+        },
+      ],
+      path: 'sampledata/NPC/ZombieSmooth.fbx',
+    },
+  ],
+  materials: [
+    {
+      name: 'Texture',
+      parameters: [
+        {
+          baseColor: [
+            0.80000000000000004,
+            0.80000000000000004,
+            0.80000000000000004,
+            1,
+          ],
+        },
+        {
+          baseColorMap: null,
+        },
+        {
+          normalMap: null,
+        },
+        {
+          interpolatedColor: null,
+        },
+        {
+          metallic: 0,
+        },
+        {
+          metallicMap: null,
+        },
+        {
+          roughness: 1,
+        },
+        {
+          roughnessMap: null,
+        },
+        {
+          opacity: null,
+        },
+      ],
+      source: 'build/sceneform_sdk/default_materials/fbx_material.sfm',
+    },
+  ],
+  model: {
+    attributes: [
+      'Position',
+      'TexCoord',
+      'Orientation',
+      'BoneIndices',
+      'BoneWeights',
+    ],
+    collision: {},
+    file: 'sampledata/NPC/ZombieSmooth.fbx',
+    name: 'ZombieSmooth',
+    recenter: 'root',
+    scale: 0.58679300000000001,
+  },
+  version: '0.54:2',
+}

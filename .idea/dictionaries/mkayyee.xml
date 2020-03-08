@@ -7,9 +7,12 @@
       <w>illum</w>
       <w>inputerr</w>
       <w>npcs</w>
+      <w>proj</w>
       <w>renderable</w>
       <w>renderables</w>
       <w>shandler</w>
+      <w>spawnable</w>
+      <w>spawner</w>
     </words>
   </dictionary>
 </component>

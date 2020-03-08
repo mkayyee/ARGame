@@ -35,83 +35,43 @@ import com.google.ar.sceneform.ux.TransformableNode
  *
  */
 
+// The delay before instantiating the projectile
+const val CAST_TIME: Long = 350
+
 interface ProjectileAnimator {
 
     fun instantiateProjectile(projAnimData: ProjectileAnimationData, ability: Ability, cb: () -> Unit) {
-        // TODO: val callback = projectileData.context as Ability.AbilityCallbackListener
-        val uri: Uri? = projAnimData.modelUri
-        // Get 3d model of the projectile if not null
-        if (projAnimData.modelUri != null) {
-            val renderableFuture = ModelRenderable.builder()
-                .setSource(projAnimData.context, uri)
-                .build()
-            renderableFuture.thenAccept {
-                val animData = it.getAnimationData(0) // 0 should be the index where projectile animation is
-                if (animData != null) { // Null check. By default the ability should have at least 1 animation but never know
-                    if (ability == Ability.BEAM) {
-                        instantiateNodeInScene(projAnimData, it, cb, true)
-                    } else {
-                        instantiateNodeInScene(projAnimData, it, cb)
-                    }
-                    val animator = ModelAnimator(animData, it)
-                    animator.start()
-                } else {
-                    instantiateDefaultProjectile(projAnimData, cb)
-                    wtf("PAERROR", "Projectile animation data was null")
-                }
-            }
-        } else { // some random test sphere to be fired at a target if 3d model is null
-            instantiateDefaultProjectile(projAnimData, cb)
-        }
-    }
-
-    private fun instantiateDefaultProjectile(projAnimData: ProjectileAnimationData, cb: () -> Unit) {
-        MaterialFactory
-            .makeOpaqueWithColor(
-                projAnimData.context,
-                com.google.ar.sceneform.rendering.Color(Color.BLUE))
-            .thenAccept {
-                val renderable: ModelRenderable = ShapeFactory.makeSphere(0.02f, Vector3(0f, 0.1f, 0f), it)
-                instantiateNodeInScene(projAnimData, renderable, cb)
-            }
-    }
-
-    private fun initAbilityAnimationRenderable(context: Context, cb: (ViewRenderable) -> Unit) {
-        val renderableFutureAbility = ViewRenderable.builder()
-            .setView(context, R.layout.ability_animation)
-            .build()
-        renderableFutureAbility.thenAccept {
-            cb(it)
-        }
-    }
-
-    private fun instantiateNodeInScene(projAnimData: ProjectileAnimationData, renderable: ModelRenderable,
-        cb: () -> Unit, isBeam: Boolean = false) {
-        initAbilityAnimationRenderable(projAnimData.context) {animation ->
-            //val node = TransformableNode(projAnimData.fragment.transformationSystem)
-            val animationNode = TransformableNode(projAnimData.fragment.transformationSystem)
-            val scene = projAnimData.fragment.arSceneView.scene
-            animation.isShadowCaster = false
-            //node.renderable = renderable
-            animationNode.renderable = animation
-            scene.addChild(animationNode)
-            //node.addChild(animationNode)
-            if (!isBeam) {
-                animateProjectile(projAnimData, animationNode) {
-                    Handler().postDelayed({
-                        cb()
-                        deleteProjectile(animationNode, projAnimData.fragment.arSceneView.scene)
-                    }, ABILITY_PROJECTILE_SPEED)
-                }
+        Handler().postDelayed({
+            if (ability == Ability.BEAM) {
+                instantiateNodeInScene(projAnimData, cb, true)
             } else {
-                val casterPos = projAnimData.startPos
-                val targetPos = projAnimData.endPos
-                AnimationAPI.stretchModel(casterPos, targetPos, animationNode, projAnimData.context)
+                instantiateNodeInScene(projAnimData, cb)
+            }
+        },CAST_TIME)
+    }
+
+    private fun instantiateNodeInScene(projAnimData: ProjectileAnimationData, cb: () -> Unit, isBeam: Boolean = false) {
+        val animationNode = TransformableNode(projAnimData.fragment.transformationSystem)
+        val scene = projAnimData.fragment.arSceneView.scene
+        scene.addChild(animationNode)
+        if (!isBeam) {
+            animationNode.renderable = projAnimData.gifRenderable
+            animationNode.renderable?.isShadowCaster = false
+            animateProjectile(projAnimData, animationNode) {
                 Handler().postDelayed({
                     cb()
                     deleteProjectile(animationNode, projAnimData.fragment.arSceneView.scene)
                 }, ABILITY_PROJECTILE_SPEED)
             }
+        } else {
+            // Beam
+            val casterPos = projAnimData.startPos
+            val targetPos = projAnimData.endPos
+            AnimationAPI.stretchModel(casterPos, targetPos, animationNode, projAnimData)
+            Handler().postDelayed({
+                cb()
+                deleteProjectile(animationNode, projAnimData.fragment.arSceneView.scene)
+            }, ABILITY_PROJECTILE_SPEED)
         }
     }
 
