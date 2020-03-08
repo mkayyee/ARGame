@@ -151,7 +151,7 @@ object NPCDataForLevels {
         val npc9 = NPCSpawnData(
             NPCType.SUPPORT,
             20000,
-            7
+            8
         )
 
         val npcs = arrayOf(

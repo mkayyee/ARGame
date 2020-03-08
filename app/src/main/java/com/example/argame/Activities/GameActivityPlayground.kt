@@ -45,7 +45,6 @@ import com.example.argame.Model.NPC.*
 import com.example.argame.Model.Persistence.AppDatabase
 import com.example.argame.Model.Persistence.User
 import com.example.argame.Model.Persistence.UserDao
-import com.example.argame.Model.Player.Highscore
 import com.example.argame.Model.Player.Player
 import com.example.argame.Model.Player.PlayerTargetData
 import com.example.argame.R
