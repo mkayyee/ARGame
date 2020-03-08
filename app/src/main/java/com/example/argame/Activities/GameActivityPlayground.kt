@@ -3,6 +3,7 @@ package com.example.argame.Activities
 import com.example.argame.Model.BackgroundMusic
 import android.animation.ObjectAnimator
 import android.app.ActionBar
+import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -70,6 +71,7 @@ import org.jetbrains.anko.displayMetrics
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.matchParent
 import org.jetbrains.anko.*
+import org.jetbrains.anko.db.INTEGER
 import pl.droidsonroids.gif.GifImageView
 import java.sql.Time
 import kotlin.concurrent.thread
@@ -111,7 +113,9 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
 
     // MUSIC & SOUNDS
     private lateinit var intentm : Intent
-    private lateinit var effectPlayer : SoundEffectPlayer
+    private lateinit var effectPlayerPlayer : SoundEffectPlayer
+    private lateinit var effectPlayerNPC : SoundEffectPlayer
+
 
     // Spawning NPC's
     private lateinit var spawnHandler: NPCSpawnHandler
@@ -128,8 +132,11 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         setContentView(R.layout.activity_game_playground)
         intentm = Intent(this, BackgroundMusic::class.java)
 
-        effectPlayer = SoundEffectPlayer(this)
-        effectPlayer.initSoundEffectPlayer()
+        effectPlayerPlayer = SoundEffectPlayer(this)
+        effectPlayerPlayer.initSoundEffectPlayer()
+
+        effectPlayerNPC = SoundEffectPlayer(this)
+        effectPlayerNPC.initSoundEffectPlayer()
 
         fragment =
             supportFragmentManager.findFragmentById(R.id.playground_sceneform_fragment) as CustomArFragment
@@ -155,38 +162,50 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             Handler()
         )
         initUltimateHandler()
+        //startService(intentm)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        val layoutParamsTop = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
-        val layoutParamsBot = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
-        var marginTopTop = 0
-        var marginTopBot = 0
-        var marginRight = 0
-        var marginLeft = 0
+        if (teleportLayout != null && shieldLayout != null && beamLayout != null && attackLayout != null) {
+            val layoutParamsTop = FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT,
+                FrameLayout.LayoutParams.MATCH_PARENT
+            )
+            val layoutParamsBot = FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT,
+                FrameLayout.LayoutParams.MATCH_PARENT
+            )
+            var marginTopTop = 0
+            var marginTopBot = 0
+            var marginRight = 0
+            var marginLeft = 0
 
-        when (newConfig.orientation) {
-            Configuration.ORIENTATION_PORTRAIT -> {
-                marginTopTop = 300*displayMetrics.density.toInt()
-                marginTopBot = 500*displayMetrics.density.toInt()
-                marginRight = 10*displayMetrics.density.toInt()
-                marginLeft = 10*displayMetrics.density.toInt()
+            when (newConfig.orientation) {
+
+                Configuration.ORIENTATION_PORTRAIT -> {
+                    marginTopTop = 300 * displayMetrics.density.toInt()
+                    marginTopBot = 500 * displayMetrics.density.toInt()
+                    marginRight = 10 * displayMetrics.density.toInt()
+                    marginLeft = 10 * displayMetrics.density.toInt()
+                }
+                Configuration.ORIENTATION_LANDSCAPE -> {
+                    marginTopTop = 150 * displayMetrics.density.toInt()
+                    marginTopBot = 320 * displayMetrics.density.toInt()
+                    marginRight = 20 * displayMetrics.density.toInt()
+                    marginLeft = 20 * displayMetrics.density.toInt()
+                }
             }
-            Configuration.ORIENTATION_LANDSCAPE -> {
-                marginTopTop = 150*displayMetrics.density.toInt()
-                marginTopBot = 320*displayMetrics.density.toInt()
-                marginRight = 20*displayMetrics.density.toInt()
-                marginLeft = 20*displayMetrics.density.toInt()
-            }
+            layoutParamsTop.setMargins(marginLeft, marginTopTop, marginRight, 0)
+            layoutParamsBot.setMargins(marginLeft, marginTopBot, marginRight, 0)
+            teleportLayout.layoutParams = layoutParamsTop
+            shieldLayout.layoutParams = layoutParamsTop
+            beamLayout.layoutParams = layoutParamsBot
+            attackLayout.layoutParams = layoutParamsBot
         }
-        layoutParamsTop.setMargins(marginLeft,marginTopTop,marginRight,0)
-        layoutParamsBot.setMargins(marginLeft,marginTopBot,marginRight,0)
-        teleportLayout.layoutParams = layoutParamsTop
-        shieldLayout.layoutParams = layoutParamsTop
-        beamLayout.layoutParams = layoutParamsBot
-        attackLayout.layoutParams = layoutParamsBot
     }
+
+
 
     override fun onPause() {
         super.onPause()
@@ -196,18 +215,22 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         stopService(intentm)
     }
 
+
     override fun onDestroy() {
         super.onDestroy()
         saver.edit().putInt("levelNum", curLevel!!).apply()
         Log.d("SAVE", "Saving level " + curLevel.toString())
-        stopService(intentm)
+        //stopService(intentm)
     }
 
     override fun onResume() {
         super.onResume()
-        startService(intentm)
         curLevel = saver.getInt("levelNum", 1)
         spawnHandler.resume()
+        if (!BackgroundMusic().isBackgroundMusicRunning()) {
+            startService(intentm)
+        }
+        Log.d("MUSIC", "Running?: " + BackgroundMusic().isBackgroundMusicRunning().toString())
         // TODO: Restore level and abilities
 
     }
@@ -403,7 +426,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                     gifRenderable = fireBallRenderable
                 )
             doAsync { doCooldown(playground_attackDuckBtn_cd, Ability.TEST.getCooldown(), playground_attackDuckBtn) }
-            effectPlayer.playSound(R.raw.fireball)
+            effectPlayerPlayer.playSound(R.raw.fireball)
 
             cancelAnimator(player)
             animateCast(Ability.TEST.getCastAnimationString()!!, renderedPlayer!!, player)
@@ -490,7 +513,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         animateCast(Ability.SHIELD.getCastAnimationString()!!, renderedPlayer!!, player)
         player.incrementAbilitiesUsed()
         playground_shieldDuckBtn.isEnabled = false
-        doAsync { effectPlayer.playSound(R.raw.shield) }
+        doAsync { effectPlayerPlayer.playSound(R.raw.shield) }
         doAsync { doCooldown(playground_shieldDuckBtn_cd, Ability.SHIELD.getCooldown(), playground_shieldDuckBtn) }
         renderable?.view?.textView_barrier?.visibility = View.VISIBLE
         cc.useShield()
@@ -522,7 +545,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                 player.increaseUltProgress(beam.getDamage(player.getStatus()).toInt())
                 updateUltBar(player.getUltBar()?.view?.textView_ultbar, player)
             }
-            doAsync { effectPlayer.playSound(R.raw.beam) }
+            doAsync { effectPlayerPlayer.playSound(R.raw.beam) }
             doAsync {
                 doCooldown(
                     playground_beamDuckBtn_cd,
@@ -570,7 +593,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         player.incrementAbilitiesUsed()
         fragment.setOnTapArPlaneListener{hitResult, plane, motionEvent ->
             Log.d("Teleport", "tap")
-            doAsync { effectPlayer.playSound(R.raw.swoosh) }
+            doAsync { effectPlayerPlayer.playSound(R.raw.swoosh) }
             val newAnchor = hitResult.createAnchor()
             val node = AnchorNode(newAnchor)
             val objectAnimation = ObjectAnimator()
@@ -1126,7 +1149,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                     updateShieldBar(hpRenderablePlayer?.view?.textView_barrier, player)
                 }
                 updateHPBar(hpRenderablePlayer?.view?.textView_healthbar, player)
-                doAsync { effectPlayer.playSound(R.raw.gothit) }
+                doAsync { effectPlayerPlayer.playSound(R.raw.gothit) }
             }
         } else {
             if (cc is NPC) {
@@ -1139,6 +1162,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                     }
                 }
                 animateCast(cc.getType().hitAnimationString(), cc.model!!, cc)
+                doAsync { effectPlayerNPC.playSound(R.raw.gothit) }
             }
         }
     }
@@ -1188,7 +1212,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     override fun onCCDeath(cc: CombatControllable) {
         // TODO: Stop any pending animation here
         val totalNpcCount = NPCDataForLevels.getNPCForLevelCount(curLevel!!)
-        doAsync { effectPlayer.playSound(R.raw.gothit) }
+        doAsync { effectPlayerNPC.playSound(R.raw.gothit) }
         Log.d(
             "NPCDED",
             "curLevel: $curLevel LevelOne.size: ${NPCDataForLevels.getNPCForLevelCount(curLevel!!)}"
