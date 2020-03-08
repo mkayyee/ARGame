@@ -486,7 +486,6 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     }
 
     private fun attackPlayer(npc: NPC, node: Node) {
-        // disable attack button for the animation duration
         val ability = Ability.TEST
         val animData = ProjectileAnimationData(
             // TODO make start position relative to screen position
@@ -494,9 +493,10 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             playerNode.worldPosition,
             this,
             fragment,
-            ability.uri()
+            ability.uri(),
+            gifRenderable = fireBallRenderable
         )
-        animateCast(npc.getType().attackAnimationString(), npc.model!!, npc)
+        //animateCast(npc.getType().attackAnimationString(), npc.model!!, npc)
         npc.useAbility(ability, player, animData) {
             updateHPBar(hpRenderablePlayer?.view?.textView_healthbar, player)
         }
@@ -571,10 +571,12 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         }
     }
 
-    private fun animateCast(abilityStr: String, rend: ModelRenderable, cc: CombatControllable) { //TODO: callback to return the animator so can cancel
+    private fun animateCast(abilityStr: String, rend: ModelRenderable, cc: CombatControllable, repeatCount: Int = 0) { //TODO: callback to return the animator so can cancel
         val animData
                 = rend.getAnimationData(abilityStr)
         val animator = ModelAnimator(animData, rend)
+        Log.d("WALK", "repeat: " + repeatCount.toString() )
+        animator.repeatCount = repeatCount
         val currentAnimator = cc.getModelAnimator()
         if (currentAnimator != null) {
             if (currentAnimator.isRunning) currentAnimator.end()
@@ -642,8 +644,8 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             hpNode.localScale = Vector3(4f / 1.25f, 4f / 1.25f, 4f / 1.25f)
             hpNode.localPosition = Vector3(0f, 3.5f, 0f)
         } else {
-            hpNode.localScale = Vector3(8f / 1.25f, 8f / 1.25f, 8f / 1.25f)
-            hpNode.localPosition = Vector3(0f, 5f, 0f)
+            hpNode.localScale = Vector3(6f / 1.25f, 6f / 1.25f, 6f / 1.25f)
+            hpNode.localPosition = Vector3(0f, 4f, 0f)
         }
     }
 
@@ -680,7 +682,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     private fun updateNpcRotation(npcNode: TransformableNode) {
         if (player.getStatus().isAlive) {
             val q1 = AnimationAPI.calculateNewRotation(npcNode.worldPosition, playerNode.worldPosition)
-            val q2 = Quaternion.axisAngle(Vector3(0f, 1f, 0f), -80f)
+            val q2 = Quaternion.axisAngle(Vector3(0f, 1f, 0f), -43f)
             val rotation = Quaternion.multiply(q1, q2)
             npcNode.localRotation = rotation
         }
@@ -735,7 +737,12 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                             trackableWasPlane = true
                             //playerAnchorPos = hit!!
                             when (spawnable) {
-                                is Player -> anchor = hit.createAnchor()
+                                is Player -> {
+                                    anchor = (frame.hitTest(
+                                        pt.x.toFloat(),
+                                        (pt.y.toFloat() * 0.75).toFloat()
+                                    ))[0].createAnchor()
+                                }
                                 else -> {
                                     anchor = (frame.hitTest(
                                         (pt.x.toFloat() - randX),
@@ -806,7 +813,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                                 }
 
                                 val newTargetNode = randomMove(node)
-                                animateCast(spawnable.getType().walkAnimationString(), spawnable.model!!, spawnable)
+                                animateCast(spawnable.getType().walkAnimationString(), spawnable.model!!, spawnable, repeatCount = 100)
                                 moveToTarget(node, newTargetNode, spawnable)
                                 attackInitializer(spawnable.getType(), spawnable, node)
                                 node.setOnTouchListener { _, _ ->
@@ -935,19 +942,19 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         return newNode
     }
 
-    private fun moveToTarget(model: TransformableNode, targetNode: Node, npc: NPC){
+    private fun moveToTarget(npcNode: TransformableNode, targetNode: Node, npc: NPC){
         // Move to previously randomized location
         val objectAnimation = ObjectAnimator()
         objectAnimation.setAutoCancel(true)
-        objectAnimation.target = model
-        updateNpcRotation(model)
-        objectAnimation.setObjectValues(model.worldPosition, targetNode.worldPosition)
+        objectAnimation.target = npcNode
+        npcNode.setLookDirection(targetNode.worldPosition)
+        objectAnimation.setObjectValues(npcNode.worldPosition, targetNode.worldPosition)
         objectAnimation.setPropertyName("worldPosition")
         objectAnimation.setEvaluator(Vector3Evaluator())
         objectAnimation.interpolator = LinearInterpolator()
-        objectAnimation.duration = 3000
+        objectAnimation.duration = 5000
         objectAnimation.start()
-        animateCast(npc.getType().walkAnimationString(), npc.model!!, npc)
+        animateCast(npc.getType().walkAnimationString(), npc.model!!, npc, repeatCount = 100)
     }
 
     fun attackInitializer(type: NPCType, npc: NPC, npcNode: TransformableNode) {
@@ -964,8 +971,8 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             when (type) {
                 NPCType.MELEE -> {
                     val valuePool =
-                        floatArrayOf(-0.12f, -0.10f, -0.08f, -0.06f, 0.06f, 0.08f, 0.10f, 0.12f)
-                    val randomifier = valuePool[(0..7).shuffled().first()]
+                        floatArrayOf(-0.14f,-0.12f, -0.10f, -0.08f, -0.06f, 0.06f, 0.08f, 0.10f, 0.12f,0.14f)
+                    val randomifier = valuePool[(0..9).shuffled().first()]
                     val newX = (stopX + randomifier)
                     val stop = Vector3(
                         newX,
@@ -973,18 +980,19 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                         playerNode.worldPosition.z
                     )
                     objectAnimation.setObjectValues(npcNode.worldPosition, stop)
-                    objectAnimation.duration = 6000
+                    objectAnimation.duration = 5000
                     Handler().postDelayed({
                         // Attack until attacker or target is dead
                         attackLooperMelee(npc, npcNode)
-                    }, 6000)
+                        animateCast(npc.getType().idleAnimationString(), npc.model!!, npc, repeatCount = 100)
+                    }, 5000)
                 }
                 else -> {
                     val newX = ((stopX + startX) / 2)
                     val newZ = ((stopZ + startZ) / 2)
                     val stop = Vector3(newX, npcNode.worldPosition.y, newZ)
                     objectAnimation.setObjectValues(npcNode.worldPosition, stop)
-                    objectAnimation.duration = 2000
+                    objectAnimation.duration = 2500
                     // Attack until attacker or target is dead
                     attackLooper(npc, npcNode)
                 }
@@ -993,7 +1001,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             objectAnimation.setEvaluator(Vector3Evaluator())
             objectAnimation.interpolator = LinearInterpolator()
             objectAnimation.start()
-        }, 3500)
+        }, 5200)
     }
 
     fun attackLooper(npc: NPC, model: TransformableNode) {
@@ -1009,6 +1017,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                         cooldown = false
                     }
                     }, 7100)
+                    animateCast(npc.getType().idleAnimationString(), npc.model!!, npc, repeatCount = 100)
                 }
             }
         }
@@ -1035,6 +1044,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                                 npc.dealDamage(100.0, player)
                             }
                         }, 1500)
+                        animateCast(npc.getType().idleAnimationString(), npc.model!!, npc, repeatCount = 100)
                         cooldown = false
                     }, 6000)
                 }
@@ -1148,6 +1158,9 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                     }
                 }
                 animateCast(cc.getType().hitAnimationString(), cc.model!!, cc)
+                Handler().postDelayed({
+                    animateCast(cc.getType().idleAnimationString(), cc.model!!, cc)
+                },900)
                 doAsync { effectPlayerNPC.playSound(R.raw.gothit) }
             }
         }
