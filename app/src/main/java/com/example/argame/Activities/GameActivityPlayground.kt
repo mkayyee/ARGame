@@ -93,7 +93,6 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     val threadList = mutableListOf<Thread>()
     var threadStop = false
 
-
     // SHAREDPREFERENCE
 
     private lateinit var saver: SharedPreferences
@@ -104,7 +103,6 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     private lateinit var intentm : Intent
     private lateinit var effectPlayerPlayer : SoundEffectPlayer
     private lateinit var effectPlayerNPC : SoundEffectPlayer
-
 
     // Spawning NPC's
     private lateinit var spawnHandler: NPCSpawnHandler
@@ -151,7 +149,6 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             Handler()
         )
         initUltimateHandler()
-        //startService(intentm)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -169,9 +166,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             var marginTopBot = 0
             var marginRight = 0
             var marginLeft = 0
-
             when (newConfig.orientation) {
-
                 Configuration.ORIENTATION_PORTRAIT -> {
                     marginTopTop = 300 * displayMetrics.density.toInt()
                     marginTopBot = 500 * displayMetrics.density.toInt()
@@ -194,8 +189,6 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         }
     }
 
-
-
     override fun onPause() {
         super.onPause()
         saver.edit().putInt("levelNum", curLevel!!).apply()
@@ -204,7 +197,6 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         threadStop = true
         stopService(intentm)
     }
-
 
     override fun onDestroy() {
         super.onDestroy()
@@ -223,14 +215,12 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         curLevel = saver.getInt("levelNum", 1)
         spawnHandler.resume()
         if (npcsAlive.size > 0) {
-            Log.d("RESATK", "Yes")
-            var npcNode : TransformableNode? = null
+            var npcNode : TransformableNode?
             npcsAlive.forEach { curNpc ->
                 npcAnchors.forEach {
                     if (it.npc == curNpc) {
                         npcNode = it.anchorNode.children[0] as TransformableNode
                         if (npcNode != null) {
-                            Log.d("RESATK", "atk")
                             attackInitializer(curNpc.getType(), curNpc, npcNode!!)
                         }
                     }
@@ -344,7 +334,6 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             clearModels()
         }
         playground_teleportDuckBtn.setOnClickListener {
-            Log.d("Teleport", "button pressed")
             doAsync { teleportPlayer() }
         }
         playground_killallBtn.setOnClickListener {
@@ -377,15 +366,14 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     }
 
     private fun callFragment(fragmentName: String) {
+        @Suppress("IMPLICIT_CAST_TO_ANY")
         val fragmentToGet = when (fragmentName) {
-            "NextLevel" -> NextLevelFragment(
-                supportFragmentManager
-            )
+            "NextLevel" -> NextLevelFragment(supportFragmentManager)
             else -> GameOverFragment()
-        } as Fragment
+        }
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.playground_main_menu_container, fragmentToGet)
+            .replace(R.id.playground_main_menu_container, fragmentToGet as Fragment)
             .addToBackStack(null)
             .commit()
     }
@@ -445,8 +433,6 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                 player.increaseUltProgress(ability.getDamage(player.getStatus()).toInt())
                 updateUltBar(player.getUltBar()?.view?.textView_ultbar, player)
             }
-
-            //playground_beamDuckBtn_cd.visibility = View.
         } else {
             Toast.makeText(this, "You don't have a target", Toast.LENGTH_SHORT).show()
         }
@@ -461,7 +447,6 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         while (cooldown) {
             if (update) {
             if (cdTime - timePassed >= cycle) {
-                    Log.d("cooldown", "ROUND")
                     update = false
                     cdHandler.postDelayed({
                       runOnUiThread {
@@ -490,7 +475,6 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         }
         }, cycle)
         }
-
 
     private fun cancelAnimator(cc: CombatControllable) {
         val animator = cc.getModelAnimator()
@@ -600,16 +584,13 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     }
 
     private fun teleportPlayer() {
-        Log.d("Teleport", "function")
         playground_teleportDuckBtn.isEnabled = false
         player.incrementAbilitiesUsed()
-        fragment.setOnTapArPlaneListener{hitResult, plane, motionEvent ->
-            Log.d("Teleport", "tap")
+        fragment.setOnTapArPlaneListener{ hitResult, _, _ ->
             doAsync { effectPlayerPlayer.playSound(R.raw.swoosh) }
             val newAnchor = hitResult.createAnchor()
             val node = AnchorNode(newAnchor)
             val objectAnimation = ObjectAnimator()
-            Log.d("Teleport", node.worldPosition.toString())
             cancelAnimator(player)
             animateCast(Ability.TELEPORT.getCastAnimationString()!!, renderedPlayer!!, player)
             Handler().postDelayed({
@@ -632,15 +613,6 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                     )
                 }
             }
-/*            val savedRenderable = playerNode.renderable
-            val savedHp = playerNode.children[0].renderable
-            playerNode.renderable = null
-            playerNode.children[0].renderable = null
-            hpRenderablePlayer = null
-            Handler().postDelayed({
-                playerNode.renderable = savedRenderable
-                playerNode.children[0].renderable = savedHp
-            },150)*/
         }
     }
 
@@ -862,7 +834,6 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                                     }, 250)
                                 }
                             }
-                            // Create and add HP bars after everything else
                         }
                     }
                 }
@@ -942,7 +913,6 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     }
 
     private fun randomMove(node: TransformableNode): Node {
-        Log.d("RMOVE", "1")
         return when ((1..100).shuffled().first()) {
             in 1..10 -> NodeCreator(node, Vector3(0.9f, 0.0f, 0.0f))
             in 11..30 -> NodeCreator(node, Vector3(0.8f, 0.0f, -1.0f))
@@ -959,7 +929,6 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         initialNode: TransformableNode,
         newLocation: Vector3
     ): Node {
-        Log.d("RMOVE", "2")
         val newNode = Node()
         val summedVector = Vector3.add(initialNode.worldPosition, newLocation)
         newNode.worldPosition = summedVector
@@ -967,7 +936,6 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     }
 
     private fun moveToTarget(model: TransformableNode, targetNode: Node, npc: NPC){
-        Log.d("RMOVE", "3")
         // Move to previously randomized location
         val objectAnimation = ObjectAnimator()
         objectAnimation.setAutoCancel(true)
@@ -984,7 +952,6 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
 
     fun attackInitializer(type: NPCType, npc: NPC, npcNode: TransformableNode) {
         // Move to player and start attacking. Movement and attack pattern are received from NPCTYPE
-        Log.d("RESATK", "atkinit")
         Handler().postDelayed({
             val objectAnimation = ObjectAnimator()
             objectAnimation.setAutoCancel(true)
@@ -1259,6 +1226,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             }
         } else {
             if (cc is NPC) {
+                clearPlayerTarget()
                 player.addPoints(cc.getStatus().maxHealth.toInt())
                 npcsAlive.forEach {
                     if (cc == it) {

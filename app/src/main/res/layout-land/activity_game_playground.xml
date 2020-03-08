@@ -8,14 +8,6 @@
     tools:context=".Activities.GameActivity">
 
 
-
-    <fragment
-        android:id="@+id/playground_sceneform_fragment"
-        android:name="com.example.argame.Fragments.CustomArFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-
-
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
@@ -59,6 +51,12 @@
             android:text="x"
             app:cornerRadius="50dp" />
 
+        <fragment
+            android:id="@+id/playground_sceneform_fragment"
+            android:name="com.example.argame.Fragments.CustomArFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
     </LinearLayout>
 
     <LinearLayout
@@ -66,32 +64,32 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_gravity="bottom"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="50dp"
         android:visibility="gone"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="30dp"
+
         android:gravity="bottom|center">
-        <Button
+        <ImageButton
             android:id="@+id/playground_killallBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:alpha="1"
-            android:text="KILLALL"
-            app:cornerRadius="45dp" />
-        <Button
+            android:alpha="0.8"
+            android:background="@drawable/icon_killall"/>
+        <ImageButton
             android:id="@+id/playground_serenityBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:alpha="1"
-            android:text="Serenity"
-            app:cornerRadius="45dp" />
+            android:background="@drawable/icon_serenity"
+            android:alpha="0.8" />
     </LinearLayout>
 
 
 
     <LinearLayout
-    android:orientation="vertical"
+        android:id="@+id/attackLayout"
+        android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center|right"
@@ -129,7 +127,8 @@
 </LinearLayout>
 
     <LinearLayout
-    android:orientation="vertical"
+        android:id="@+id/beamLayout"
+        android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginTop="320dp"
@@ -167,7 +166,8 @@
 </LinearLayout>
 
     <LinearLayout
-    android:orientation="vertical"
+        android:id="@+id/teleportLayout"
+        android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginTop="150dp"
@@ -205,6 +205,7 @@
 </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/shieldLayout"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
