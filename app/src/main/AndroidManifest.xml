@@ -20,10 +20,11 @@
         <service android:name=".Model.BackgroundMusic" android:stopWithTask="false"/>
         <activity android:name=".Activities.GameActivityPlayground" android:launchMode="singleInstance" android:configChanges="orientation|screenSize"></activity>
         <activity android:name=".Activities.MenuActivity" android:launchMode="singleInstance"/>
+        <activity android:name=".Activities.TutorialActivityFirst" android:launchMode="singleInstance"/>
+        <activity android:name=".Activities.TutorialActivitySecond" android:launchMode="singleInstance"/>
         <activity android:name=".Activities.MainActivity" android:launchMode="singleInstance">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

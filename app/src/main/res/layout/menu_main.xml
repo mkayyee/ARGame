@@ -38,12 +38,12 @@
         android:text="@string/high_scores"/>
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/button_game_settings"
+        android:id="@+id/button_tutorial"
         android:textSize="30sp"
         android:textAllCaps="false"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/game_settings"/>
+        android:text="@string/tutorial"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/button_resume_game"

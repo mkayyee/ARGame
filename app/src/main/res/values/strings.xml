@@ -28,4 +28,25 @@
     <string name="new_username">New username</string>
     <string name="score_username">Username:</string>
     <string name="score">Score:</string>
+    <string name="tutorial_menu">
+        The small x in the top right corner will open up a menu that
+        provides an option to exit the game whenever you want.
+    </string>
+    <string name="tutorial_abilities">
+        The image buttons are abilities you can use to deal damage to the enemies.
+        The numbers over them indicate that the ability is recharging before it may be used again.
+    </string>
+    <string name="tutorial_start_level">
+        To be able to start the level, you must first let your camera find a horizontal plane.
+        This may take some time depending on the environment. The optimal environment is somewhere
+        light (preferable inside), and the optimal plane has some contrast. The start level button
+        will light up when a plane is found, and pressing it will begin the current level.
+    </string>
+    <string name="tutorial_bars">
+        The colored rectangular area above your head is your health bar. Once the health bar turns completely black — you die.
+        The black bar below the health bar is to keep track of your ultimate progress. Ultimates are powerful abilities
+        that you gain access to, after using a certain amount of regular abilities that progressively fill up the ultimate bar.
+    </string>
+    <string name="tutorial">Tutorial</string>
+    <string name="finish">Finish</string>
 </resources>
