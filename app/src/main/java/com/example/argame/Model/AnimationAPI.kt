@@ -3,6 +3,7 @@ package com.example.argame.Model
 import android.animation.ObjectAnimator
 import android.content.Context
 import android.graphics.Color
+import android.os.CountDownTimer
 import android.util.Log
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.LinearInterpolator
@@ -17,6 +18,9 @@ import com.google.ar.sceneform.rendering.MaterialFactory
 import com.google.ar.sceneform.rendering.ModelRenderable
 import com.google.ar.sceneform.rendering.ShapeFactory
 import com.google.ar.sceneform.ux.TransformableNode
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
+import java.sql.Time
 
 
 /***
@@ -26,7 +30,7 @@ import com.google.ar.sceneform.ux.TransformableNode
  */
 
 // TODO make enum or something for different abilities
-const val ABILITY_PROJECTILE_SPEED: Long = 700
+const val ABILITY_PROJECTILE_SPEED: Long = 1000
 
 object AnimationAPI {
 
@@ -59,8 +63,8 @@ object AnimationAPI {
     // Reference:
     // https://stackoverflow.com/questions/53371583/draw-line-between-location-markers-in-arcore
     fun stretchModel(startPos: Vector3, endPos: Vector3, node: TransformableNode, projAnimData: ProjectileAnimationData) {
-        val rotation = calculateNewRotation(startPos, endPos)
-        val difference = Vector3.subtract(startPos, endPos)
+        var rotation = calculateNewRotation(startPos, endPos)
+        var difference = Vector3.subtract(startPos, endPos)
         node.rotationController.isEnabled = false
         node.scaleController.isEnabled = false
         node.rotationController.isEnabled = false
@@ -71,6 +75,21 @@ object AnimationAPI {
         node.setParent(projAnimData.fragment.arSceneView.scene)
         node.renderable = projAnimData.abilityRenderable
         node.renderable?.isShadowCaster = false
+
+        val timer = object: CountDownTimer(ABILITY_PROJECTILE_SPEED, 100) {
+            override fun onFinish() {
+                Log.d("ANIMATORS", "Timer stopped at ${Time(System.nanoTime())}")
+            }
+            override fun onTick(millisUntilFinished: Long) {
+                difference = Vector3.subtract(node.worldPosition, projAnimData.targetNode.worldPosition)
+                Log.d("ANIMATORS", "ticked at ${Time(System.nanoTime())}")
+                rotation = calculateNewRotation(node.worldPosition, projAnimData.targetNode.worldPosition)
+                node.localScale = Vector3(0.03f, 0.03f, difference.length() * 0.9f)
+                node.worldPosition = Vector3.add(node.worldPosition, projAnimData.targetNode.worldPosition).scaled(0.5f)
+                node.worldRotation = rotation
+            }
+        }
+        timer.start()
     }
 
     fun calculateNewRotation(startPos: Vector3, endPos: Vector3) : Quaternion {

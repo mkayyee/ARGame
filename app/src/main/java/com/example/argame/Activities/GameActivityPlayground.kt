@@ -441,7 +441,9 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                         playground_attackDuckBtn
                     )
                 }
-                effectPlayerPlayer.playSound(R.raw.fireball)
+                doAsync {
+                    effectPlayerPlayer.playSound(R.raw.fireball)
+                }
 
                 cancelAnimator(player)
                 animateCast(Ability.TEST.getCastAnimationString()!!, renderedPlayer!!, player)
@@ -452,17 +454,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                 }
             }
         } else {
-            if (npcsAlive.isNotEmpty()) {
-                val closest = getClosestNpc()
-                if (closest?.getHPBar() != null) {
-                    playerTarget = PlayerTargetData(
-                        closest.getNode(),
-                        closest, closest.getHPBar()!!.view.textView_healthbar)
-                    attackTarget()
-                }
-            } else {
-                Toast.makeText(this, "You don't have a target", Toast.LENGTH_SHORT).show()
-            }
+            lookForNewTarget(Ability.TEST)
         }
     }
 
@@ -485,6 +477,24 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                 }
         }
         return closest
+    }
+
+    private fun lookForNewTarget(ability: Ability) {
+        if (npcsAlive.isNotEmpty()) {
+            val closest = getClosestNpc()
+            if (closest?.getHPBar() != null) {
+                playerTarget = PlayerTargetData(
+                    closest.getNode(),
+                    closest, closest.getHPBar()!!.view.textView_healthbar)
+                if (ability == Ability.TEST) {
+                    attackTarget()
+                } else {
+                    beamTarget(playerNode.worldPosition, playerTarget)
+                }
+            }
+        } else {
+            Toast.makeText(this, "You don't have a target", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun doCooldown(cdView: TextView, cdTime: Long, skillBtn : ImageButton) {
@@ -565,7 +575,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
 
     // beams a target npc and will call itself from that npc position if another npc nearby
     private fun beamTarget(startPos: Vector3, npcData: PlayerTargetData?, subStartIdx: Int? = null, isRecursive : Boolean = false) {
-        if (npcData != null) {
+        if (npcData != null && npcData.model.getStatus().isAlive) {
             // Prevent indexOutOfBoundsException when calling recursively
             if (subStartIdx != null && subStartIdx + 1 > npcAnchors.size) return
             updateHpBarOrientations()
@@ -619,6 +629,8 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                     //it.anchorNode.localScale = Vector3(0.4f, 0.4f, 0.4f)
                 }
             }
+        } else {
+            lookForNewTarget(Ability.BEAM)
         }
     }
 
