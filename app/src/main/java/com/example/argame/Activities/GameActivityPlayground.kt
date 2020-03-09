@@ -580,7 +580,6 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             if (subStartIdx != null && subStartIdx + 1 > npcAnchors.size) return
             updateHpBarOrientations()
             updatePlayerRotation()
-            cancelAnimator(player)
             playground_beamDuckBtn.isEnabled = false
             val beam = Ability.BEAM
 //            val attackAnimationData =
@@ -593,13 +592,8 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                 targetNode = npcData.node,
                 casterNode = caster
             )
-            animateCast(Ability.BEAM.getCastAnimationString()!!, renderedPlayer!!, player)
-            player.useAbility(beam, npcData.model, data) {
-                player.incrementAbilitiesUsed()
-                player.increaseUltProgress(beam.getDamage(player.getStatus()).toInt())
-                updateUltBar(player.getUltBar()?.view?.textView_ultbar, player)
-            }
             if (!isRecursive) {
+                animateCast(Ability.BEAM.getCastAnimationString()!!, renderedPlayer!!, player)
                 doAsync { effectPlayerPlayer.playSound(R.raw.beam) }
                 doAsync {
                     doCooldown(
@@ -608,6 +602,11 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                         playground_beamDuckBtn
                     )
                 }
+            }
+            player.useAbility(beam, npcData.model, data) {
+                player.incrementAbilitiesUsed()
+                player.increaseUltProgress(beam.getDamage(player.getStatus()).toInt())
+                updateUltBar(player.getUltBar()?.view?.textView_ultbar, player)
             }
             // split the list if the function is called recursively, so it won't loop infinitely
             val subList = npcAnchors.subList(subStartIdx ?: 0, npcAnchors.size)
