@@ -553,11 +553,8 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             this,
             fragment,
             ability.uri(),
-<<<<<<< HEAD
-            gifRenderable = fireBallRenderable
-=======
+            gifRenderable = fireBallRenderable,
             targetNode = playerNode
->>>>>>> e85ea738504b2c428de3d03ad03f4e30010d65bb
         )
         //animateCast(npc.getType().attackAnimationString(), npc.model!!, npc)
         npc.useAbility(ability, player, animData) {
@@ -633,7 +630,9 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                 }
             }
         } else {
-            lookForNewTarget(Ability.BEAM)
+            if (!isRecursive) {
+                lookForNewTarget(Ability.BEAM)
+            }
         }
     }
 

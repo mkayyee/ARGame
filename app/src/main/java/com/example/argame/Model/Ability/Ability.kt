@@ -91,4 +91,8 @@ enum class Ability() {
             TELEPORT -> "AlienArmature|Alien_Jump"
         }
     }
+
+    fun updateAbility() {
+        // TODO: Update ability
+    }
 }
