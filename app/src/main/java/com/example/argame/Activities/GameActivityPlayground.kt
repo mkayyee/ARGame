@@ -416,33 +416,75 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     private fun attackTarget() {
         // disable attack button for the animation duration
         if (playerTarget != null) {
-            updateHpBarOrientations()
-            updatePlayerRotation()
-            playground_attackDuckBtn.isEnabled = false
-            playground_attackDuckBtn_cd.isEnabled = true
-            val ability = Ability.TEST
-            val animData =
-                ProjectileAnimationData(
-                    playerNode.worldPosition,
-                    playerTarget!!.node.worldPosition,
-                    this,
-                    fragment,
-                    ability.uri(),
-                    gifRenderable = fireBallRenderable
-                )
-            doAsync { doCooldown(playground_attackDuckBtn_cd, Ability.TEST.getCooldown(), playground_attackDuckBtn) }
-            effectPlayerPlayer.playSound(R.raw.fireball)
+            if (!playerTarget!!.model.getStatus().isAlive) {
+                clearPlayerTarget()
+            } else {
+                updateHpBarOrientations()
+                updatePlayerRotation()
+                playground_attackDuckBtn.isEnabled = false
+                playground_attackDuckBtn_cd.isEnabled = true
+                val ability = Ability.TEST
+                val animData =
+                    ProjectileAnimationData(
+                        playerNode.worldPosition,
+                        playerTarget!!.node.worldPosition,
+                        this,
+                        fragment,
+                        ability.uri(),
+                        gifRenderable = fireBallRenderable,
+                        targetNode = playerTarget!!.node
+                    )
+                doAsync {
+                    doCooldown(
+                        playground_attackDuckBtn_cd,
+                        Ability.TEST.getCooldown(),
+                        playground_attackDuckBtn
+                    )
+                }
+                effectPlayerPlayer.playSound(R.raw.fireball)
 
-            cancelAnimator(player)
-            animateCast(Ability.TEST.getCastAnimationString()!!, renderedPlayer!!, player)
-            player.useAbility(ability, playerTarget!!.model, animData) {
-                player.incrementAbilitiesUsed()
-                player.increaseUltProgress(ability.getDamage(player.getStatus()).toInt())
-                updateUltBar(player.getUltBar()?.view?.textView_ultbar, player)
+                cancelAnimator(player)
+                animateCast(Ability.TEST.getCastAnimationString()!!, renderedPlayer!!, player)
+                player.useAbility(ability, playerTarget!!.model, animData) {
+                    player.incrementAbilitiesUsed()
+                    player.increaseUltProgress(ability.getDamage(player.getStatus()).toInt())
+                    updateUltBar(player.getUltBar()?.view?.textView_ultbar, player)
+                }
             }
         } else {
-            Toast.makeText(this, "You don't have a target", Toast.LENGTH_SHORT).show()
+            if (npcsAlive.isNotEmpty()) {
+                val closest = getClosestNpc()
+                if (closest?.getHPBar() != null) {
+                    playerTarget = PlayerTargetData(
+                        closest.getNode(),
+                        closest, closest.getHPBar()!!.view.textView_healthbar)
+                    attackTarget()
+                }
+            } else {
+                Toast.makeText(this, "You don't have a target", Toast.LENGTH_SHORT).show()
+            }
         }
+    }
+
+    private fun getClosestNpc() : NPC? {
+        var closest: NPC? = null
+        var currentDiff: Float? = null
+        npcsAlive.forEach {
+            val diff = Vector3.subtract(playerNode.worldPosition, it.getNode().worldPosition).length()
+            // alive check, to ignore dying NPCs
+                if (closest == null && it.getStatus().isAlive) {
+                    closest = it
+                    currentDiff = diff
+                } else {
+                    if (currentDiff != null) {
+                        if (diff < currentDiff!! && it.getStatus().isAlive) {
+                            closest = it
+                            currentDiff = diff
+                        }
+                    }
+                }
+        }
+        return closest
     }
 
     private fun doCooldown(cdView: TextView, cdTime: Long, skillBtn : ImageButton) {
@@ -501,7 +543,8 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             playerNode.worldPosition,
             this,
             fragment,
-            ability.uri()
+            ability.uri(),
+            targetNode = playerNode
         )
         animateCast(npc.getType().attackAnimationString(), npc.model!!, npc)
         npc.useAbility(ability, player, animData) {
@@ -538,7 +581,8 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                 this,
                 fragment,
                 beam.uri(),
-                abilityRenderable = beamRenderable
+                abilityRenderable = beamRenderable,
+                targetNode = npcData.node
             )
             animateCast(Ability.BEAM.getCastAnimationString()!!, renderedPlayer!!, player)
             player.useAbility(beam, npcData.model, data) {
@@ -804,6 +848,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                                         spawnable
                                     )
                                 )
+                                spawnable.setNode(node)
                                 updateHpBarOrientations()
                                 npcsAlive.add(spawnable)
                                 playground_targetTxt.text = "Enemies alive ${npcsAlive.size}"
@@ -1204,7 +1249,6 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     }
 
     override fun onCCDeath(cc: CombatControllable) {
-        // TODO: Stop any pending animation here
         val totalNpcCount = NPCDataForLevels.getNPCForLevelCount(curLevel!!)
         doAsync { effectPlayerNPC.playSound(R.raw.gothit) }
         Log.d(
@@ -1234,7 +1278,6 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             }
         } else {
             if (cc is NPC) {
-                clearPlayerTarget()
                 player.addPoints(cc.getStatus().maxHealth.toInt())
                 npcsAlive.forEach {
                     if (cc == it) {
@@ -1259,6 +1302,9 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                             // That is why we need to check if the target
                             // still exists when receiving another callback.
                             if (npcsAlive.indexOf(it) >= 0) {
+//                                if (cc.getNode() == playerTarget?.node) {
+//                                    clearPlayerTarget()
+//                                }
                                 if (npcAnchors.size >= npcsAlive.indexOf(it)) {
                                     npcAnchors.removeAt(npcsAlive.indexOf(it))
                                     npcsAlive.removeAt(npcsAlive.indexOf(it))

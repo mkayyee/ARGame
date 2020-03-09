@@ -3,9 +3,12 @@ package com.example.argame.Model
 import android.animation.ObjectAnimator
 import android.content.Context
 import android.graphics.Color
+import android.util.Log
+import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.LinearInterpolator
 import com.example.argame.Activities.GameActivityPlayground
 import com.example.argame.Model.Ability.ProjectileAnimationData
+import com.google.ar.sceneform.Node
 import com.google.ar.sceneform.math.Quaternion
 import com.google.ar.sceneform.math.Vector3
 import com.google.ar.sceneform.math.Vector3Evaluator
@@ -23,37 +26,35 @@ import com.google.ar.sceneform.ux.TransformableNode
  */
 
 // TODO make enum or something for different abilities
-const val ABILITY_PROJECTILE_SPEED: Long = 1000
+const val ABILITY_PROJECTILE_SPEED: Long = 700
 
 object AnimationAPI {
 
-    fun fireProjectile(model: TransformableNode, startPos: Vector3, endPos: Vector3, callback: () -> Unit) {
+    // Potential crash: Node gets removed when trying to update objectValues
+    fun fireProjectile(
+        model: TransformableNode, startPos: Vector3, endPos: Vector3, targetNode: Node, callback: () -> Unit
+    ) {
         val objectAnimation = ObjectAnimator()
         val rotation = Quaternion.lookRotation(startPos, endPos)
         model.localRotation = rotation
         objectAnimation.setAutoCancel(true)
         objectAnimation.target = model
-        objectAnimation.setObjectValues(startPos, endPos)
+        objectAnimation.setObjectValues(startPos, targetNode.worldPosition)
         objectAnimation.setPropertyName("worldPosition")
         objectAnimation.setEvaluator(Vector3Evaluator())
         objectAnimation.interpolator = LinearInterpolator()
-        objectAnimation.duration = ABILITY_PROJECTILE_SPEED
+        objectAnimation.duration = (ABILITY_PROJECTILE_SPEED.toDouble() * 2).toLong()
+        objectAnimation.addUpdateListener {
+            //rotation = Quaternion.lookRotation(it.animatedValue as Vector3, targetNode.worldPosition)
+            //model.localRotation = rotation
+            objectAnimation.setObjectValues(it.animatedValue, targetNode.worldPosition)
+            objectAnimation.setEvaluator(Vector3Evaluator())
+            objectAnimation.interpolator = LinearInterpolator()
+            objectAnimation.setPropertyName("worldPosition")
+        }
         objectAnimation.start()
-        // currently executed immediately --
-        // could implement some logic to see if it reached the target
         callback()
     }
-
-//    MaterialFactory.makeTransparentWithColor(context, com.google.ar.sceneform.rendering.Color(Color.BLUE))
-//    .thenAccept { material: Material? ->
-//        lineRenderable = ShapeFactory.makeCube(
-//            Vector3(.01f, .01f, difference.length() * 0.9f),
-//            Vector3.zero(), material
-//        )
-//        lineRenderable.isShadowCaster = false
-//        node.renderable = lineRenderable
-//        node.localPosition = Vector3.add(startPos, endPos).scaled(.5f)
-//    }
 
     // Reference:
     // https://stackoverflow.com/questions/53371583/draw-line-between-location-markers-in-arcore
