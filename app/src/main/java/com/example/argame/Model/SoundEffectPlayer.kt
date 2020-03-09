@@ -3,6 +3,7 @@ package com.example.argame.Model
 import android.content.Context
 import android.media.MediaPlayer
 import android.net.Uri
+import android.util.Log
 
 class SoundEffectPlayer(context: Context): MediaPlayer.OnPreparedListener {
     private val context = context
@@ -15,12 +16,16 @@ class SoundEffectPlayer(context: Context): MediaPlayer.OnPreparedListener {
     }
 
     fun playSound(file: Int) {
-        player.apply {
-            stop()
-            reset()
-            setDataSource(context, Uri.parse("android.resource://com.example.argame/" + file))
-            setOnPreparedListener(this@SoundEffectPlayer)
-            prepareAsync()
+        try {
+            player.apply {
+                stop()
+                reset()
+                setDataSource(context, Uri.parse("android.resource://com.example.argame/" + file))
+                setOnPreparedListener(this@SoundEffectPlayer)
+                prepareAsync()
+            }
+        } catch (e: Error) {
+            Log.d("SOUNDERR", "Caught error: ${e.localizedMessage}")
         }
     }
 

@@ -56,6 +56,8 @@ interface ProjectileAnimator {
         scene.addChild(animationNode)
         if (!isBeam) {
             animationNode.renderable = projAnimData.gifRenderable
+            animationNode.scaleController.isEnabled = false
+            animationNode.localScale = Vector3(0.65f, 0.65f, 0.65f)
             animationNode.renderable?.isShadowCaster = false
             animateProjectile(projAnimData, animationNode) {
                 Handler().postDelayed({
@@ -80,8 +82,7 @@ interface ProjectileAnimator {
         val endPos = projectileAnimationData.endPos
         // TODO some logic that separates different types of abilities.
         //  e.g if (projectile.type == ray) *cast something other than AnimationAPI.fireProjectile*
-        AnimationAPI.fireProjectile(node, startPos, endPos) {
-            // in the makings of a callback hell
+        AnimationAPI.fireProjectile(node, startPos, endPos, projectileAnimationData.targetNode) {
             cb()
         }
     }

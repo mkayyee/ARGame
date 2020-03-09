@@ -8,6 +8,7 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.View
 import android.widget.Button
+import android.widget.Toast
 import androidx.preference.PreferenceManager
 import com.example.argame.Fragments.Menu.MenuFragmentController
 import com.example.argame.Interfaces.FragmentCallbackListener
@@ -15,19 +16,32 @@ import com.example.argame.Model.Ability.Ability
 import com.example.argame.Model.Ability.AbilityConverter
 import com.example.argame.Model.Persistence.AppDatabase
 import com.example.argame.Model.Persistence.Entities
+import com.example.argame.Networking.HighscoreService
+import com.example.argame.Networking.NetworkAPI
+import com.example.argame.Networking.RetrofitClientInstance
+import com.example.argame.Networking.UserService
 import com.example.argame.R
 import kotlinx.android.synthetic.main.menu_main.*
+import okhttp3.ResponseBody
 import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.doAsyncResult
+import org.jetbrains.anko.onComplete
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+
 class MainActivity : AppCompatActivity(), FragmentCallbackListener {
 
-    private val menuFragController =
-        MenuFragmentController()
+    private lateinit var prefs: SharedPreferences
+    private val menuFragController = MenuFragmentController()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         initMenuContainer()
         addTestStuffRoom()
+        prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        getUserData()
     }
 
 
@@ -62,4 +76,64 @@ class MainActivity : AppCompatActivity(), FragmentCallbackListener {
         // that handles all the logic for these events
         menuFragController.onButtonPressed(btn)
     }
+
+    // Get user data from the back end if user id in preferences is not null.
+    // Updates a high score if local high score is higher than data from the server,
+    // and also updates the user object in sharedPreferences to match the retrieved data.
+    private fun getUserData() {
+        val id = prefs.getInt("USER", -1)
+        if (id != -1) {
+            val db = AppDatabase.get(this).userDao()
+            doAsyncResult {
+                val user = db.getUser(id)
+                onComplete {
+                    val service = RetrofitClientInstance.retrofitInstance?.create(UserService::class.java)
+                    val call = service?.getUser(id)
+                    call?.enqueue(object : Callback<NetworkAPI.UserModel.GetUserResponse> {
+                        override fun onFailure(
+                            call: Call<NetworkAPI.UserModel.GetUserResponse>,
+                            t: Throwable
+                        ) {
+                            Log.d(
+                                "RETROFIT",
+                                "Couldn't get userdata. Reason: ${t.localizedMessage}"
+                            )
+                        }
+                        override fun onResponse(
+                            call: Call<NetworkAPI.UserModel.GetUserResponse>,
+                            response: Response<NetworkAPI.UserModel.GetUserResponse>) {
+                            val res = response.body()
+                            if (res != null) {
+                                if (res.score != null) {
+                                    Log.d("RETROFIT", "user.highScore: ${user.highScore} res.Score: ${res.score}")
+                                    if (user.highScore > res.score) {
+                                        postNewHighScore(id, user.highScore)
+                                    }
+                                } else {
+                                    if (user.highScore > 0) {
+                                        postNewHighScore(id, user.highScore)
+                                    }
+                                }
+                            }
+                        }
+                    })
+                }
+            }
+        }
+    }
+
+    private fun postNewHighScore(uid: Int, score: Int) {
+        val service = RetrofitClientInstance.retrofitInstance?.create(HighscoreService::class.java)
+        val body = NetworkAPI.HighScoreModel.PostHSBody(uid, score)
+        val call = service?.newHighScore(body)
+        call?.enqueue(object : Callback<ResponseBody> {
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                Log.d("RETROFIT", "Error updating highscore: ${t.localizedMessage}")
+            }
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                Log.d("RETROFIT", "New high score saved to back end")
+            }
+        })
+    }
+
 }

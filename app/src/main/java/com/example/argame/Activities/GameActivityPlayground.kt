@@ -40,6 +40,9 @@ import com.example.argame.Model.Persistence.User
 import com.example.argame.Model.Persistence.UserDao
 import com.example.argame.Model.Player.Player
 import com.example.argame.Model.Player.PlayerTargetData
+import com.example.argame.Networking.HighscoreService
+import com.example.argame.Networking.NetworkAPI
+import com.example.argame.Networking.RetrofitClientInstance
 import com.example.argame.R
 import com.google.ar.core.Anchor
 import com.google.ar.core.HitResult
@@ -57,11 +60,15 @@ import kotlinx.android.synthetic.main.activity_level_intermission.*
 import kotlinx.android.synthetic.main.healthbar.view.*
 import kotlinx.android.synthetic.main.healthbar.view.textView_barrier
 import kotlinx.android.synthetic.main.ultimatebar.view.*
+import okhttp3.ResponseBody
 import org.jetbrains.anko.displayMetrics
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.matchParent
 import org.jetbrains.anko.*
 import pl.droidsonroids.gif.GifImageView
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.sql.Time
 
 class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
@@ -409,29 +416,81 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     private fun attackTarget() {
         // disable attack button for the animation duration
         if (playerTarget != null) {
-            updateHpBarOrientations()
-            updatePlayerRotation()
-            playground_attackDuckBtn.isEnabled = false
-            playground_attackDuckBtn_cd.isEnabled = true
-            val ability = Ability.TEST
-            val animData =
-                ProjectileAnimationData(
-                    playerNode.worldPosition,
-                    playerTarget!!.node.worldPosition,
-                    this,
-                    fragment,
-                    ability.uri(),
-                    gifRenderable = fireBallRenderable
-                )
-            doAsync { doCooldown(playground_attackDuckBtn_cd, Ability.TEST.getCooldown(), playground_attackDuckBtn) }
-            effectPlayerPlayer.playSound(R.raw.fireball)
+            if (!playerTarget!!.model.getStatus().isAlive) {
+                clearPlayerTarget()
+            } else {
+                updateHpBarOrientations()
+                updatePlayerRotation()
+                playground_attackDuckBtn.isEnabled = false
+                playground_attackDuckBtn_cd.isEnabled = true
+                val ability = Ability.TEST
+                val animData =
+                    ProjectileAnimationData(
+                        playerNode.worldPosition,
+                        playerTarget!!.node.worldPosition,
+                        this,
+                        fragment,
+                        ability.uri(),
+                        gifRenderable = fireBallRenderable,
+                        targetNode = playerTarget!!.node
+                    )
+                doAsync {
+                    doCooldown(
+                        playground_attackDuckBtn_cd,
+                        Ability.TEST.getCooldown(),
+                        playground_attackDuckBtn
+                    )
+                }
+                doAsync {
+                    effectPlayerPlayer.playSound(R.raw.fireball)
+                }
 
-            cancelAnimator(player)
-            animateCast(Ability.TEST.getCastAnimationString()!!, renderedPlayer!!, player)
-            player.useAbility(ability, playerTarget!!.model, animData) {
-                player.incrementAbilitiesUsed()
-                player.increaseUltProgress(ability.getDamage(player.getStatus()).toInt())
-                updateUltBar(player.getUltBar()?.view?.textView_ultbar, player)
+                cancelAnimator(player)
+                animateCast(Ability.TEST.getCastAnimationString()!!, renderedPlayer!!, player)
+                player.useAbility(ability, playerTarget!!.model, animData) {
+                    player.incrementAbilitiesUsed()
+                    player.increaseUltProgress(ability.getDamage(player.getStatus()).toInt())
+                    updateUltBar(player.getUltBar()?.view?.textView_ultbar, player)
+                }
+            }
+        } else {
+            lookForNewTarget(Ability.TEST)
+        }
+    }
+
+    private fun getClosestNpc() : NPC? {
+        var closest: NPC? = null
+        var currentDiff: Float? = null
+        npcsAlive.forEach {
+            val diff = Vector3.subtract(playerNode.worldPosition, it.getNode().worldPosition).length()
+            // alive check, to ignore dying NPCs
+                if (closest == null && it.getStatus().isAlive) {
+                    closest = it
+                    currentDiff = diff
+                } else {
+                    if (currentDiff != null) {
+                        if (diff < currentDiff!! && it.getStatus().isAlive) {
+                            closest = it
+                            currentDiff = diff
+                        }
+                    }
+                }
+        }
+        return closest
+    }
+
+    private fun lookForNewTarget(ability: Ability) {
+        if (npcsAlive.isNotEmpty()) {
+            val closest = getClosestNpc()
+            if (closest?.getHPBar() != null) {
+                playerTarget = PlayerTargetData(
+                    closest.getNode(),
+                    closest, closest.getHPBar()!!.view.textView_healthbar)
+                if (ability == Ability.TEST) {
+                    attackTarget()
+                } else {
+                    beamTarget(playerNode.worldPosition, playerTarget)
+                }
             }
         } else {
             Toast.makeText(this, "You don't have a target", Toast.LENGTH_SHORT).show()
@@ -494,7 +553,11 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             this,
             fragment,
             ability.uri(),
+<<<<<<< HEAD
             gifRenderable = fireBallRenderable
+=======
+            targetNode = playerNode
+>>>>>>> e85ea738504b2c428de3d03ad03f4e30010d65bb
         )
         //animateCast(npc.getType().attackAnimationString(), npc.model!!, npc)
         npc.useAbility(ability, player, animData) {
@@ -515,7 +578,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
 
     // beams a target npc and will call itself from that npc position if another npc nearby
     private fun beamTarget(startPos: Vector3, npcData: PlayerTargetData?, subStartIdx: Int? = null, isRecursive : Boolean = false) {
-        if (npcData != null) {
+        if (npcData != null && npcData.model.getStatus().isAlive) {
             // Prevent indexOutOfBoundsException when calling recursively
             if (subStartIdx != null && subStartIdx + 1 > npcAnchors.size) return
             updateHpBarOrientations()
@@ -531,7 +594,8 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                 this,
                 fragment,
                 beam.uri(),
-                abilityRenderable = beamRenderable
+                abilityRenderable = beamRenderable,
+                targetNode = npcData.node
             )
             animateCast(Ability.BEAM.getCastAnimationString()!!, renderedPlayer!!, player)
             player.useAbility(beam, npcData.model, data) {
@@ -568,6 +632,8 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                     //it.anchorNode.localScale = Vector3(0.4f, 0.4f, 0.4f)
                 }
             }
+        } else {
+            lookForNewTarget(Ability.BEAM)
         }
     }
 
@@ -804,6 +870,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                                         spawnable
                                     )
                                 )
+                                spawnable.setNode(node)
                                 updateHpBarOrientations()
                                 npcsAlive.add(spawnable)
                                 playground_targetTxt.text = "Enemies alive ${npcsAlive.size}"
@@ -1184,6 +1251,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                     if (totalScore > it.highScore) {
                         //val highscore = Highscore(userId!!, user.username, totalScore)
                         db.updateHighScore(totalScore, it.id)
+                        postNewHighScore(userId!!, totalScore)
                         Log.d("POINTS", "New highscore: $totalScore")
                         // TODO: NetworkAPI.postNewHighScore(highScore)
                         uiThread {
@@ -1209,7 +1277,6 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     }
 
     override fun onCCDeath(cc: CombatControllable) {
-        // TODO: Stop any pending animation here
         val totalNpcCount = NPCDataForLevels.getNPCForLevelCount(curLevel!!)
         doAsync { effectPlayerNPC.playSound(R.raw.gothit) }
         Log.d(
@@ -1239,7 +1306,6 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             }
         } else {
             if (cc is NPC) {
-                clearPlayerTarget()
                 player.addPoints(cc.getStatus().maxHealth.toInt())
                 npcsAlive.forEach {
                     if (cc == it) {
@@ -1264,6 +1330,9 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                             // That is why we need to check if the target
                             // still exists when receiving another callback.
                             if (npcsAlive.indexOf(it) >= 0) {
+//                                if (cc.getNode() == playerTarget?.node) {
+//                                    clearPlayerTarget()
+//                                }
                                 if (npcAnchors.size >= npcsAlive.indexOf(it)) {
                                     npcAnchors.removeAt(npcsAlive.indexOf(it))
                                     npcsAlive.removeAt(npcsAlive.indexOf(it))
@@ -1325,6 +1394,27 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                 updateHPBar(hpRenderablePlayer?.view?.textView_healthbar, player)
             }
             // TODO: MAKE ULTIMATE BUTTONS INVISIBLE
+        }
+    }
+
+    private fun postNewHighScore(uid: Int, score: Int) {
+        if (userId != null) {
+            val service = RetrofitClientInstance.retrofitInstance?.create(HighscoreService::class.java)
+            val body = NetworkAPI.HighScoreModel.PostHSBody(uid, score)
+            val call = service?.newHighScore(body)
+            call?.enqueue(object : Callback<ResponseBody>{
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    Toast.makeText(this@GameActivityPlayground, "Error updating highscore", Toast.LENGTH_LONG).show()
+                    Log.d("RETROFIT", "Error updating highscore: ${t.localizedMessage}")
+                }
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    if (response.code() == 200) {
+                        Log.d("RETROFIT", "New high score saved to back end")
+                    } else {
+                        Log.d("RETROFIT", "High score not saved into back end")
+                    }
+                }
+            })
         }
     }
 }
