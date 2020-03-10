@@ -5,8 +5,11 @@
     android:orientation="vertical"
     android:layout_margin="8dp"
     android:weightSum="5"
+    android:clipToPadding="false"
+    android:elevation="24dp"
+    android:outlineProvider="bounds"
     android:layout_width="match_parent"
-    android:background="@drawable/background_borders"
+    android:background="@drawable/healthbar_background"
     android:layout_height="wrap_content">
 
     <ScrollView
@@ -25,7 +28,6 @@
                 android:layout_height="wrap_content"
                 android:padding="16dp"
                 android:text="@string/tutorial_start_level"
-                android:textColor="#000000"
                 android:textSize="25sp" />
         </LinearLayout>
     </ScrollView>

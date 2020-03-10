@@ -77,12 +77,14 @@ class ProfileFragment(private var changeUser: Boolean = false) : Fragment() {
             getUser(userId) {
                 Log.d("USER", "games played: ${it.numberOfGames}")
                 profile_textView_username.text = it.username
-                profile_textView_games_played.text = it.numberOfGames.toString()
+                val gpText = "Games played: ${it.numberOfGames}"
+                profile_textView_games_played.text = gpText
                 if (it.avatar != null) {
                     profile_imageView_avatar.setImageURI(Uri.parse(it.avatar))
                 }
                 if (it.highScore != 0) {
-                    profile_textView_highest_score.text = it.highScore.toString()
+                    val score = "High score: ${it.highScore}"
+                    profile_textView_highest_score.text = score
                 }
             }
         }
@@ -105,6 +107,9 @@ class ProfileFragment(private var changeUser: Boolean = false) : Fragment() {
         if (!userExists || changeUser) {
             textInputListenerSetup()
             createUserBtnListener()
+            if (changeUser) {
+                textView_newUser.text = getString(R.string.change_user)
+            }
         } else {
             btn_change_username.setOnClickListener {
                 changeUsernameBtnListener()

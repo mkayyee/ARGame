@@ -3,12 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="@drawable/abilitybgmaterial"
+    android:background="@drawable/hpmaterial"
     android:layout_height="match_parent"
     tools:context=".Activities.MainActivity">
 
     <FrameLayout
-        android:layout_margin="32dp"
+        android:layout_margin="16dp"
         android:id="@+id/main_menu_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

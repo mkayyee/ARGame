@@ -7,9 +7,9 @@
     android:gravity="center">
 
     <TextView
-        android:layout_marginBottom="120dp"
+        android:layout_marginBottom="80dp"
         android:textStyle="bold"
-        android:textSize="30sp"
+        android:textSize="40sp"
         android:textColor="#FFF"
         android:background="#F000"
         android:padding="12dp"
@@ -19,24 +19,36 @@
         />
 
     <com.google.android.material.button.MaterialButton
+        android:elevation="8dp"
+        android:padding="16dp"
         android:id="@+id/button_next_level"
         android:layout_gravity="center"
         android:layout_width="300dp"
+        android:textSize="28sp"
+        android:textAllCaps="false"
         android:layout_margin="5dp"
         android:layout_height="wrap_content"
         android:text="@string/next_level"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/button_select_abilities"
+        android:padding="16dp"
+        android:elevation="8dp"
         android:layout_gravity="center"
         android:layout_width="300dp"
+        android:textAllCaps="false"
+        android:textSize="28sp"
         android:layout_margin="5dp"
         android:layout_height="wrap_content"
         android:text="@string/select_abilities"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/button_exit"
+        android:padding="16dp"
+        android:elevation="8dp"
         android:layout_gravity="center"
+        android:textSize="28sp"
+        android:textAllCaps="false"
         android:layout_width="300dp"
         android:layout_margin="5dp"
         android:layout_height="wrap_content"

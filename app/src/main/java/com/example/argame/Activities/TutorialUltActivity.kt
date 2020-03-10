@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.view.animation.AnimationUtils
 import com.example.argame.Fragments.TutorialState
 import com.example.argame.Fragments.TutorialWindowFragment
 import com.example.argame.R
@@ -14,6 +15,7 @@ class TutorialUltActivity : AppCompatActivity(), TutorialWindowFragment.Tutorial
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_tutorial_ults)
+        supportActionBar?.hide()
         initUltFragment()
     }
 

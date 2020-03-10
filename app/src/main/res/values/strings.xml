@@ -67,4 +67,6 @@
     <string name="finish">Finish</string>
     <string name="next">Next</string>
     <string name="survivar">SurvivAR</string>
+    <string name="_1">#1</string>
+    <string name="change_user">Change username</string>
 </resources>

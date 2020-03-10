@@ -3,6 +3,7 @@ package com.example.argame.Activities
 import android.content.Intent
 import android.os.Bundle
 import android.os.PersistableBundle
+import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
@@ -17,6 +18,7 @@ class TutorialActivitySecond : AppCompatActivity(), TutorialWindowFragment.Tutor
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_tutorial_second)
+        supportActionBar?.hide()
         handleFragmentChange(TutorialState.BARS)
     }
 
