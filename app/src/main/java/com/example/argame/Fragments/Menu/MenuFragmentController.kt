@@ -13,6 +13,7 @@ import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import com.example.argame.Activities.GameActivityPlayground
+import com.example.argame.Activities.TutorialActivityFirst
 import com.example.argame.Interfaces.FragmentCallbackListener
 import com.example.argame.R
 import com.google.android.material.button.MaterialButton
@@ -83,7 +84,10 @@ class MenuFragmentController : Fragment(), FragmentCallbackListener {
             //R.id.profile_button_back -> drawMainMenuFragment()
             R.id.button_profile -> drawFragment(profileFrag)
             R.id.button_high_scores -> drawFragment(highscoresFrag)
-            R.id.button_game_settings -> drawFragment(settingsFrag)
+            R.id.button_tutorial -> {
+                val intent = Intent(context, TutorialActivityFirst::class.java)
+                startActivity(intent)
+            }
             R.id.button_new_game -> {
                 saver?.edit()?.putInt("levelNum", 1)?.apply()
                 launchGameActivity()

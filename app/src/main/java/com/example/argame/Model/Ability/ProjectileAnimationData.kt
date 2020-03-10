@@ -10,12 +10,11 @@ import com.google.ar.sceneform.ux.ArFragment
 import com.google.ar.sceneform.ux.TransformableNode
 
 data class ProjectileAnimationData(
-    val startPos: Vector3,
-    val endPos: Vector3,
     val context: Context,
     val fragment: ArFragment,
     val modelUri: Uri? = null,
     val abilityRenderable: ModelRenderable? = null,
     val gifRenderable: ViewRenderable? = null,
-    val targetNode: Node
+    val targetNode: Node,
+    val casterNode: Node
 )

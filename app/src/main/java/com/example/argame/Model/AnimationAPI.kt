@@ -62,7 +62,9 @@ object AnimationAPI {
 
     // Reference:
     // https://stackoverflow.com/questions/53371583/draw-line-between-location-markers-in-arcore
-    fun stretchModel(startPos: Vector3, endPos: Vector3, node: TransformableNode, projAnimData: ProjectileAnimationData) {
+    fun stretchModel(node: TransformableNode, projAnimData: ProjectileAnimationData) {
+        val startPos = projAnimData.casterNode.worldPosition
+        val endPos = projAnimData.targetNode.worldPosition
         var rotation = calculateNewRotation(startPos, endPos)
         var difference = Vector3.subtract(startPos, endPos)
         node.rotationController.isEnabled = false
@@ -70,23 +72,26 @@ object AnimationAPI {
         node.rotationController.isEnabled = false
         node.worldPosition = Vector3.add(startPos, endPos).scaled(0.5f)
         node.worldRotation = rotation
-        node.localScale = Vector3(0.03f, 0.03f, difference.length() * 0.9f)
-        node.localPosition = Vector3.add(startPos, endPos).scaled(.5f)
+        node.localScale = Vector3(0.03f, 0.03f, difference.length() * 0.8f)
+        var position = Vector3.add(projAnimData.casterNode.worldPosition, projAnimData.targetNode.worldPosition).scaled(.5f)
+        node.localPosition = Vector3(position.x, position.y + 0.075f, position.z)
         node.setParent(projAnimData.fragment.arSceneView.scene)
         node.renderable = projAnimData.abilityRenderable
         node.renderable?.isShadowCaster = false
 
-        val timer = object: CountDownTimer(ABILITY_PROJECTILE_SPEED, 100) {
+        val timer = object: CountDownTimer(ABILITY_PROJECTILE_SPEED, 50) {
             override fun onFinish() {
                 Log.d("ANIMATORS", "Timer stopped at ${Time(System.nanoTime())}")
             }
             override fun onTick(millisUntilFinished: Long) {
-                difference = Vector3.subtract(node.worldPosition, projAnimData.targetNode.worldPosition)
+                difference = Vector3.subtract(projAnimData.casterNode.worldPosition, projAnimData.targetNode.worldPosition)
                 Log.d("ANIMATORS", "ticked at ${Time(System.nanoTime())}")
-                rotation = calculateNewRotation(node.worldPosition, projAnimData.targetNode.worldPosition)
-                node.localScale = Vector3(0.03f, 0.03f, difference.length() * 0.9f)
-                node.worldPosition = Vector3.add(node.worldPosition, projAnimData.targetNode.worldPosition).scaled(0.5f)
+                rotation = calculateNewRotation(projAnimData.casterNode.worldPosition, projAnimData.targetNode.worldPosition)
+                node.localScale = Vector3(0.03f, 0.03f, difference.length() * 0.8f)
+                node.worldPosition = Vector3.add(projAnimData.casterNode.worldPosition, projAnimData.targetNode.worldPosition).scaled(0.5f)
                 node.worldRotation = rotation
+                position = Vector3.add(projAnimData.casterNode.worldPosition, projAnimData.targetNode.worldPosition).scaled(.5f)
+                node.localPosition = Vector3(position.x, position.y + 0.075f, position.z)
             }
         }
         timer.start()
