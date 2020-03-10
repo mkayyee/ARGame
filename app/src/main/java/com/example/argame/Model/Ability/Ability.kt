@@ -25,17 +25,21 @@ object AbilityConverter {
 }
 
 enum class Ability() {
-    TEST,
+    FBALL,
     BEAM,
     SHIELD,
-    TELEPORT;
+    TELEPORT,
+    DOT,
+    ATK;
 
     override fun toString(): String {
         return when (this) {
-            TEST -> "Fireball"
+            FBALL -> "Fireball"
             BEAM -> "Beam"
             SHIELD -> "Shield"
             TELEPORT -> "Teleport"
+            DOT -> "DoT"
+            ATK -> "Attack"
         }
     }
 
@@ -46,28 +50,35 @@ enum class Ability() {
 
     fun getImage(context: Context) : Drawable? {
         return when (this) {
-            TEST -> ContextCompat.getDrawable(context, R.drawable.icon_attack)
+            FBALL -> ContextCompat.getDrawable(context, R.drawable.icon_attack)
             BEAM -> ContextCompat.getDrawable(context, R.drawable.icon_beam)
             SHIELD -> ContextCompat.getDrawable(context, R.drawable.icon_shield)
             TELEPORT -> ContextCompat.getDrawable(context, R.drawable.icon_teleport)
+            DOT -> ContextCompat.getDrawable(context, R.drawable.icon_attack)
+            ATK -> ContextCompat.getDrawable(context, R.drawable.icon_attack)
+
         }
     }
 
     fun getCooldown() : Long {
         return when (this) {
-            TEST -> 1000
+            FBALL -> 1000
             BEAM -> 3000
             SHIELD -> 10000
             TELEPORT -> 15000
+            DOT -> 3000
+            ATK -> 100
         }
     }
 
     fun uri() : Uri {
         return when (this) {
-            TEST -> Uri.parse("untitledv4.sfb")
+            FBALL -> Uri.parse("untitledv4.sfb")
             BEAM -> Uri.parse("beam.sfb")
             SHIELD -> throw Error("shield doesn't have uri")
             TELEPORT -> throw Error("teleport doesn't have uri")
+            DOT -> throw Error("teleport doesn't have uri")
+            ATK -> throw Error("teleport doesn't have uri")
         }
     }
 
@@ -76,19 +87,23 @@ enum class Ability() {
     // (this will probably change in the future)
     fun getDamage(caster: CombatControllableStatus) : Double {
         return when (this) {
-            TEST -> caster.level * 0.5 + 200 + caster.attackPower
+            FBALL -> caster.level * 0.5 + 200 + caster.attackPower
             BEAM -> caster.level * 0.25 + 200 + caster.attackPower
             SHIELD -> throw Error("ability Shield does not support getDamage casted by $caster")
             TELEPORT -> throw Error("ability Teleport does not support getDamage casted by $caster")
+            DOT -> caster.level * 0.25 + 200 + caster.attackPower
+            ATK -> caster.level * 0.25 + 200 + caster.attackPower
         }
     }
 
     fun getCastAnimationString() : String?{
         return when (this) {
-            TEST -> "AlienArmature|Alien_SwordSlash"
+            FBALL -> "AlienArmature|Alien_SwordSlash"
             BEAM -> "AlienArmature|Alien_Punch"
             SHIELD -> "AlienArmature|Alien_Clapping"
             TELEPORT -> "AlienArmature|Alien_Jump"
+            DOT -> "AlienArmature|Alien_SwordSlash"
+            ATK -> "AlienArmature|Alien_SwordSlash"
         }
     }
 

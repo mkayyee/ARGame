@@ -3,6 +3,7 @@ package com.example.argame.Interfaces
 import android.os.Handler
 import com.example.argame.Model.ABILITY_PROJECTILE_SPEED
 import com.example.argame.Model.Ability.Ability
+import com.example.argame.Model.Ability.AbilityModifier
 import com.example.argame.Model.CombatControllable.CombatControllable
 import com.example.argame.Model.Ability.ProjectileAnimationData
 import com.google.ar.sceneform.rendering.ModelRenderable
@@ -22,12 +23,24 @@ interface AbilityUser {
                    ability: Ability, projectileData: ProjectileAnimationData, cb: () -> Unit) {
         val casterStatus = caster.getStatus()
         val targetStatus = target.getStatus()
+        var damageMultiplier = 1
+        var damageModifier = AbilityModifier()
 
         if (targetStatus.isAlive && casterStatus.isAlive) {
             val animator = caster.getModelAnimator()
             caster.instantiateProjectile(projectileData, ability) {
                 // retrieved callback that the projectile was fired, so probably safe to deal damage
-                caster.dealDamage(ability.getDamage(casterStatus), target)
+                if (caster.name == "player") {
+                   damageMultiplier = when(ability) {
+                        Ability.FBALL -> damageModifier.getModifier(Ability.FBALL)
+                        Ability.BEAM -> damageModifier.getModifier(Ability.BEAM)
+                       Ability.TELEPORT -> 0
+                       Ability.SHIELD -> 0
+                       Ability.DOT -> damageModifier.getModifier(Ability.DOT)
+                       Ability.ATK -> damageModifier.getModifier(Ability.ATK)
+                   }
+                }
+                caster.dealDamage(ability.getDamage(casterStatus) * damageMultiplier, target)
                 animator?.end()
                 cb()
             }

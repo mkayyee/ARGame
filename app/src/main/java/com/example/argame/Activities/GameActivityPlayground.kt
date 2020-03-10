@@ -423,7 +423,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                 updatePlayerRotation()
                 playground_attackDuckBtn.isEnabled = false
                 playground_attackDuckBtn_cd.isEnabled = true
-                val ability = Ability.TEST
+                val ability = Ability.FBALL
                 val animData =
                     ProjectileAnimationData(
                         this,
@@ -436,7 +436,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                 doAsync {
                     doCooldown(
                         playground_attackDuckBtn_cd,
-                        Ability.TEST.getCooldown(),
+                        Ability.FBALL.getCooldown(),
                         playground_attackDuckBtn
                     )
                 }
@@ -445,7 +445,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                 }
 
                 cancelAnimator(player)
-                animateCast(Ability.TEST.getCastAnimationString()!!, renderedPlayer!!, player)
+                animateCast(Ability.FBALL.getCastAnimationString()!!, renderedPlayer!!, player)
                 player.useAbility(ability, playerTarget!!.model, animData) {
                     player.incrementAbilitiesUsed()
                     player.increaseUltProgress(ability.getDamage(player.getStatus()).toInt())
@@ -453,7 +453,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                 }
             }
         } else {
-            lookForNewTarget(Ability.TEST)
+            lookForNewTarget(Ability.FBALL)
         }
     }
 
@@ -485,7 +485,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                 playerTarget = PlayerTargetData(
                     closest.getNode(),
                     closest, closest.getHPBar()!!.view.textView_healthbar)
-                if (ability == Ability.TEST) {
+                if (ability == Ability.FBALL) {
                     attackTarget()
                 } else {
                     beamTarget(playerTarget)
@@ -544,7 +544,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     }
 
     private fun attackPlayer(npc: NPC, node: Node) {
-        val ability = Ability.TEST
+        val ability = Ability.FBALL
         val animData = ProjectileAnimationData(
             // TODO make start position relative to screen position
             this,

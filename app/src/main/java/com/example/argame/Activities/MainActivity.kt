@@ -4,11 +4,8 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.AttributeSet
 import android.util.Log
-import android.view.View
 import android.widget.Button
-import android.widget.Toast
 import androidx.preference.PreferenceManager
 import com.example.argame.Fragments.Menu.MenuFragmentController
 import com.example.argame.Interfaces.FragmentCallbackListener
@@ -21,7 +18,6 @@ import com.example.argame.Networking.NetworkAPI
 import com.example.argame.Networking.RetrofitClientInstance
 import com.example.argame.Networking.UserService
 import com.example.argame.R
-import kotlinx.android.synthetic.main.menu_main.*
 import okhttp3.ResponseBody
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.doAsyncResult
@@ -54,7 +50,7 @@ class MainActivity : AppCompatActivity(), FragmentCallbackListener {
     }
 
     private fun addTestStuffRoom() {
-        val test = AbilityConverter.fromAbility(Ability.TEST)
+        val test = AbilityConverter.fromAbility(Ability.FBALL)
         val beam = AbilityConverter.fromAbility(Ability.BEAM)
         val teleport = AbilityConverter.fromAbility(Ability.TELEPORT)
         val shield = AbilityConverter.fromAbility(Ability.SHIELD)
