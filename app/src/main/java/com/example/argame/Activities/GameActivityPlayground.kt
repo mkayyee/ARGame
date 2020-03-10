@@ -16,6 +16,7 @@ import android.os.Looper
 import android.util.Log
 import android.util.Log.wtf
 import android.view.View
+import android.view.animation.AnimationUtils
 import android.view.animation.LinearInterpolator
 import android.widget.*
 import androidx.core.content.ContextCompat
@@ -346,11 +347,13 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             doAsync { teleportPlayer() }
         }
         playground_killallBtn.setOnClickListener {
+            cancelUltBtnAnimations()
             ultimateHandler.beginMeasuring(PlayerUltimate.KILLALL)
             // TODO: Hide ultimate bar
             Toast.makeText(this, "Move phone fast enough in any direction to trigger KILLALL", Toast.LENGTH_LONG).show()
         }
         playground_serenityBtn.setOnClickListener {
+            cancelUltBtnAnimations()
             ultimateHandler.beginMeasuring(PlayerUltimate.SERENITY)
             Toast.makeText(this, "Cover light sensor to trigger Serenity", Toast.LENGTH_LONG).show()
         }
@@ -372,6 +375,13 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         }
         // Update current level view
         findViewById<Button>(R.id.playground_toggleLevel).text = "Level " + curLevel.toString()
+    }
+
+    private fun cancelUltBtnAnimations() {
+        if (playground_killallBtn.animation != null && playground_serenityBtn.animation != null) {
+            playground_killallBtn.animation.cancel()
+            playground_serenityBtn.animation.cancel()
+        }
     }
 
     private fun callFragment(fragmentName: String) {
@@ -948,6 +958,8 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         layOutParams.setMargins(currentMargin, currentMargin, currentMargin, currentMargin)
         if (ratio == 1f) {
             playground_ultimateBar.visibility = View.VISIBLE
+            playground_killallBtn.animation = AnimationUtils.loadAnimation(this, R.anim.pulse_ultimate)
+            playground_serenityBtn.animation = AnimationUtils.loadAnimation(this, R.anim.pulse_ultimate)
         }
     }
 

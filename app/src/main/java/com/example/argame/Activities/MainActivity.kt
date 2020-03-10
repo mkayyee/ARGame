@@ -38,6 +38,7 @@ class MainActivity : AppCompatActivity(), FragmentCallbackListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        supportActionBar?.hide()
         initMenuContainer()
         addTestStuffRoom()
         prefs = PreferenceManager.getDefaultSharedPreferences(this)

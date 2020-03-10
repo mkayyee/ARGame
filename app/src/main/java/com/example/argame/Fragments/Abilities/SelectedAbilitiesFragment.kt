@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -84,6 +85,7 @@ class SelectedAbilitiesAdapter(
                 if (image != null) {
                     holder.itemView.ability_image.setImageDrawable(image)
                 }
+                holder.itemView.background = ContextCompat.getDrawable(holder.itemView.context, R.drawable.healthbar_background)
                 // create a callback that the ability should be removed from selected abilities
                 holder.itemView.button_select.setOnClickListener {
                     cbListener.onAbilityRemove(AbilityConverter.fromAbility(ability))

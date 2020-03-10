@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.util.Log
+import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
@@ -18,12 +19,14 @@ class TutorialActivityFirst : AppCompatActivity(), TutorialWindowFragment.Tutori
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_tutorial_first)
+        supportActionBar?.hide()
         handleFragmentChange(TutorialState.START_LEVEL)
     }
 
     private fun enableNext() {
         supportFragmentManager.popBackStack()
         container_tutorial_next.isVisible = true
+        container_tutorial_next.animation = AnimationUtils.loadAnimation(this, R.anim.pulse)
         container_tutorial_next.setOnClickListener {
             val intent = Intent(this, TutorialActivitySecond::class.java)
             startActivity(intent)
