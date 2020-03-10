@@ -67,9 +67,7 @@ interface ProjectileAnimator {
             }
         } else {
             // Beam
-            val casterPos = projAnimData.startPos
-            val targetPos = projAnimData.endPos
-            AnimationAPI.stretchModel(casterPos, targetPos, animationNode, projAnimData)
+            AnimationAPI.stretchModel(animationNode, projAnimData)
             Handler().postDelayed({
                 cb()
                 deleteProjectile(animationNode, projAnimData.fragment.arSceneView.scene)
@@ -78,8 +76,8 @@ interface ProjectileAnimator {
     }
 
     fun animateProjectile(projectileAnimationData: ProjectileAnimationData, node: TransformableNode, cb: () -> Unit) {
-        val startPos = projectileAnimationData.startPos
-        val endPos = projectileAnimationData.endPos
+        val startPos = projectileAnimationData.casterNode.worldPosition
+        val endPos = projectileAnimationData.targetNode.worldPosition
         // TODO some logic that separates different types of abilities.
         //  e.g if (projectile.type == ray) *cast something other than AnimationAPI.fireProjectile*
         AnimationAPI.fireProjectile(node, startPos, endPos, projectileAnimationData.targetNode) {

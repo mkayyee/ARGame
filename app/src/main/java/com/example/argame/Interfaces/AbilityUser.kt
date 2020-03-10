@@ -7,16 +7,16 @@ import com.example.argame.Model.CombatControllable.CombatControllable
 import com.example.argame.Model.Ability.ProjectileAnimationData
 import com.google.ar.sceneform.rendering.ModelRenderable
 
-/***
+/**
  *  An Interface for casting abilities, that both, the NPC and the Player implement.
  */
 interface AbilityUser {
-    /***
+    /**
      *  useAbility() Parameters explained:
      *      -caster & target: The casting GameControllable and the receiving GameControllable
      *      -ability: Holds the data of the ability -> how much damage it does and its name.
      *      -projectileData: Holds the data for the start and end poses, which are used to calculate
-     *                      the animated projectiles trajectory.
+     *                       the animated projectiles trajectory.
      */
     fun useAbility(caster: CombatControllable, target: CombatControllable,
                    ability: Ability, projectileData: ProjectileAnimationData, cb: () -> Unit) {

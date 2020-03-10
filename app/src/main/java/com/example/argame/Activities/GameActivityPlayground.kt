@@ -255,7 +255,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         MaterialFactory.makeTransparentWithColor(this, Color(0f, 0f, 1f, 0.25f))
             .thenAccept { material: Material? ->
                 beamRenderable = ShapeFactory.makeCube(
-                    Vector3(1f, 1f, 1f),
+                    Vector3(0.5f, 0.5f, 1f),
                     Vector3.zero(), material
                 )
                 beamRenderable.isShadowCaster = false
@@ -332,7 +332,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             attackTarget()
         }
         playground_beamDuckBtn.setOnClickListener {
-            beamTarget(playerNode.worldPosition, playerTarget)
+            beamTarget(playerTarget)
         }
         playground_shieldDuckBtn.setOnClickListener {
             useBarrier(hpRenderablePlayer, player)
@@ -426,13 +426,12 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                 val ability = Ability.TEST
                 val animData =
                     ProjectileAnimationData(
-                        playerNode.worldPosition,
-                        playerTarget!!.node.worldPosition,
                         this,
                         fragment,
                         ability.uri(),
                         gifRenderable = fireBallRenderable,
-                        targetNode = playerTarget!!.node
+                        targetNode = playerTarget!!.node,
+                        casterNode = playerNode
                     )
                 doAsync {
                     doCooldown(
@@ -489,7 +488,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                 if (ability == Ability.TEST) {
                     attackTarget()
                 } else {
-                    beamTarget(playerNode.worldPosition, playerTarget)
+                    beamTarget(playerTarget)
                 }
             }
         } else {
@@ -548,16 +547,12 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         val ability = Ability.TEST
         val animData = ProjectileAnimationData(
             // TODO make start position relative to screen position
-            node.worldPosition,
-            playerNode.worldPosition,
             this,
             fragment,
             ability.uri(),
-<<<<<<< HEAD
-            gifRenderable = fireBallRenderable
-=======
-            targetNode = playerNode
->>>>>>> e85ea738504b2c428de3d03ad03f4e30010d65bb
+            gifRenderable = fireBallRenderable,
+            targetNode = playerNode,
+            casterNode = node
         )
         //animateCast(npc.getType().attackAnimationString(), npc.model!!, npc)
         npc.useAbility(ability, player, animData) {
@@ -576,34 +571,29 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         cc.useShield()
     }
 
-    // beams a target npc and will call itself from that npc position if another npc nearby
-    private fun beamTarget(startPos: Vector3, npcData: PlayerTargetData?, subStartIdx: Int? = null, isRecursive : Boolean = false) {
+    // Beams a target npc and will call itself from that npc position if another npc nearby.
+    // Caster node is player by default -- will be an npc node when called recursively.
+    private fun beamTarget(npcData: PlayerTargetData?, subStartIdx: Int? = null,
+        isRecursive : Boolean = false, caster: Node = playerNode) {
         if (npcData != null && npcData.model.getStatus().isAlive) {
             // Prevent indexOutOfBoundsException when calling recursively
             if (subStartIdx != null && subStartIdx + 1 > npcAnchors.size) return
             updateHpBarOrientations()
             updatePlayerRotation()
-            cancelAnimator(player)
             playground_beamDuckBtn.isEnabled = false
             val beam = Ability.BEAM
 //            val attackAnimationData =
 //                player.model?.getAnimationData(Ability.BEAM.getCastAnimationString())
             val data = ProjectileAnimationData(
-                startPos,
-                npcData.node.worldPosition,
                 this,
                 fragment,
                 beam.uri(),
                 abilityRenderable = beamRenderable,
-                targetNode = npcData.node
+                targetNode = npcData.node,
+                casterNode = caster
             )
-            animateCast(Ability.BEAM.getCastAnimationString()!!, renderedPlayer!!, player)
-            player.useAbility(beam, npcData.model, data) {
-                player.incrementAbilitiesUsed()
-                player.increaseUltProgress(beam.getDamage(player.getStatus()).toInt())
-                updateUltBar(player.getUltBar()?.view?.textView_ultbar, player)
-            }
             if (!isRecursive) {
+                animateCast(Ability.BEAM.getCastAnimationString()!!, renderedPlayer!!, player)
                 doAsync { effectPlayerPlayer.playSound(R.raw.beam) }
                 doAsync {
                     doCooldown(
@@ -612,6 +602,11 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                         playground_beamDuckBtn
                     )
                 }
+            }
+            player.useAbility(beam, npcData.model, data) {
+                player.incrementAbilitiesUsed()
+                player.increaseUltProgress(beam.getDamage(player.getStatus()).toInt())
+                updateUltBar(player.getUltBar()?.view?.textView_ultbar, player)
             }
             // split the list if the function is called recursively, so it won't loop infinitely
             val subList = npcAnchors.subList(subStartIdx ?: 0, npcAnchors.size)
@@ -622,18 +617,19 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
 
                 if (difference < 20  && subList.size > 1) {
                     beamTarget(
-                        npcData.node.worldPosition,
                         PlayerTargetData(
-                            it.anchorNode.children[0],
+                            it.npc.getNode(),
                             it.npc,
                             it.npc.getHPBar()?.view?.textView_healthbar),
-                        npcAnchors.indexOf(it) + 1, isRecursive = true)
+                        npcAnchors.indexOf(it) + 1, isRecursive = true, caster = npcData.node)
                     Log.d("BEAM", "HIT NPC  " + npcAnchors.indexOf(it))
                     //it.anchorNode.localScale = Vector3(0.4f, 0.4f, 0.4f)
                 }
             }
         } else {
-            lookForNewTarget(Ability.BEAM)
+            if (!isRecursive) {
+                lookForNewTarget(Ability.BEAM)
+            }
         }
     }
 
