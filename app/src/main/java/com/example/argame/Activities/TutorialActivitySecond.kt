@@ -41,7 +41,7 @@ class TutorialActivitySecond : AppCompatActivity(), TutorialWindowFragment.Tutor
         supportFragmentManager.popBackStack()
         container_tutorial_continue.isVisible = true
         container_tutorial_continue.setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
+            val intent = Intent(this, TutorialUltActivity::class.java)
             startActivity(intent)
             finish()
         }

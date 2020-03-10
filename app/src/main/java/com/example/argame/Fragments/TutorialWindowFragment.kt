@@ -17,7 +17,10 @@ enum class TutorialState() {
     START_LEVEL,
     MENU,
     BARS,
-    ABILITIES;
+    ABILITIES,
+    ULTS,
+    KILLALL,
+    SERENITY;
 }
 
 class TutorialWindowFragment(private val state: TutorialState) : Fragment() {
@@ -48,40 +51,18 @@ class TutorialWindowFragment(private val state: TutorialState) : Fragment() {
             TutorialState.MENU -> getString(R.string.tutorial_menu)
             TutorialState.BARS -> getString(R.string.tutorial_bars)
             TutorialState.ABILITIES -> getString(R.string.tutorial_abilities)
+            TutorialState.ULTS -> getString(R.string.tutorial_ults)
+            TutorialState.KILLALL -> getString(R.string.tutorial_killall)
+            TutorialState.SERENITY -> getString(R.string.tutorial_serenity)
         }
         setButtonListeners()
     }
 
     private fun setButtonListeners() {
-        when (state) {
-            TutorialState.START_LEVEL -> {
-                btn_closeTutorialWindow.setOnClickListener {
-                    fragmentManager!!.beginTransaction()
-                        .remove(this)
-                    buttonCallback.onButtonPressed(state)
-                }
-            }
-            TutorialState.MENU -> {
-                btn_closeTutorialWindow.setOnClickListener {
-                    fragmentManager!!.beginTransaction()
-                        .remove(this)
-                    buttonCallback.onButtonPressed(state)
-                }
-            }
-            TutorialState.BARS -> {
-                btn_closeTutorialWindow.setOnClickListener {
-                    fragmentManager!!.beginTransaction()
-                        .remove(this)
-                    buttonCallback.onButtonPressed(state)
-                }
-            }
-            TutorialState.ABILITIES -> {
-                btn_closeTutorialWindow.setOnClickListener {
-                    fragmentManager!!.beginTransaction()
-                        .remove(this)
-                    buttonCallback.onButtonPressed(state)
-                }
-            }
+        btn_closeTutorialWindow.setOnClickListener {
+            fragmentManager!!.beginTransaction()
+                .remove(this)
+            buttonCallback.onButtonPressed(state)
         }
     }
 }

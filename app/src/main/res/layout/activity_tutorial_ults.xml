@@ -1,35 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:background="@drawable/tutorial"
+    android:id="@+id/tutorial_ult_container"
+    android:background="@drawable/tutorial_ults"
     android:layout_height="match_parent">
-
-    <FrameLayout
-        android:id="@+id/container_tutorial_bars"
-        android:layout_marginTop="300dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    </FrameLayout>
 
     <Button
         android:padding="16dp"
-        android:id="@+id/container_tutorial_continue"
+        android:id="@+id/btn_tutorial_finish"
+        android:visibility="gone"
         android:layout_centerVertical="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="16dp"
+        android:layout_centerHorizontal="true"
         android:textStyle="bold"
         android:textSize="30sp"
         android:textAllCaps="false"
-        android:text="@string/next"
-        android:visibility="gone"
+        android:text="@string/finish"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
     </Button>
 
     <FrameLayout
-        android:id="@+id/container_tutorial_abilities"
+        android:id="@+id/container_tutorial_ults"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="300dp"
+        android:layout_marginBottom="200dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
     </FrameLayout>

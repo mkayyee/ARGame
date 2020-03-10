@@ -6,6 +6,7 @@
       <w>huomio</w>
       <w>illum</w>
       <w>inputerr</w>
+      <w>killall</w>
       <w>npcs</w>
       <w>proj</w>
       <w>renderable</w>
@@ -13,6 +14,7 @@
       <w>shandler</w>
       <w>spawnable</w>
       <w>spawner</w>
+      <w>ults</w>
     </words>
   </dictionary>
 </component>

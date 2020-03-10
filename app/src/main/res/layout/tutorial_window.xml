@@ -4,23 +4,37 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_margin="8dp"
+    android:weightSum="5"
     android:layout_width="match_parent"
     android:background="@drawable/background_borders"
     android:layout_height="wrap_content">
 
-    <TextView
-        android:padding="8dp"
-        android:id="@+id/textView_tutorialText"
-        android:textSize="20sp"
-        android:textColor="#000000"
+    <ScrollView
+        android:layout_weight="4.9"
+        android:layout_height="0dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/tutorial_start_level" />
-
+        android:maxHeight="200dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+            <TextView
+                android:id="@+id/textView_tutorialText"
+                style="@style/AppTheme.Text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="@string/tutorial_start_level"
+                android:textColor="#000000"
+                android:textSize="25sp" />
+        </LinearLayout>
+    </ScrollView>
     <ImageButton
+        android:layout_weight="0.1"
         android:id="@+id/btn_closeTutorialWindow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
         app:srcCompat="@android:drawable/checkbox_on_background" />
+
 </LinearLayout>
