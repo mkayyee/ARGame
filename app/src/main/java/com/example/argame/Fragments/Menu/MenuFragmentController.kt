@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import com.example.argame.Activities.GameActivityPlayground
 import com.example.argame.Activities.TutorialActivityFirst
+import com.example.argame.Fragments.Abilities.AbilityMenuFragment
 import com.example.argame.Interfaces.FragmentCallbackListener
 import com.example.argame.R
 import com.google.android.material.button.MaterialButton
@@ -25,7 +26,7 @@ import kotlinx.android.synthetic.main.menu_main.*
  *  Handles the logic for callbacks from menus attached to it.
  */
 
-class MenuFragmentController : Fragment(), FragmentCallbackListener {
+class MenuFragmentController: Fragment(), FragmentCallbackListener {
 
     var saver : SharedPreferences? = null
     private val mainMenuFrag =
@@ -88,6 +89,7 @@ class MenuFragmentController : Fragment(), FragmentCallbackListener {
                 val intent = Intent(context, TutorialActivityFirst::class.java)
                 startActivity(intent)
             }
+            R.id.button_select_abilities_main -> drawFragment(AbilityMenuFragment(btn.context))
             R.id.button_new_game -> {
                 saver?.edit()?.putInt("levelNum", 1)?.apply()
                 launchGameActivity()

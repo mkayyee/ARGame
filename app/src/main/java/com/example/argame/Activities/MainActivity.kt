@@ -40,8 +40,6 @@ class MainActivity : AppCompatActivity(), FragmentCallbackListener {
         getUserData()
     }
 
-
-
     private fun initMenuContainer() {
         supportFragmentManager.beginTransaction()
             .add(R.id.main_menu_container, menuFragController)

@@ -276,6 +276,8 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     }
 
     private fun sceneUpdateListener() {
+        updateHpBarOrientations()
+        updatePlayerRotation()
         val frame = fragment.arSceneView.arFrame
         val pt = getScreenCenter()
         val hits: List<HitResult>
@@ -406,10 +408,10 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     }
 
     private fun updateHpBarOrientations() {
-//        val forward = fragment.arSceneView.scene.camera.forward
-//        hpBarNodes.forEach {
-//            it.setLookDirection(Vector3(forward.x, forward.y + 0.25f, forward.z))
-//        }
+        val forward = fragment.arSceneView.scene.camera.forward
+        hpBarNodes.forEach {
+            it.setLookDirection(Vector3(forward.x, forward.y + 0.25f, forward.z))
+        }
     }
 
     // MARK: Testing-abilities-related stuff
@@ -419,7 +421,6 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
             if (!playerTarget!!.model.getStatus().isAlive) {
                 clearPlayerTarget()
             } else {
-                updateHpBarOrientations()
                 updatePlayerRotation()
                 playground_attackDuckBtn.isEnabled = false
                 playground_attackDuckBtn_cd.isEnabled = true
@@ -578,7 +579,6 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         if (npcData != null && npcData.model.getStatus().isAlive) {
             // Prevent indexOutOfBoundsException when calling recursively
             if (subStartIdx != null && subStartIdx + 1 > npcAnchors.size) return
-            updateHpBarOrientations()
             updatePlayerRotation()
             playground_beamDuckBtn.isEnabled = false
             val beam = Ability.BEAM
@@ -690,7 +690,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         hpBarNodes.add(ultNode)
         ultNode.setParent(node)
         ultNode.renderable = renderable
-        ultNode.localScale = Vector3(4f / 1.25f, 2.85f / 1.25f, 2.85f / 1.25f)
+        ultNode.localScale = Vector3(4f / 1.25f, 2.85f / 1.5f, 2.85f / 1.25f)
         ultNode.localPosition = Vector3(0f, 3.4f, 0f)
     }
 
@@ -703,7 +703,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         renderable?.isShadowCaster = false
 
         if (node == playerNode) {
-            hpNode.localScale = Vector3(4f / 1.25f, 4f / 1.25f, 4f / 1.25f)
+            hpNode.localScale = Vector3(4f / 1.25f, 4f / 1.5f, 4f / 1.25f)
             hpNode.localPosition = Vector3(0f, 3.5f, 0f)
         } else {
             hpNode.localScale = Vector3(6f / 1.25f, 6f / 1.25f, 6f / 1.25f)
@@ -728,7 +728,6 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     }
 
     private fun updatePlayerRotation() {
-        updateHpBarOrientations()
         if (playerTarget != null) {
             val playerPos = playerNode.worldPosition
             val targetPos: Vector3
@@ -867,7 +866,6 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                                     )
                                 )
                                 spawnable.setNode(node)
-                                updateHpBarOrientations()
                                 npcsAlive.add(spawnable)
                                 playground_targetTxt.text = "Enemies alive ${npcsAlive.size}"
                                 node.localScale = Vector3(0.05f, 0.05f, 0.05f)

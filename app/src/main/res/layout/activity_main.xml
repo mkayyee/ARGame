@@ -8,9 +8,10 @@
     tools:context=".Activities.MainActivity">
 
     <FrameLayout
+        android:layout_margin="32dp"
         android:id="@+id/main_menu_container"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true">
     </FrameLayout>
