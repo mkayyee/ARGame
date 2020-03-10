@@ -41,7 +41,7 @@
     <string name="tutorial_start_level">
         To be able to start the level, you must first let your camera find a horizontal plane.
         This may take some time depending on the environment. The optimal environment is somewhere
-        light (preferable inside), and the optimal plane has some contrast.\nThe \"Start level\" button
+        light (preferably inside), and the optimal plane has some contrast.\nThe \"Start level\" button
         will light up when a plane is found, and pressing it — will begin the current level.
     </string>
     <string name="tutorial_bars">
@@ -55,14 +55,16 @@
     </string>
     <string name="tutorial_killall">
         The ultimate on the left: \"Killall\", is an ultimate ability, that listens to your phone\'s internal acceleration sensor.\n
-        Killall activates when you have moved your phone fast enough in any of it\'s axes. Once activated — will kill all enemies alive.
+        Killall activates when you have moved your phone fast enough in any of its axes. Once activated — will kill all enemies alive.
     </string>
     <string name="tutorial_serenity">
         The ultimate on the right: \"Serenity\", is an ultimate ability, that listens to your phone\'s internal light sensor.\n
         To activate this ability — you have to either be in a dark place, or you have to place your hand over the sensor. 
-        The light sensor usually looks like a small dot (like camera), and is usually located at the top of your phone, just above the screen.
+        The light sensor usually looks like a small dot (like camera), and is usually located at the top of your phone, just above the screen.\n Serenity
+        refills your health and gives you a shield that blocks a certain amount of incoming damage.
     </string>
     <string name="tutorial">Tutorial</string>
     <string name="finish">Finish</string>
     <string name="next">Next</string>
+    <string name="survivar">SurvivAR</string>
 </resources>

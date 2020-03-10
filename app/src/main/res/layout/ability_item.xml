@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="60dp"
     android:background="@drawable/button_bg"
-    android:layout_marginTop="4dp"
+    android:layout_marginTop="2dp"
     android:elevation="2dp"
     android:layout_marginBottom="4dp"
     android:alpha="0.35"
@@ -17,7 +17,7 @@
     <TextView
         android:theme="@style/AppTheme.Text"
         android:id="@+id/ability_name"
-        android:textSize="20sp"
+        android:textSize="24sp"
         android:layout_centerVertical="true"
         android:gravity="center_horizontal"
         android:layout_width="match_parent"
