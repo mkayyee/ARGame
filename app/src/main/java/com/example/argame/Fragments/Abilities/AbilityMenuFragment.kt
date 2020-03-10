@@ -60,7 +60,6 @@ class AbilityMenuFragment(private val mContext: Context) : Fragment(),
             for (ab in unselected) {
                 Log.d("ABILITYUNSELECTED", AbilityConverter.toAbility(ab.abilityID).toString())
             }
-
         }
         val userID = 1 //TODO: Get from sharedprefs?
         val fragSelected = SelectedAbilitiesFragment(db, userID, this)
