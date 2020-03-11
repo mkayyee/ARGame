@@ -1392,11 +1392,10 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                                             curLevel = curLevel!! + 1
                                         }
                                     }
-
-                                    Log.d("CURLEVEL", curLevel.toString())
                                     saver.edit().putInt("levelNum", curLevel!!).apply()
                                     val skillPoints = saver.getInt("skillLevel", 0)
                                     saver.edit().putInt("skillLevel", (skillPoints + 1)).apply()
+                                    Log.d("CURLEVEL", curLevel.toString())
                                     onComplete {
                                         callFragment("NextLevel") } }
                             }
