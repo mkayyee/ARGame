@@ -62,12 +62,12 @@ enum class Ability() {
 
     fun getCooldown() : Long {
         return when (this) {
-            FBALL -> 1000
-            BEAM -> 3000
-            SHIELD -> 10000
-            TELEPORT -> 15000
-            DOT -> 3000
-            ATK -> 100
+            FBALL -> 1000 * AbilityModifier.getCdModifier(this).toLong()
+            BEAM -> 3000 * AbilityModifier.getCdModifier(this).toLong()
+            SHIELD -> 10000 * AbilityModifier.getCdModifier(this).toLong()
+            TELEPORT -> 15000 * AbilityModifier.getCdModifier(this).toLong()
+            DOT -> 3000 * AbilityModifier.getCdModifier(this).toLong()
+            ATK -> 100 * AbilityModifier.getCdModifier(this).toLong()
         }
     }
 
