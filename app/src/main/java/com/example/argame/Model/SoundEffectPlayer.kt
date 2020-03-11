@@ -5,7 +5,7 @@ import android.media.MediaPlayer
 import android.net.Uri
 import android.util.Log
 
-class SoundEffectPlayer(context: Context): MediaPlayer.OnPreparedListener {
+class SoundEffectPlayer(context: Context): MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener {
     private val context = context
     lateinit var player: MediaPlayer
 
@@ -31,6 +31,11 @@ class SoundEffectPlayer(context: Context): MediaPlayer.OnPreparedListener {
 
     override fun onPrepared(mp: MediaPlayer?) {
         player.start()
+    }
+
+    override fun onError(mp: MediaPlayer?, what: Int, extra: Int): Boolean {
+        mp?.reset()
+        return true
     }
 
 }
