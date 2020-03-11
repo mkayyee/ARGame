@@ -497,19 +497,22 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         var closest: NPC? = null
         var currentDiff: Float? = null
         npcsAlive.forEach {
-            val diff = Vector3.subtract(playerNode.worldPosition, it.getNode().worldPosition).length()
-            // alive check, to ignore dying NPCs
-                if (closest == null && it.getStatus().isAlive) {
+            if (it.getStatus().isAlive) {
+                val diff =
+                    Vector3.subtract(playerNode.worldPosition, it.getNode().worldPosition).length()
+                // alive check, to ignore dying NPCs
+                if (closest == null) {
                     closest = it
                     currentDiff = diff
                 } else {
                     if (currentDiff != null) {
-                        if (diff < currentDiff!! && it.getStatus().isAlive) {
+                        if (diff < currentDiff!!) {
                             closest = it
                             currentDiff = diff
                         }
                     }
                 }
+            }
         }
         return closest
     }

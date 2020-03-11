@@ -72,7 +72,7 @@ object AnimationAPI {
         node.rotationController.isEnabled = false
         node.worldPosition = Vector3.add(startPos, endPos).scaled(0.5f)
         node.worldRotation = rotation
-        node.localScale = Vector3(0.03f, 0.03f, difference.length() * 0.8f)
+        node.localScale = Vector3(0.03f, 0.03f, difference.length() * 1f)
         var position = Vector3.add(projAnimData.casterNode.worldPosition, projAnimData.targetNode.worldPosition).scaled(.5f)
         node.localPosition = Vector3(position.x, position.y + 0.075f, position.z)
         node.setParent(projAnimData.fragment.arSceneView.scene)
@@ -87,7 +87,7 @@ object AnimationAPI {
                 difference = Vector3.subtract(projAnimData.casterNode.worldPosition, projAnimData.targetNode.worldPosition)
                 Log.d("ANIMATORS", "ticked at ${Time(System.nanoTime())}")
                 rotation = calculateNewRotation(projAnimData.casterNode.worldPosition, projAnimData.targetNode.worldPosition)
-                node.localScale = Vector3(0.03f, 0.03f, difference.length() * 0.8f)
+                node.localScale = Vector3(0.03f, 0.03f, difference.length() * 1f)
                 node.worldPosition = Vector3.add(projAnimData.casterNode.worldPosition, projAnimData.targetNode.worldPosition).scaled(0.5f)
                 node.worldRotation = rotation
                 position = Vector3.add(projAnimData.casterNode.worldPosition, projAnimData.targetNode.worldPosition).scaled(.5f)

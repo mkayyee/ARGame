@@ -40,8 +40,8 @@ class MainActivity : AppCompatActivity(), FragmentCallbackListener {
         setContentView(R.layout.activity_main)
         supportActionBar?.hide()
         initMenuContainer()
-        addTestStuffRoom()
         prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        addTestStuffRoom()
         connManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         getUserData()
     }
