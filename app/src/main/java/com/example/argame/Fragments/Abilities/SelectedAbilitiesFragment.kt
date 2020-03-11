@@ -143,6 +143,17 @@ class SelectedAbilitiesAdapter(
                 }
                 holder.itemView.button_cdminus.setOnClickListener {
                     AbilityModifier.setModifier(ability, false)
+                    if (skillsToLevel > 0) {
+                        saver.edit().putInt("skillLevel", (skillsToLevel-1)).apply()
+                        if (skillsToLevel-1 == 0) {
+                            mRecyclerView.forEach {
+                                it.findViewById<MaterialButton>(R.id.button_pwrplus).visibility =
+                                    View.GONE
+                                it.findViewById<MaterialButton>(R.id.button_cdminus).visibility =
+                                    View.GONE
+                            }
+                        }
+                    }
                 }
             } else {
                 name = "Slot ${position + 1}"
