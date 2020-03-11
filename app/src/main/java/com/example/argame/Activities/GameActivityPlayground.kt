@@ -30,10 +30,7 @@ import com.example.argame.Fragments.Menu.NextLevelFragment
 import com.example.argame.Interfaces.CAST_TIME
 import com.example.argame.Interfaces.FragmentCallbackListener
 import com.example.argame.Model.*
-import com.example.argame.Model.Ability.Ability
-import com.example.argame.Model.Ability.PlayerUltimate
-import com.example.argame.Model.Ability.ProjectileAnimationData
-import com.example.argame.Model.Ability.UltimateHandler
+import com.example.argame.Model.Ability.*
 import com.example.argame.Model.CombatControllable.CombatControllable
 import com.example.argame.Model.NPC.*
 import com.example.argame.Model.Persistence.AppDatabase
@@ -106,6 +103,13 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     private lateinit var saver: SharedPreferences
     private var userId: Int? = null
     private var curLevel: Int? = null
+    val abilityList = listOf(
+        Ability.FBALL,
+        Ability.DOT,
+        Ability.SHIELD,
+        Ability.TELEPORT,
+        Ability.BEAM
+    )
 
     // MUSIC & SOUNDS
     private lateinit var intentm : Intent
@@ -140,6 +144,17 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         }
         saver = PreferenceManager.getDefaultSharedPreferences(this)
         curLevel = saver.getInt("levelNum", 1)
+        abilityList.forEach{
+            var resPwr = saver.getFloat(it.name + "pwr", 0.0F).toDouble()
+            var resCd = saver.getFloat(it.name + "cd", 0.0F).toDouble()
+            if (resPwr > 0 && AbilityModifier.getPwrModifier(it) == 1.0) {
+            AbilityModifier.setModifier(it, true, value = resPwr)
+            }
+            if (resCd < 0 && AbilityModifier.getCdModifier(it) == 1.0) {
+                AbilityModifier.setModifier(it, false, value = resCd)
+            }
+            Log.d("MODIFIER","Current PWR modifier for " + it.toString() + " is: " + AbilityModifier.getPwrModifier(it) )
+        }
         val uid = saver.getInt("USER", -1)
         if (uid != -1) {
             userId = uid
@@ -214,6 +229,16 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         threadStop = true
         threadList.forEach {
             it.interrupt()
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.d("MODIFIER", "DESTROYED")
+        abilityList.forEach{
+            saver.edit().putFloat(it.name + "pwr", (AbilityModifier.getPwrModifier(it)-1).toFloat()).apply()
+            saver.edit().putFloat(it.name + "cd", (AbilityModifier.getCdModifier(it)-1).toFloat()).apply()
+            Log.d("MODIFIER", "Saved "+ it.name)
         }
     }
 
@@ -434,7 +459,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                 updatePlayerRotation()
                 playground_attackDuckBtn.isEnabled = false
                 playground_attackDuckBtn_cd.isEnabled = true
-                val ability = Ability.TEST
+                val ability = Ability.FBALL
                 val animData =
                     ProjectileAnimationData(
                         this,
@@ -447,7 +472,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                 doAsync {
                     doCooldown(
                         playground_attackDuckBtn_cd,
-                        Ability.TEST.getCooldown(),
+                        Ability.FBALL.getCooldown(),
                         playground_attackDuckBtn
                     )
                 }
@@ -456,7 +481,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                 }
 
                 cancelAnimator(player)
-                animateCast(Ability.TEST.getCastAnimationString()!!, renderedPlayer!!, player)
+                animateCast(Ability.FBALL.getCastAnimationString()!!, renderedPlayer!!, player)
                 player.useAbility(ability, playerTarget!!.model, animData) {
                     player.incrementAbilitiesUsed()
                     player.increaseUltProgress(ability.getDamage(player.getStatus()).toInt())
@@ -464,7 +489,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                 }
             }
         } else {
-            lookForNewTarget(Ability.TEST)
+            lookForNewTarget(Ability.FBALL)
         }
     }
 
@@ -496,7 +521,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                 playerTarget = PlayerTargetData(
                     closest.getNode(),
                     closest, closest.getHPBar()!!.view.textView_healthbar)
-                if (ability == Ability.TEST) {
+                if (ability == Ability.FBALL) {
                     attackTarget()
                 } else {
                     beamTarget(playerTarget)
@@ -555,7 +580,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     }
 
     private fun attackPlayer(npc: NPC, node: Node) {
-        val ability = Ability.TEST
+        val ability = Ability.FBALL
         val animData = ProjectileAnimationData(
             // TODO make start position relative to screen position
             this,
@@ -1232,7 +1257,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                 }
                 animateCast(cc.getType().hitAnimationString(), cc.model!!, cc)
                 Handler().postDelayed({
-                    animateCast(cc.getType().idleAnimationString(), cc.model!!, cc)
+                    animateCast(cc.getType().idleAnimationString(), cc.model, cc)
                 },900)
                 doAsync { effectPlayerNPC.playSound(R.raw.gothit) }
             }
@@ -1369,6 +1394,8 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
 
                                     Log.d("CURLEVEL", curLevel.toString())
                                     saver.edit().putInt("levelNum", curLevel!!).apply()
+                                    val skillPoints = saver.getInt("skillLevel", 0)
+                                    saver.edit().putInt("skillLevel", (skillPoints + 1)).apply()
                                     onComplete {
                                         callFragment("NextLevel") } }
                             }

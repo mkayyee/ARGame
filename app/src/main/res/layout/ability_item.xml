@@ -21,6 +21,7 @@
         android:textSize="24sp"
         android:layout_centerVertical="true"
         android:gravity="center_horizontal"
+        android:layout_marginRight="150dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Ability1" />
@@ -32,11 +33,32 @@
         >
         <com.google.android.material.button.MaterialButton
             style="@style/AppTheme.Button"
+            android:elevation="8dp"
+            android:layout_marginEnd="8dp"
+            android:textSize="11sp"
+            android:id="@+id/button_pwrplus"
+            android:layout_width="71dp"
+            android:layout_height="50dp"
+            android:text="PWR+"
+            android:visibility="gone"/>
+        <com.google.android.material.button.MaterialButton
+            style="@style/AppTheme.Button"
             android:layout_marginEnd="8dp"
             android:elevation="8dp"
-            android:textSize="20sp"
+            android:textSize="11sp"
+            android:id="@+id/button_cdminus"
+            android:layout_width="71dp"
+            android:layout_height="50dp"
+            android:text="CD-"
+            android:visibility="gone"/>
+        <com.google.android.material.button.MaterialButton
+            style="@style/AppTheme.Button"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:elevation="8dp"
+            android:textSize="11sp"
             android:id="@+id/button_select"
-            android:layout_width="50dp"
+            android:layout_width="38dp"
             android:layout_height="50dp"
             android:text="@string/minus" />
     </LinearLayout>
