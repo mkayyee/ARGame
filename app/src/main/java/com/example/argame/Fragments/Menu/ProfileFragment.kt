@@ -127,24 +127,27 @@ class ProfileFragment(private var changeUser: Boolean = false) : Fragment() {
 
     private fun createUserBtnListener() {
         profile_button_create_user.setOnClickListener {
-            doAsync{
-                // create user, reload fragment
-                postUser {
-                    if (it) {
-                        uiThread {
-                            val ft = fragmentManager!!.beginTransaction()
-                            fragmentManager!!.popBackStack()
-                            if (changeUser) {
-                                changeUser = false}
-                            if (userExists) {
-                                ft.replace(R.id.main_menu_container, this@ProfileFragment)
-                                    .addToBackStack(null)
-                                    .commit()
-                            } else {
-                                val frag = ProfileFragment()
-                                ft.replace(R.id.main_menu_container, frag)
-                                    .addToBackStack(null)
-                                    .commit()
+            NetworkAPI.executeIfConnected(context!!, true) {
+                doAsync {
+                    // create user, reload fragment
+                    postUser {
+                        if (it) {
+                            uiThread {
+                                val ft = fragmentManager!!.beginTransaction()
+                                fragmentManager!!.popBackStack()
+                                if (changeUser) {
+                                    changeUser = false
+                                }
+                                if (userExists) {
+                                    ft.replace(R.id.main_menu_container, this@ProfileFragment)
+                                        .addToBackStack(null)
+                                        .commit()
+                                } else {
+                                    val frag = ProfileFragment()
+                                    ft.replace(R.id.main_menu_container, frag)
+                                        .addToBackStack(null)
+                                        .commit()
+                                }
                             }
                         }
                     }

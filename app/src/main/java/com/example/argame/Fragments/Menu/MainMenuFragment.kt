@@ -49,6 +49,7 @@ class MainMenuFragment : Fragment() {
         if (saver != null) {
             Log.d("RESUME","level " + saver!!.getInt("levelNum", 1).toString())
             button_resume_game.isEnabled = saver!!.getInt("levelNum", 0) > 1
+            button_new_game.isEnabled = saver!!.getInt("levelNum", 0) <= 1
         }
     }
 
