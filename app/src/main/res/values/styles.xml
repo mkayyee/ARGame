@@ -21,8 +21,10 @@
     <style name="AppTheme.Text">
         <item name="android:textColor">@color/colorButtonBackground</item>
         <item name="android:shadowColor">@color/colorAbilitybgDark</item>
-
-        <item name="fontFamily">sans-serif</item>
+        <item name="android:shadowRadius">1.0</item>
+        <item name="android:shadowDx">1.0</item>
+        <item name="android:shadowDy">1.0</item>
+        <item name="fontFamily">sans-serif-condensed</item>
     </style>
 
 </resources>

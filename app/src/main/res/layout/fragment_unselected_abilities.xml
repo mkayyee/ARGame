@@ -9,6 +9,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
         <TextView
+            style="@style/AppTheme.Text"
             android:id="@+id/textView_unselected_abilities"
             android:textStyle="bold"
             android:textSize="24sp"

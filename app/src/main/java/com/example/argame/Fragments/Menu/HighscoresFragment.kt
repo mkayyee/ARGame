@@ -103,6 +103,8 @@ class HighScoreAdapter(private val scores: List<NetworkAPI.HighScoreModel.HighSc
     override fun onBindViewHolder(holder: HighScoreViewHolder, position: Int) {
         val uName = scores[position].username
         val score = "Score: ${scores[position].score}"
+        val order = "#${position+1}"
+        holder.itemView.textView_highScore_order.text = order
         holder.itemView.textView_score_username.text = uName
         holder.itemView.textView_score.text = score
     }

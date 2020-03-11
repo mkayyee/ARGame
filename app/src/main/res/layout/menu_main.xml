@@ -2,71 +2,92 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/main_menu_button_container"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:weightSum="7"
+    android:weightSum="8"
+    android:gravity="center"
     android:layout_height="match_parent">
 
     <TextView
         android:layout_weight="1"
+        android:padding="8dp"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:text="@string/survivar"
         style="@style/AppTheme.Text"
-        android:textSize="65sp"
+        android:textSize="48sp"
+        android:gravity="center"
         android:textStyle="bold"
         android:layout_marginBottom="30dp"
         android:textAlignment="center"/>
 
     <com.google.android.material.button.MaterialButton
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:layout_weight="1"
+        android:elevation="2dp"
         android:id="@+id/button_new_game"
         android:textSize="30sp"
         android:textAllCaps="false"
-        android:layout_width="match_parent"
+        android:layout_width="300dp"
         android:layout_height="0dp"
         android:text="@string/new_game"/>
 
     <com.google.android.material.button.MaterialButton
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:layout_weight="1"
+        android:elevation="2dp"
         android:id="@+id/button_select_abilities_main"
         android:textSize="30sp"
         android:textAllCaps="false"
-        android:layout_width="match_parent"
+        android:layout_width="300dp"
         android:layout_height="0dp"
         android:text="@string/select_abilities"/>
 
     <com.google.android.material.button.MaterialButton
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:layout_weight="1"
+        android:elevation="2dp"
         android:id="@+id/button_profile"
         android:textSize="30sp"
         android:textAllCaps="false"
-        android:layout_width="match_parent"
+        android:layout_width="300dp"
         android:layout_height="0dp"
         android:text="@string/profile"/>
 
     <com.google.android.material.button.MaterialButton
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:layout_weight="1"
+        android:elevation="8dp"
         android:id="@+id/button_high_scores"
         android:textSize="30sp"
         android:textAllCaps="false"
-        android:layout_width="match_parent"
+        android:layout_width="300dp"
         android:layout_height="0dp"
         android:text="@string/high_scores"/>
 
     <com.google.android.material.button.MaterialButton
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:layout_weight="1"
+        android:elevation="2dp"
         android:id="@+id/button_tutorial"
         android:textSize="30sp"
         android:textAllCaps="false"
-        android:layout_width="match_parent"
+        android:layout_width="300dp"
         android:layout_height="0dp"
         android:text="@string/tutorial"/>
 
     <com.google.android.material.button.MaterialButton
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:layout_weight="1"
+        android:elevation="2dp"
         android:id="@+id/button_resume_game"
         android:textSize="30sp"
         android:textAllCaps="false"
-        android:layout_width="match_parent"
+        android:layout_width="300dp"
         android:layout_height="0dp"
         android:enabled="false"
         android:text="@string/resume_game"/>

@@ -29,6 +29,7 @@
             android:launchMode="singleInstance" />
         <activity
             android:name=".Activities.MenuActivity"
+            android:screenOrientation="portrait"
             android:launchMode="singleInstance" />
         <activity
             android:name=".Activities.TutorialActivityFirst" android:screenOrientation="portrait"
@@ -38,6 +39,7 @@
             android:launchMode="singleInstance" />
         <activity
             android:name=".Activities.MainActivity"
+            android:screenOrientation="portrait"
             android:launchMode="singleInstance">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
