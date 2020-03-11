@@ -83,13 +83,6 @@ class AbilityMenuFragment(private val mContext: Context) : Fragment(),
         disableButtons()
         doAsyncResult {
             db.abilitiesDao().selectAbility(id)
-            onComplete {
-                enableButtons()
-                uiThread {
-                    // TODO: if max amount of abilities, keep buttons disabled
-                    enableButtons()
-                }
-            }
         }
     }
 
@@ -97,14 +90,6 @@ class AbilityMenuFragment(private val mContext: Context) : Fragment(),
         if (recycler_unselected_abilities != null) {
             recycler_unselected_abilities.forEach {
                 it.button_select?.isEnabled = false
-            }
-        }
-    }
-
-    private fun enableButtons() {
-        if (recycler_unselected_abilities != null) {
-            recycler_unselected_abilities.forEach {
-                it.button_select?.isEnabled = true
             }
         }
     }
