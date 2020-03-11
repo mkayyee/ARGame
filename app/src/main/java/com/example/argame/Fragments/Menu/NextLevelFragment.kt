@@ -8,12 +8,10 @@ import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import com.example.argame.Activities.GameActivityPlayground
+import com.example.argame.Activities.GameActivity
 import com.example.argame.Activities.MainActivity
 import com.example.argame.Fragments.Abilities.AbilityMenuFragment
 import com.example.argame.Interfaces.FragmentCallbackListener
-import com.example.argame.Model.Ability.Ability
-import com.example.argame.Model.Ability.AbilityModifier
 import com.example.argame.R
 
 /***
@@ -52,7 +50,7 @@ class NextLevelFragment(val fragManager: FragmentManager) : Fragment(), View.OnC
             }
             R.id.button_next_level -> {
                 activity?.finish()
-                val intent = Intent(activity, GameActivityPlayground::class.java)  // HUOMIO !!!!
+                val intent = Intent(activity, GameActivity::class.java)  // HUOMIO !!!!
                 startActivity(intent)
             }
             R.id.button_select_abilities -> {

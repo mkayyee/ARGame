@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
-import com.example.argame.Activities.GameActivityPlayground
+import com.example.argame.Activities.GameActivity
 import com.example.argame.Activities.MainActivity
 import com.example.argame.Fragments.Abilities.AbilityMenuFragment
 import com.example.argame.R
@@ -45,7 +45,7 @@ class GameOverFragment : Fragment(), View.OnClickListener {
             }
             R.id.button_new_game -> {
                 activity?.finish()
-                val intent = Intent(activity, GameActivityPlayground::class.java)  // HUOMIO !!!!
+                val intent = Intent(activity, GameActivity::class.java)  // HUOMIO !!!!
                 startActivity(intent)
              }
             R.id.button_select_abilities -> {

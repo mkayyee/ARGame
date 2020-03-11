@@ -25,7 +25,7 @@
             android:stopWithTask="false" />
 
         <activity
-            android:name=".Activities.GameActivityPlayground"
+            android:name=".Activities.GameActivity"
             android:configChanges="orientation|screenSize"
             android:launchMode="singleInstance" />
         <activity
@@ -48,9 +48,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".Activities.GameActivity"
-            android:configChanges="orientation|screenSize" />
 
         <meta-data
             android:name="com.google.ar.core"
