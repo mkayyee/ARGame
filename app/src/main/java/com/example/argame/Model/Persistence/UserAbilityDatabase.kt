@@ -84,5 +84,8 @@ object Entities {
 
         @Query("SELECT * FROM SelectableAbility WHERE isSelected = 0")
         fun checkUnselectedAbilities(): List<SelectableAbility>
+
+         @Query("SELECT COUNT(*) from SelectableAbility where isSelected = 1")
+         fun getSelectedAbilitiesCount() : Int
     }
 }

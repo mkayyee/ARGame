@@ -85,6 +85,10 @@ class UnselectedAbilitiesAdapter(
         holder.itemView.button_select.setOnClickListener {
             cb.onAbilityAdd(AbilityConverter.fromAbility(ability))
         }
+        if (abilities!!.size < 2) {
+            holder.itemView.button_select.isEnabled = false
+            holder.itemView.button_select.alpha = 0.1f
+        }
 
         val image = ability.getImage(holder.itemView.context)
         if (image != null) {

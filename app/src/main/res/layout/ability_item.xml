@@ -26,6 +26,7 @@
         android:layout_height="wrap_content"
         android:text="Ability1" />
     <LinearLayout
+        android:id="@+id/unselected_button_container"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:layout_centerVertical="true"
