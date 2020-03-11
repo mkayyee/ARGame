@@ -686,6 +686,7 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
         playground_teleportDuckBtn.isEnabled = false
         player.incrementAbilitiesUsed()
         fragment.setOnTapArPlaneListener{ hitResult, _, _ ->
+            player.restoreHealth(player.getMaxHealth() * AbilityModifier.getPwrModifier(Ability.TELEPORT))
             doAsync { effectPlayerPlayer.playSound(R.raw.swoosh) }
             val newAnchor = hitResult.createAnchor()
             val node = AnchorNode(newAnchor)

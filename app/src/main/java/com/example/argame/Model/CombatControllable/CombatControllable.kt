@@ -6,6 +6,7 @@ import android.util.Log.wtf
 import com.example.argame.Interfaces.AbilityUser
 import com.example.argame.Interfaces.ProjectileAnimator
 import com.example.argame.Model.Ability.Ability
+import com.example.argame.Model.Ability.AbilityModifier
 import com.example.argame.Model.Ability.ProjectileAnimationData
 import com.google.ar.sceneform.animation.ModelAnimator
 import com.google.ar.sceneform.rendering.ModelRenderable
@@ -34,8 +35,8 @@ abstract class CombatControllable(
     private var maxHealth = baseHealth
     private var isAlive: Boolean = true
     private var isShielded = false
-    private var maxShieldAmount = 600.0
-    private var shieldAmount = 600.0
+    private var maxShieldAmount = 600.0 * AbilityModifier.getPwrModifier(Ability.SHIELD)
+    private var shieldAmount = 600.0 * AbilityModifier.getPwrModifier(Ability.SHIELD)
     private var status: CombatControllableStatus
     private var level = 1
     private var xp = 0.0

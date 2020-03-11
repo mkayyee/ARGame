@@ -53,6 +53,8 @@ class MainActivity : AppCompatActivity(), FragmentCallbackListener {
         val beam = AbilityConverter.fromAbility(Ability.BEAM)
         val teleport = AbilityConverter.fromAbility(Ability.TELEPORT)
         val shield = AbilityConverter.fromAbility(Ability.SHIELD)
+        val dot = AbilityConverter.fromAbility(Ability.DOT)
+        val atk = AbilityConverter.fromAbility(Ability.ATK)
         val context: Context = this
         val db = AppDatabase.get(context)
         doAsync {
@@ -61,6 +63,8 @@ class MainActivity : AppCompatActivity(), FragmentCallbackListener {
             db.abilitiesDao().insertAbility(Entities.SelectableAbility(beam))
             db.abilitiesDao().insertAbility(Entities.SelectableAbility(teleport))
             db.abilitiesDao().insertAbility(Entities.SelectableAbility(shield))
+            db.abilitiesDao().insertAbility(Entities.SelectableAbility(dot))
+            //db.abilitiesDao().insertAbility(Entities.SelectableAbility(atk))
             //db.abilitiesDao().selectAbility(test)
         }
     }

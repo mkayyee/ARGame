@@ -30,6 +30,7 @@ class Player(
     private var ultProgress = 0
     private val ultMax = 1000
     private var ultIsReady = false
+    private var health = startHealth
 
     init {
         Log.d("PLAYER", "Player initialized with score: $score")
@@ -62,6 +63,10 @@ class Player(
 
     fun getMaxUlt() : Int {
         return ultMax
+    }
+
+    fun getMaxHealth(): Double {
+        return health
     }
 
     fun calculateScore() : Int {
