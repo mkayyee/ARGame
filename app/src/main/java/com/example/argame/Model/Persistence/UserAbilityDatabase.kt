@@ -87,5 +87,8 @@ object Entities {
 
          @Query("SELECT COUNT(*) from SelectableAbility where isSelected = 1")
          fun getSelectedAbilitiesCount() : Int
+
+        @Query("SELECT * FROM SelectableAbility WHERE isSelected = 1")
+        fun getSelectedAbilities(): List<SelectableAbility>
     }
 }
