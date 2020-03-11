@@ -1,25 +1,15 @@
 package com.example.argame.Model
 
 import android.animation.ObjectAnimator
-import android.content.Context
-import android.graphics.Color
 import android.os.CountDownTimer
 import android.util.Log
-import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.LinearInterpolator
-import com.example.argame.Activities.GameActivityPlayground
 import com.example.argame.Model.Ability.ProjectileAnimationData
 import com.google.ar.sceneform.Node
 import com.google.ar.sceneform.math.Quaternion
 import com.google.ar.sceneform.math.Vector3
 import com.google.ar.sceneform.math.Vector3Evaluator
-import com.google.ar.sceneform.rendering.Material
-import com.google.ar.sceneform.rendering.MaterialFactory
-import com.google.ar.sceneform.rendering.ModelRenderable
-import com.google.ar.sceneform.rendering.ShapeFactory
 import com.google.ar.sceneform.ux.TransformableNode
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.uiThread
 import java.sql.Time
 
 

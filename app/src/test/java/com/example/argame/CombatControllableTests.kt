@@ -1,6 +1,6 @@
 package com.example.argame
 
-import com.example.argame.Activities.GameActivityPlayground
+import com.example.argame.Activities.GameActivity
 import com.example.argame.Model.CombatControllable.*
 import com.example.argame.Model.NPC.NPC
 import com.example.argame.Model.NPC.NPCType
@@ -25,14 +25,14 @@ class CombatControllableTests {
             positiveAP,
             playerName,
             positiveHP,
-            context = GameActivityPlayground()
+            context = GameActivity()
         )
         val npc = NPC(
             positiveAP,
             npcName,
             positiveHP,
             type = npcType,
-            context = GameActivityPlayground(),
+            context = GameActivity(),
             id = 1
         )
         // dealDamage() should deal damage equal to the input --
@@ -64,14 +64,14 @@ class CombatControllableTests {
             negativeAP,
             playerName,
             negativeHP,
-            context = GameActivityPlayground()
+            context = GameActivity()
         )
         val npc = NPC(
             negativeAP,
             npcName,
             negativeHP,
             type = npcType,
-            context = GameActivityPlayground(),
+            context = GameActivity(),
             id = 1
         )
         // Verifying that they are converted into positive values
@@ -90,14 +90,14 @@ class CombatControllableTests {
             lessThanOne,
             playerName,
             lessThanOne,
-            context = GameActivityPlayground()
+            context = GameActivity()
         )
         val npc = NPC(
             zero,
             npcName,
             zero,
             type = npcType,
-            context = GameActivityPlayground(),
+            context = GameActivity(),
             id = 1
         )
         // confirming that the values are set correctly (according to minimum values)
@@ -124,14 +124,14 @@ class CombatControllableTests {
             positiveAP,
             playerName,
             positiveHP,
-            context = GameActivityPlayground()
+            context = GameActivity()
         )
         val npc = NPC(
             negativeAP,
             npcName,
             negativeHP,
             type = npcType,
-            context = GameActivityPlayground(),
+            context = GameActivity(),
             id = 1
         )
         assertEquals(positiveHP, player.getStatus().currentHealth, 0.0)
@@ -150,14 +150,14 @@ class CombatControllableTests {
             positiveAP,
             playerName,
             positiveHP,
-            context = GameActivityPlayground()
+            context = GameActivity()
         )
         val npc = NPC(
             negativeAP,
             npcName,
             negativeHP,
             type = npcType,
-            context = GameActivityPlayground(),
+            context = GameActivity(),
             id = 1
         )
         // overkill (this will get multiplied by ap as well)
@@ -181,14 +181,14 @@ class CombatControllableTests {
             positiveAP,
             playerName,
             positiveHP,
-            context = GameActivityPlayground()
+            context = GameActivity()
         )
         val npc = NPC(
             negativeAP,
             npcName,
             negativeHP,
             type = npcType,
-            context = GameActivityPlayground(),
+            context = GameActivity(),
             id = 1
         )
         // deal damage to player
@@ -208,14 +208,14 @@ class CombatControllableTests {
             positiveAP,
             playerName,
             positiveHP,
-            context = GameActivityPlayground()
+            context = GameActivity()
         )
         val npc = NPC(
             negativeAP,
             npcName,
             negativeHP,
             type = npcType,
-            context = GameActivityPlayground(),
+            context = GameActivity(),
             id = 1
         )
         npc.dealDamage(2.0, player)
@@ -262,7 +262,7 @@ class CombatControllableTests {
             positiveAP,
             playerName,
             positiveHP,
-            context = GameActivityPlayground()
+            context = GameActivity()
         )
         // increase max health by 200%
         player.increaseMaxHealth(2.0)
@@ -293,7 +293,7 @@ class CombatControllableTests {
             positiveAP,
             playerName,
             positiveHP,
-            context = GameActivityPlayground()
+            context = GameActivity()
         )
         // increase max AP by 200%
         player.increaseAP(2.0)
@@ -325,7 +325,7 @@ class CombatControllableTests {
             "player 1",
             300.0,
             null,
-            GameActivityPlayground()
+            GameActivity()
         )
         // verifying that the player starts at 0 xp and at level 1
         var status = player.getStatus()

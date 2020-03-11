@@ -13,6 +13,11 @@ import com.example.argame.Fragments.TutorialWindowFragment
 import com.example.argame.R
 import kotlinx.android.synthetic.main.activity_tutorial_second.*
 
+/**
+ *  The tutorial activity that handles the explanation
+ *  of player health bar, ultimate bar and abilities.
+ */
+
 class TutorialActivitySecond : AppCompatActivity(), TutorialWindowFragment.TutorialButtonListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {

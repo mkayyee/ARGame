@@ -19,8 +19,15 @@ import com.example.argame.R
 import kotlinx.android.synthetic.main.ability_item.view.*
 import kotlinx.android.synthetic.main.fragment_unselected_abilities.*
 
+/**
+ *  The bottom fragment of the "select abilities" menu,
+ *  and the Adapter class for its recycler view.
+ *
+ *  Uses live data from room to update the recycler view.
+ */
+
 class UnselectedAbilitiesFragment(
-    private val database: AppDatabase, private val uid: Int, private val mContext: AbilityMenuFragment) : Fragment() {
+    private val database: AppDatabase, private val mContext: AbilityMenuFragment) : Fragment() {
 
     interface AbilitySelectCallback {
         fun onAbilityAdd(id: Int)

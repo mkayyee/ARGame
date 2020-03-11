@@ -1,7 +1,5 @@
 package com.example.argame.Fragments.Menu
 
-import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -12,15 +10,13 @@ import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
-import com.example.argame.Activities.GameActivityPlayground
+import com.example.argame.Activities.GameActivity
 import com.example.argame.Activities.TutorialActivityFirst
 import com.example.argame.Fragments.Abilities.AbilityMenuFragment
 import com.example.argame.Interfaces.FragmentCallbackListener
 import com.example.argame.Model.Ability.Ability
 import com.example.argame.Model.Ability.AbilityModifier
 import com.example.argame.R
-import com.google.android.material.button.MaterialButton
-import kotlinx.android.synthetic.main.menu_main.*
 import org.jetbrains.anko.doAsync
 
 /***
@@ -71,7 +67,7 @@ class MenuFragmentController: Fragment(), FragmentCallbackListener {
 
     private fun launchGameActivity() {
         //val intent = Intent(activity, GameActivity::class.java)
-        val intent = Intent(activity, GameActivityPlayground::class.java)  // HUOMIO !!!!
+        val intent = Intent(activity, GameActivity::class.java)  // HUOMIO !!!!
         startActivity(intent)
     }
 

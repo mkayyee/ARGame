@@ -10,6 +10,13 @@ import com.example.argame.Fragments.TutorialWindowFragment
 import com.example.argame.R
 import kotlinx.android.synthetic.main.activity_tutorial_ults.*
 
+/**
+ *  The tutorial activity for explaining ultimates.
+ *
+ *  Has logic for calling the dialog fragment with different states,
+ *  explaining where the ultimates are, and how to use both of them.
+ */
+
 class TutorialUltActivity : AppCompatActivity(), TutorialWindowFragment.TutorialButtonListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {

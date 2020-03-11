@@ -6,7 +6,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import androidx.core.view.forEach
 import androidx.fragment.app.Fragment
 import com.example.argame.Interfaces.FragmentCallbackListener
@@ -18,8 +17,16 @@ import kotlinx.android.synthetic.main.activity_level_intermission.*
 import kotlinx.android.synthetic.main.fragment_unselected_abilities.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.doAsyncResult
-import org.jetbrains.anko.onComplete
-import org.jetbrains.anko.uiThread
+
+/**
+ *  The "select abilities" menu.
+ *
+ *  Listen's to callbacks from each of its fragments: (SelectedAbilitiesFragment,
+ *  UnselectedAbilitiesFragment) and updates the database accordingly.
+ *
+ *  Both fragments have a LiveData reference to the abilities database, so
+ *  they will be automatically updated.
+ */
 
 class AbilityMenuFragment(private val mContext: Context) : Fragment(),
     SelectedAbilitiesFragment.AbilitySelectCallback,
@@ -44,7 +51,6 @@ class AbilityMenuFragment(private val mContext: Context) : Fragment(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         button_close_ability_menu.setOnClickListener {
-            //fragmentCallbackListener.onButtonPressed(it as Button)
             fragmentManager!!.popBackStack()
         }
         initFragments()
@@ -62,9 +68,8 @@ class AbilityMenuFragment(private val mContext: Context) : Fragment(),
                 Log.d("ABILITYUNSELECTED", AbilityConverter.toAbility(ab.abilityID).toString())
             }
         }
-        val userID = 1 //TODO: Get from sharedprefs?
-        val fragSelected = SelectedAbilitiesFragment(db, userID, this)
-        val fragUnselected = UnselectedAbilitiesFragment(db, userID, this)
+        val fragSelected = SelectedAbilitiesFragment(db, this)
+        val fragUnselected = UnselectedAbilitiesFragment(db, this)
         fragmentManager!!.beginTransaction()
             .add(R.id.selected_abilities_container, fragSelected)
             .add(R.id.unselected_abilities_container, fragUnselected)
