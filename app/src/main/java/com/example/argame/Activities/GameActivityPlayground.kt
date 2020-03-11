@@ -69,6 +69,23 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.sql.Time
 
+/**
+ *  The activity where all the magic happens... literally.
+ *
+ *  While this activity should by no means be ~1500 lines of code,
+ *  there was simply not enough time to abstract it out.
+ *
+ *  This class basically holds the entire game logic (mostly UI-wise),
+ *  having references to helper classes for spawning enemies,
+ *  override methods for game callbacks (informing that the UI should be updated),
+ *  using and animating abilities --
+ *
+ *  and is responsible for:
+ *      - rendering abilities,
+ *      - rendering player and enemy models
+ *      - and most importantly, rendering the AR scene.
+ */
+
 class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
     NPCSpawnHandler.NPCSpawnCallback, Ability.AbilityCallbackListener,
     CombatControllable.CombatControllableListener, UltimateHandler.UltimateHandlerListener {

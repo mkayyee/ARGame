@@ -1,6 +1,5 @@
 package com.example.argame.Activities
 
-import android.accounts.NetworkErrorException
 import android.content.Context
 import android.content.SharedPreferences
 import android.net.ConnectivityManager
@@ -28,6 +27,18 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.lang.Error
+
+/**
+ *  The start screen of the app, that holds the navigation menu.
+ *
+ *  Will check if the user data retrieved from the server matches
+ *  to local user data, and if not, sends a request to update the server.
+ *  This is mainly to keep real-time track of the user's high score.
+ *
+ *  High scores are saved after each level AS LONG as there is an internet connection.
+ *  If the device doesn't have a connection, or saving high scores fails for other reasons,
+ *  the high scores are will still be updated locally.
+ */
 
 class MainActivity : AppCompatActivity(), FragmentCallbackListener {
 
@@ -107,7 +118,6 @@ class MainActivity : AppCompatActivity(), FragmentCallbackListener {
                                         "Couldn't get userdata. Reason: ${t.localizedMessage}"
                                     )
                                 }
-
                                 override fun onResponse(
                                     call: Call<NetworkAPI.UserModel.GetUserResponse>,
                                     response: Response<NetworkAPI.UserModel.GetUserResponse>

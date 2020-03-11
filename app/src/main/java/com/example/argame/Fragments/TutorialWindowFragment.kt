@@ -13,7 +13,7 @@ import kotlinx.android.synthetic.main.activity_tutorial_first.*
 import kotlinx.android.synthetic.main.activity_tutorial_second.*
 import kotlinx.android.synthetic.main.tutorial_window.*
 
-enum class TutorialState() {
+enum class TutorialState {
     START_LEVEL,
     MENU,
     BARS,
@@ -22,6 +22,14 @@ enum class TutorialState() {
     KILLALL,
     SERENITY;
 }
+
+/**
+ *  The fragment for the tutorial dialog, and a callback interface for it's initializer.
+ *  The callback is fired by the dialog's check button, and is handled by a tutorial Activity,
+ *  and those activities call this fragment again, based on the state the callback was sent in.
+ *
+ *  TutorialState defines what should be inside the dialog's TextView.
+ */
 
 class TutorialWindowFragment(private val state: TutorialState) : Fragment() {
 

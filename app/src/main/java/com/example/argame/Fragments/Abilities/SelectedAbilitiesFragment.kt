@@ -27,8 +27,15 @@ import kotlinx.android.synthetic.main.fragment_selected_abilities.*
 import androidx.preference.PreferenceManager
 import org.jetbrains.anko.forEachChild
 
+/**
+*  The top fragment of the "select abilities" menu,
+*  and the Adapter class for its recycler view.
+*
+*  Uses live data from room to update the recycler view.
+*/
+
 class SelectedAbilitiesFragment(
-    private val database: AppDatabase, private val uid: Int, private val mContext: AbilityMenuFragment) : Fragment() {
+    private val database: AppDatabase, private val mContext: AbilityMenuFragment) : Fragment() {
 
     interface AbilitySelectCallback {
         fun onAbilityRemove(id: Int)
@@ -59,13 +66,12 @@ class SelectedAbilitiesFragment(
         db = database
     }
 
-
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         val abilitiesLiveModel
                 = ViewModelProviders.of(this).get(AbilitiesLiveModel::class.java)
         abilitiesLiveModel.getSelectedAbilities().observe(this, Observer {
-            val adapter = SelectedAbilitiesAdapter(it, selectItemListener, activity!!, this)
+            val adapter = SelectedAbilitiesAdapter(it, selectItemListener, activity!!)
             val layoutManager = LinearLayoutManager(context)
             recycler_selected_abilities.adapter = adapter
             recycler_selected_abilities.layoutManager = layoutManager
@@ -76,15 +82,10 @@ class SelectedAbilitiesFragment(
 class SelectedAbilitiesAdapter(
     private var abilities: List<Entities.SelectableAbility>?,
     private val cbListener: SelectedAbilitiesFragment.AbilitySelectCallback,
-    private val activity : FragmentActivity,
-    private val fragment: SelectedAbilitiesFragment
-) : RecyclerView.Adapter<SelectedViewHolder>() {
+    private val activity : FragmentActivity) : RecyclerView.Adapter<SelectedViewHolder>() {
 
     private lateinit var mRecyclerView: RecyclerView
     private val saver = PreferenceManager.getDefaultSharedPreferences(activity)
-
-
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SelectedViewHolder {
         val item = LayoutInflater.from(parent.context)

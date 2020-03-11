@@ -14,6 +14,12 @@ import com.example.argame.Fragments.TutorialWindowFragment
 import com.example.argame.R
 import kotlinx.android.synthetic.main.activity_tutorial_first.*
 
+/**
+ *  The first part of the tutorial, providing information
+ *  about level start, the environment you should be in,
+ *  and how to get out of the game.
+ */
+
 class TutorialActivityFirst : AppCompatActivity(), TutorialWindowFragment.TutorialButtonListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
