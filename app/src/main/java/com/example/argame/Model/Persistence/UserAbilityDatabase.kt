@@ -79,7 +79,7 @@ object Entities {
         @Query("SELECT * FROM SelectableAbility")
         fun getAllAbilities() : List<SelectableAbility>
 
-        @Insert(onConflict = OnConflictStrategy.REPLACE)
+        @Insert(onConflict = OnConflictStrategy.IGNORE)
         fun insertAbility(ability: SelectableAbility): Long
 
         @Query("SELECT * FROM SelectableAbility WHERE isSelected = 0")
