@@ -16,9 +16,12 @@ import com.example.argame.Activities.GameActivityPlayground
 import com.example.argame.Activities.TutorialActivityFirst
 import com.example.argame.Fragments.Abilities.AbilityMenuFragment
 import com.example.argame.Interfaces.FragmentCallbackListener
+import com.example.argame.Model.Ability.Ability
+import com.example.argame.Model.Ability.AbilityModifier
 import com.example.argame.R
 import com.google.android.material.button.MaterialButton
 import kotlinx.android.synthetic.main.menu_main.*
+import org.jetbrains.anko.doAsync
 
 /***
  *  The class responsible for drawing all the menus over any activity.
@@ -80,9 +83,6 @@ class MenuFragmentController: Fragment(), FragmentCallbackListener {
 
     override fun onButtonPressed(btn: Button) {
         when (btn.id) {
-            //R.id.settings_button_back -> drawMainMenuFragment()
-            //R.id.high_scores_button_back -> drawMainMenuFragment()
-            //R.id.profile_button_back -> drawMainMenuFragment()
             R.id.button_profile -> drawFragment(profileFrag)
             R.id.button_high_scores -> drawFragment(highscoresFrag)
             R.id.button_tutorial -> {
@@ -91,7 +91,27 @@ class MenuFragmentController: Fragment(), FragmentCallbackListener {
             }
             R.id.button_select_abilities_main -> drawFragment(AbilityMenuFragment(btn.context))
             R.id.button_new_game -> {
+                val abilityList = listOf(
+                    Ability.FBALL,
+                    Ability.DOT,
+                    Ability.SHIELD,
+                    Ability.TELEPORT,
+                    Ability.BEAM
+                )
                 saver?.edit()?.putInt("levelNum", 1)?.apply()
+                saver?.edit()?.putInt("skillLevel", 0)?.apply()
+                doAsync {abilityList.forEach {
+                    saver?.edit()?.putFloat(
+                        it.name + "pwr",
+                        (AbilityModifier.getPwrModifier(it) - 1).toFloat()
+                    )?.apply()
+                    saver?.edit()
+                        ?.putFloat(it.name + "cd", (AbilityModifier.getCdModifier(it) - 1).toFloat())
+                        ?.apply()
+                    Log.d("MODIFIER", "RESET " + it.name)
+                }
+                }
+
                 launchGameActivity()
             }
             R.id.button_resume_game -> launchGameActivity()

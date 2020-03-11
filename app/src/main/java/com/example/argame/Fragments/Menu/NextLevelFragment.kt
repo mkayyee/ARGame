@@ -12,6 +12,8 @@ import com.example.argame.Activities.GameActivityPlayground
 import com.example.argame.Activities.MainActivity
 import com.example.argame.Fragments.Abilities.AbilityMenuFragment
 import com.example.argame.Interfaces.FragmentCallbackListener
+import com.example.argame.Model.Ability.Ability
+import com.example.argame.Model.Ability.AbilityModifier
 import com.example.argame.R
 
 /***
@@ -23,6 +25,7 @@ import com.example.argame.R
 class NextLevelFragment(val fragManager: FragmentManager) : Fragment(), View.OnClickListener {
 
     private var buttonCallbackListener: FragmentCallbackListener? = null
+
 
 
     override fun onCreateView(

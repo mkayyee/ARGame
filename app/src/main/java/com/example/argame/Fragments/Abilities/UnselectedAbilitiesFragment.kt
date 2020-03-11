@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.argame.Model.Ability.AbilityConverter
+import com.example.argame.Model.Ability.AbilityModifier
 import com.example.argame.Model.Persistence.AbilitiesLiveModel
 import com.example.argame.Model.Persistence.AppDatabase
 import com.example.argame.Model.Persistence.Entities
@@ -84,6 +85,7 @@ class UnselectedAbilitiesAdapter(
         holder.itemView.button_select.setOnClickListener {
             cb.onAbilityAdd(AbilityConverter.fromAbility(ability))
         }
+
         val image = ability.getImage(holder.itemView.context)
         if (image != null) {
             holder.itemView.ability_image.setImageDrawable(image)
