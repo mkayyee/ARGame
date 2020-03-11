@@ -22,7 +22,7 @@ import retrofit2.Response
 import retrofit2.Callback
 import kotlin.math.log
 
-/***
+/**
  *  Fragment for the list of high scores.
  *
  *  Instantiated from MenuFragmentController
@@ -48,7 +48,9 @@ class HighscoresFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupButtonListeners()
-        getHighScores()
+         NetworkAPI.executeIfConnected(context!!, true) {
+             getHighScores()
+         }
     }
 
     private fun setupButtonListeners() {
@@ -65,8 +67,7 @@ class HighscoresFragment : Fragment() {
         call?.enqueue(object: Callback<List<NetworkAPI.HighScoreModel.HighScore>> {
             override fun onFailure(
                 call: Call<List<NetworkAPI.HighScoreModel.HighScore>>,
-                t: Throwable
-            ) {
+                t: Throwable) {
                 Log.d("RETROFIT", "Failed to fetch high scores")
                 Log.d("RETROFIT", t.localizedMessage ?: "no message but error")
             }

@@ -1255,11 +1255,10 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
                                 "(${it.highScore} : ${totalScore > it.highScore}"
                     )
                     if (totalScore > it.highScore) {
-                        //val highscore = Highscore(userId!!, user.username, totalScore)
                         db.updateHighScore(totalScore, it.id)
-                        postNewHighScore(userId!!, totalScore)
-                        Log.d("POINTS", "New highscore: $totalScore")
-                        // TODO: NetworkAPI.postNewHighScore(highScore)
+                        NetworkAPI.executeIfConnected(this@GameActivityPlayground) {
+                            postNewHighScore(userId!!, totalScore)
+                        }
                         uiThread {
                             Toast.makeText(
                                 this@GameActivityPlayground,
@@ -1405,22 +1404,33 @@ class GameActivityPlayground : AppCompatActivity(), FragmentCallbackListener,
 
     private fun postNewHighScore(uid: Int, score: Int) {
         if (userId != null) {
-            val service = RetrofitClientInstance.retrofitInstance?.create(HighscoreService::class.java)
-            val body = NetworkAPI.HighScoreModel.PostHSBody(uid, score)
-            val call = service?.newHighScore(body)
-            call?.enqueue(object : Callback<ResponseBody>{
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    Toast.makeText(this@GameActivityPlayground, "Error updating highscore", Toast.LENGTH_LONG).show()
-                    Log.d("RETROFIT", "Error updating highscore: ${t.localizedMessage}")
-                }
-                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                    if (response.code() == 200) {
-                        Log.d("RETROFIT", "New high score saved to back end")
-                    } else {
-                        Log.d("RETROFIT", "High score not saved into back end")
+            try {
+                val service =
+                    RetrofitClientInstance.retrofitInstance?.create(HighscoreService::class.java)
+                val body = NetworkAPI.HighScoreModel.PostHSBody(uid, score)
+                val call = service?.newHighScore(body)
+                call?.enqueue(object : Callback<ResponseBody> {
+                    override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                        Toast.makeText(
+                            this@GameActivityPlayground,
+                            "Error updating highscore",
+                            Toast.LENGTH_LONG
+                        ).show()
+                        Log.d("RETROFIT", "Error updating highscore: ${t.localizedMessage}")
                     }
-                }
-            })
+                    override fun onResponse(
+                        call: Call<ResponseBody>,
+                        response: Response<ResponseBody>) {
+                        if (response.code() == 200) {
+                            Log.d("RETROFIT", "New high score saved to back end")
+                        } else {
+                            Log.d("RETROFIT", "High score not saved into back end")
+                        }
+                    }
+                })
+            } catch (e: Error) {
+                Log.d("RETROFIT", "Error updating highscore: ${e.localizedMessage}")
+            }
         }
     }
 }
