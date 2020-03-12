@@ -109,6 +109,7 @@ class GameActivity : AppCompatActivity(), FragmentCallbackListener,
     private lateinit var ultimateHandler: UltimateHandler
     private lateinit var beamRenderable: ModelRenderable
     private lateinit var fireBallRenderable: ViewRenderable
+    private lateinit var dotRenderable: ViewRenderable
     var ducksInScene = false
     var playerInScene = false
     val cdHandler = Handler(Looper.getMainLooper())
@@ -309,6 +310,12 @@ class GameActivity : AppCompatActivity(), FragmentCallbackListener,
         renderableFutureAbility.thenAccept {
             fireBallRenderable = it
         }
+        val renderableFutureDot = ViewRenderable.builder()
+            .setView(this, R.layout.ability_animation_dot)
+            .build()
+        renderableFutureDot.thenAccept {
+            dotRenderable = it
+        }
     }
 
     private fun initUltimateHandler() {
@@ -366,7 +373,7 @@ class GameActivity : AppCompatActivity(), FragmentCallbackListener,
             Ability.BEAM -> beamTarget(playerTarget, cdData = cdData)
             Ability.SHIELD -> useBarrier(null, player, cdData)
             Ability.TELEPORT -> teleportPlayer(cdData)
-            Ability.DOT -> attackTarget(cdData)
+            Ability.DOT -> gasTarget(cdData)
             Ability.ATK -> attackTarget(cdData)
         }
     }
@@ -534,6 +541,43 @@ class GameActivity : AppCompatActivity(), FragmentCallbackListener,
 
                 cancelAnimator(player)
                 animateCast(Ability.FBALL.getCastAnimationString()!!, renderedPlayer!!, player)
+                player.useAbility(ability, playerTarget!!.model, animData) {
+                    player.incrementAbilitiesUsed()
+                    player.increaseUltProgress(ability.getDamage(player.getStatus()).toInt())
+                    updateUltBar(player.getUltBar()?.view?.textView_ultbar, player)
+                }
+            }
+        } else {
+            lookForNewTarget(cdData)
+        }
+    }
+
+    private fun gasTarget(cdData: ButtonCooldownData) {
+        if (playerTarget != null) {
+            if (!playerTarget!!.model.getStatus().isAlive) {
+                clearPlayerTarget()
+            } else {
+                updatePlayerRotation()
+                cdData.button.isEnabled = false
+                val ability = Ability.DOT
+                val animData =
+                    ProjectileAnimationData(
+                        this,
+                        fragment,
+                        ability.uri(),
+                        gifRenderable = dotRenderable,
+                        targetNode = playerTarget!!.node,
+                        casterNode = playerNode
+                    )
+                doAsync {
+                    doCooldown(cdData)
+                }
+                doAsync {
+                    effectPlayerPlayer.playSound(R.raw.poison)
+                }
+
+                cancelAnimator(player)
+                animateCast(Ability.DOT.getCastAnimationString()!!, renderedPlayer!!, player)
                 player.useAbility(ability, playerTarget!!.model, animData) {
                     player.incrementAbilitiesUsed()
                     player.increaseUltProgress(ability.getDamage(player.getStatus()).toInt())

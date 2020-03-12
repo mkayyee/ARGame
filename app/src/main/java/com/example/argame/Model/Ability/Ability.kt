@@ -39,7 +39,7 @@ enum class Ability() {
             BEAM -> "Beam"
             SHIELD -> "Shield"
             TELEPORT -> "Teleport"
-            DOT -> "DoT"
+            DOT -> "Poison"
             ATK -> "Attack"
         }
     }
@@ -55,7 +55,7 @@ enum class Ability() {
             BEAM -> ContextCompat.getDrawable(context, R.drawable.icon_beam)
             SHIELD -> ContextCompat.getDrawable(context, R.drawable.icon_shield)
             TELEPORT -> ContextCompat.getDrawable(context, R.drawable.icon_teleport)
-            DOT -> ContextCompat.getDrawable(context, R.drawable.icon_attack)
+            DOT -> ContextCompat.getDrawable(context, R.drawable.icon_poison)
             ATK -> ContextCompat.getDrawable(context, R.drawable.icon_attack)
         }
     }
@@ -77,7 +77,7 @@ enum class Ability() {
             BEAM -> Uri.parse("beam.sfb")
             SHIELD -> throw Error("shield doesn't have uri")
             TELEPORT -> throw Error("teleport doesn't have uri")
-            DOT -> throw Error("teleport doesn't have uri")
+            DOT -> Uri.parse("untitledv4.sfb")
             ATK -> throw Error("teleport doesn't have uri")
         }
     }
@@ -91,7 +91,7 @@ enum class Ability() {
             BEAM -> caster.level * 0.25 + 200 + caster.attackPower
             SHIELD -> throw Error("ability Shield does not support getDamage casted by $caster")
             TELEPORT -> throw Error("ability Teleport does not support getDamage casted by $caster")
-            DOT -> caster.level * 0.25 + 200 + caster.attackPower
+            DOT -> caster.level * 0.5 + 70 + caster.attackPower
             ATK -> caster.level * 0.25 + 200 + caster.attackPower
         }
     }
