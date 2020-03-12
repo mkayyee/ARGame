@@ -1,6 +1,7 @@
 package com.example.argame.Fragments.Abilities
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.forEach
 import androidx.fragment.app.Fragment
+import com.example.argame.Activities.GameActivity
 import com.example.argame.Interfaces.FragmentCallbackListener
 import com.example.argame.Model.Ability.AbilityConverter
 import com.example.argame.Model.Persistence.AppDatabase
@@ -17,6 +19,7 @@ import kotlinx.android.synthetic.main.activity_level_intermission.*
 import kotlinx.android.synthetic.main.fragment_unselected_abilities.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.doAsyncResult
+import org.jetbrains.anko.uiThread
 
 /**
  *  The "select abilities" menu.
@@ -51,9 +54,30 @@ class AbilityMenuFragment(private val mContext: Context) : Fragment(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         button_close_ability_menu.setOnClickListener {
-            fragmentManager!!.popBackStack()
+            //fragmentManager!!.popBackStack()
+            launchGameActivity()
         }
         initFragments()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        enableContinueIfPossible()
+    }
+
+    private fun enableContinueIfPossible() {
+        doAsync {
+            val count = db.abilitiesDao().getSelectedAbilitiesCount()
+            uiThread {
+                button_close_ability_menu.isEnabled = count >= 4
+            }
+        }
+    }
+
+    private fun launchGameActivity() {
+        val intent = Intent(activity, GameActivity::class.java)
+        startActivity(intent)
+        fragmentManager!!.popBackStack()
     }
 
     private fun initFragments() {
@@ -77,17 +101,19 @@ class AbilityMenuFragment(private val mContext: Context) : Fragment(),
     }
 
     override fun onAbilityRemove(id: Int) {
-        Log.d("ABILITY", "ability: ${AbilityConverter.toAbility(id).toString()} removed")
+        Log.d("ABILITY", "ability: ${AbilityConverter.toAbility(id)} removed")
         doAsync {
             db.abilitiesDao().deselectAbility(id)
+            enableContinueIfPossible()
         }
     }
 
     override fun onAbilityAdd(id: Int) {
-        Log.d("ABILITY", "ability: ${AbilityConverter.toAbility(id).toString()} added")
+        Log.d("ABILITY", "ability: ${AbilityConverter.toAbility(id)} added")
         disableButtons()
         doAsyncResult {
             db.abilitiesDao().selectAbility(id)
+            enableContinueIfPossible()
         }
     }
 

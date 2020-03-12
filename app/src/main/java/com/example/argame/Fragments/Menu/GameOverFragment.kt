@@ -11,6 +11,9 @@ import com.example.argame.Activities.GameActivity
 import com.example.argame.Activities.MainActivity
 import com.example.argame.Fragments.Abilities.AbilityMenuFragment
 import com.example.argame.R
+import kotlinx.android.synthetic.main.menu_game_over.*
+import kotlinx.android.synthetic.main.menu_main.*
+import kotlinx.android.synthetic.main.menu_main.button_new_game
 
 /***
  *  Fragment for the User profile.
@@ -18,7 +21,7 @@ import com.example.argame.R
  *  Instantiated from MenuFragmentController
  */
 
-class GameOverFragment : Fragment(), View.OnClickListener {
+class GameOverFragment(private val isGameMenu: Boolean = false) : Fragment(), View.OnClickListener {
 
 
     override fun onCreateView(
@@ -34,6 +37,15 @@ class GameOverFragment : Fragment(), View.OnClickListener {
         exitBtn.setOnClickListener(this)
         selectAbilityBtn.setOnClickListener(this)
         return v
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        if (isGameMenu) {
+            button_new_game.visibility = View.GONE
+            button_select_abilities.visibility = View.GONE
+            tv_game_over.text = getString(R.string.survivar)
+        }
     }
 
     override fun onClick (v: View) {

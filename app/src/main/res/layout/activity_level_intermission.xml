@@ -25,11 +25,11 @@
 
     <Button
         android:layout_marginTop="8dp"
-        android:textSize="28sp"
+        android:textSize="40sp"
         android:textAllCaps="false"
         android:id="@+id/button_close_ability_menu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Close" />
+        android:text="@string/__arcore_continue" />
 
 </LinearLayout>

@@ -7,6 +7,7 @@
     android:gravity="center">
 
     <TextView
+        android:id="@+id/tv_game_over"
         android:layout_marginBottom="80dp"
         android:textStyle="bold"
         android:textSize="40sp"
@@ -40,7 +41,7 @@
         android:textAllCaps="false"
         android:layout_margin="5dp"
         android:layout_height="wrap_content"
-        android:text="@string/select_abilities"/>
+        android:text="@string/change_abilities"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/button_exit"

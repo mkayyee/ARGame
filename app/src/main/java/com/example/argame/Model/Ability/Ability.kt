@@ -10,7 +10,8 @@ import com.example.argame.Model.CombatControllable.CombatControllableStatus
 import com.example.argame.R
 
 /***
- *  Ability data, and animation name that will be used for calling an animation inside .fbx
+ *  Ability data for getting cast animations, models uri's,
+ *  image icons and the ability damage.
  */
 
 object AbilityConverter {
@@ -56,7 +57,6 @@ enum class Ability() {
             TELEPORT -> ContextCompat.getDrawable(context, R.drawable.icon_teleport)
             DOT -> ContextCompat.getDrawable(context, R.drawable.icon_attack)
             ATK -> ContextCompat.getDrawable(context, R.drawable.icon_attack)
-
         }
     }
 

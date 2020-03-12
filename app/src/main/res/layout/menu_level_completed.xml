@@ -37,10 +37,10 @@
         android:layout_gravity="center"
         android:layout_width="300dp"
         android:textAllCaps="false"
-        android:textSize="28sp"
+        android:textSize="24sp"
         android:layout_margin="5dp"
         android:layout_height="wrap_content"
-        android:text="@string/select_abilities"/>
+        android:text="@string/change_improve_abilities"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/button_exit"

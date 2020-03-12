@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.Toast
 import androidx.preference.PreferenceManager
 import com.example.argame.Fragments.Menu.MenuFragmentController
 import com.example.argame.Interfaces.FragmentCallbackListener
@@ -19,10 +20,12 @@ import com.example.argame.Networking.NetworkAPI
 import com.example.argame.Networking.RetrofitClientInstance
 import com.example.argame.Networking.UserService
 import com.example.argame.R
+import kotlinx.android.synthetic.main.menu_main.*
 import okhttp3.ResponseBody
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.doAsyncResult
 import org.jetbrains.anko.onComplete
+import org.jetbrains.anko.uiThread
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -90,7 +93,9 @@ class MainActivity : AppCompatActivity(), FragmentCallbackListener {
     override fun onButtonPressed(btn: Button) {
         // The callback's are forwarded to MenuFragmentController,
         // that handles all the logic for these events
-        menuFragController.onButtonPressed(btn)
+        if (btn.id == R.id.button_exit_app) finish() else {
+            menuFragController.onButtonPressed(btn)
+        }
     }
 
     // Get user data from the back end if user id in preferences is not null.

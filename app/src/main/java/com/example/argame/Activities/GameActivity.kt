@@ -100,7 +100,7 @@ class GameActivity : AppCompatActivity(), FragmentCallbackListener,
     private lateinit var playerAnchorNode: AnchorNode
     private lateinit var playerNode: TransformableNode
 
-    // MARK: Testing-abilities-related stuff
+    // Abilities-related stuff
     private var playerTarget: PlayerTargetData? = null
     private var hpRenderableNPC: ViewRenderable? = null
     private var hpRenderablePlayer: ViewRenderable? = null
@@ -162,8 +162,8 @@ class GameActivity : AppCompatActivity(), FragmentCallbackListener,
         saver = PreferenceManager.getDefaultSharedPreferences(this)
         curLevel = saver.getInt("levelNum", 1)
         abilityList.forEach{
-            var resPwr = saver.getFloat(it.name + "pwr", 0.0F).toDouble()
-            var resCd = saver.getFloat(it.name + "cd", 0.0F).toDouble()
+            val resPwr = saver.getFloat(it.name + "pwr", 0.0F).toDouble()
+            val resCd = saver.getFloat(it.name + "cd", 0.0F).toDouble()
             if (resPwr > 0 && AbilityModifier.getPwrModifier(it) == 1.0) {
             AbilityModifier.setModifier(it, true, value = resPwr)
             }
@@ -430,7 +430,7 @@ class GameActivity : AppCompatActivity(), FragmentCallbackListener,
         @Suppress("IMPLICIT_CAST_TO_ANY")
         val fragmentToGet = when (fragmentName) {
             "NextLevel" -> NextLevelFragment(supportFragmentManager)
-            else -> GameOverFragment()
+            else -> GameOverFragment(true)
         }
         supportFragmentManager
             .beginTransaction()

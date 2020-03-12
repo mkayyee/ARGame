@@ -113,8 +113,6 @@ sceneform.asset('sampledata/Abilities/beam.fbx',
         'src/main/assets/beam')
 
 
-
-
 sceneform.asset('sampledata/Player/playermodelthreeworked.fbx',
         'default',
         'sampledata/Player/playermodelthreeworked.sfa',
@@ -167,4 +165,3 @@ sceneform.asset('sampledata/NPC/Bat.fbx',
         'sampledata/NPC/Bat.sfa',
         'src/main/assets/Bat',
         ['sampledata/NPC/Bat.fbx'])
-

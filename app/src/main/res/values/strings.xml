@@ -35,7 +35,7 @@
     <string name="tutorial_abilities">
         The image buttons are abilities you can use to deal damage to the enemies, or protect yourself from them,
         and the numbers over them indicate that the ability is recharging before it may be used again.\nYou may have
-        a maximum amount of four abilities at a time, and you\'re able to select your abilities
+        a maximum amount of four abilities at a time, and you\'re able to select and improve your abilities 
         each intermission between levels.
     </string>
     <string name="tutorial_start_level">
@@ -69,4 +69,6 @@
     <string name="survivar">SurvivAR</string>
     <string name="_1">#1</string>
     <string name="change_user">Change username</string>
+    <string name="change_abilities">Change abilities</string>
+    <string name="change_improve_abilities">Change / Improve abilities</string>
 </resources>

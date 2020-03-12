@@ -85,7 +85,7 @@ class MenuFragmentController: Fragment(), FragmentCallbackListener {
                 val intent = Intent(context, TutorialActivityFirst::class.java)
                 startActivity(intent)
             }
-            R.id.button_select_abilities_main -> drawFragment(AbilityMenuFragment(btn.context))
+            //R.id.button_select_abilities_main -> drawFragment(AbilityMenuFragment(btn.context))
             R.id.button_new_game -> {
                 val abilityList = listOf(
                     Ability.FBALL,
@@ -107,10 +107,9 @@ class MenuFragmentController: Fragment(), FragmentCallbackListener {
                     Log.d("MODIFIER", "RESET " + it.name)
                 }
                 }
-
-                launchGameActivity()
+                drawFragment(AbilityMenuFragment(btn.context))
             }
-            R.id.button_resume_game -> launchGameActivity()
+            R.id.button_resume_game -> drawFragment(AbilityMenuFragment(btn.context))
         }
     }
 }
