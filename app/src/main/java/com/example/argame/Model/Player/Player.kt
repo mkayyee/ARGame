@@ -70,7 +70,9 @@ class Player(
     }
 
     fun calculateScore() : Int {
-        return (points / abilitiesUsed) + score
+        if (points > 0 && abilitiesUsed > 0) {
+            return (points / abilitiesUsed) + score
+        } else return score
     }
 
     fun getPoints() : Int {

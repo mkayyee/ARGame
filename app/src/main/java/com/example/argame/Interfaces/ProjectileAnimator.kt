@@ -57,7 +57,7 @@ interface ProjectileAnimator {
         if (!isBeam) {
             animationNode.renderable = projAnimData.gifRenderable
             animationNode.scaleController.isEnabled = false
-            animationNode.localScale = Vector3(0.65f, 0.65f, 0.65f)
+            animationNode.localScale = Vector3(0.5f, 0.5f, 0.5f)
             animationNode.renderable?.isShadowCaster = false
             animateProjectile(projAnimData, animationNode) {
                 Handler().postDelayed({

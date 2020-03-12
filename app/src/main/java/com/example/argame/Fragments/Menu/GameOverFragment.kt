@@ -45,6 +45,10 @@ class GameOverFragment(private val isGameMenu: Boolean = false) : Fragment(), Vi
             button_new_game.visibility = View.GONE
             button_select_abilities.visibility = View.GONE
             tv_game_over.text = getString(R.string.survivar)
+            button_close_game_over.visibility = View.VISIBLE
+            button_close_game_over.setOnClickListener {
+                fragmentManager!!.popBackStack()
+            }
         }
     }
 
