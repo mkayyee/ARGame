@@ -11,4 +11,64 @@
     <string name="description_avatar">A player avatar</string>
     <string name="games_played">Games played: </string>
     <string name="highest_score">Highest score: </string>
+    <string name="choose_ability">Choose ability</string>
+    <string name="select_abilities">Select abilities</string>
+    <string name="exit">Exit</string>
+    <string name="next_level">Next Level</string>
+    <string name="game_over">Game Over</string>
+    <string name="level_completed">Level Completed!</string>
+    <string name="btn_add">Add</string>
+    <string name="btn_remove">Remove</string>
+    <string name="remove">Remove</string>
+    <string name="minus">-</string>
+    <string name="close">Close</string>
+    <string name="username">Username</string>
+    <string name="create">Create</string>
+    <string name="create_new_user">Create new user</string>
+    <string name="new_username">New username</string>
+    <string name="score_username">Username:</string>
+    <string name="score">Score:</string>
+    <string name="tutorial_menu">
+        The small x in the top right corner will open up a menu that
+        provides an option to exit the game whenever you want.
+    </string>
+    <string name="tutorial_abilities">
+        The image buttons are abilities you can use to deal damage to the enemies, or protect yourself from them,
+        and the numbers over them indicate that the ability is recharging before it may be used again.\nYou may have
+        a maximum amount of four abilities at a time, and you\'re able to select and improve your abilities 
+        each intermission between levels.
+    </string>
+    <string name="tutorial_start_level">
+        To be able to start the level, you must first let your camera find a horizontal plane.
+        This may take some time depending on the environment. The optimal environment is somewhere
+        light (preferably inside), and the optimal plane has some contrast.\nThe \"Start level\" button
+        will light up when a plane is found, and pressing it — will begin the current level.
+    </string>
+    <string name="tutorial_bars">
+        The colored rectangular area above your head is your health bar.\nOnce the health bar turns completely black — you die.
+        The black bar below the health bar is to keep track of your ultimate progress.\nUltimates are powerful abilities
+        that you gain access to, after using a certain amount of regular abilities that progressively fill up the ultimate bar.
+    </string>
+    <string name="tutorial_ults">
+        The extra buttons between your regular abilities are your ultimate abilities. These buttons show up when your ultimate
+        bar is full, and pressing either of them will enable a more powerful ability — that should be used in a tough situation.
+    </string>
+    <string name="tutorial_killall">
+        The ultimate on the left: \"Killall\", is an ultimate ability, that listens to your phone\'s internal acceleration sensor.\n
+        Killall activates when you have moved your phone fast enough in any of its axes. Once activated — will kill all enemies alive.
+    </string>
+    <string name="tutorial_serenity">
+        The ultimate on the right: \"Serenity\", is an ultimate ability, that listens to your phone\'s internal light sensor.\n
+        To activate this ability — you have to either be in a dark place, or you have to place your hand over the sensor. 
+        The light sensor usually looks like a small dot (like camera), and is usually located at the top of your phone, just above the screen.\n Serenity
+        refills your health and gives you a shield that blocks a certain amount of incoming damage.
+    </string>
+    <string name="tutorial">Tutorial</string>
+    <string name="finish">Finish</string>
+    <string name="next">Next</string>
+    <string name="survivar">SurvivAR</string>
+    <string name="_1">#1</string>
+    <string name="change_user">Change username</string>
+    <string name="change_abilities">Change abilities</string>
+    <string name="change_improve_abilities">Change / Improve abilities</string>
 </resources>

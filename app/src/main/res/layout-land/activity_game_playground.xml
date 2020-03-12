@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/activity_game_playground"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Activities.GameActivity">
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:gravity="top|center">
+
+        <Button
+            android:layout_margin="4dp"
+            android:id="@+id/playground_spawnBtn"
+            android:enabled="false"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Start level"
+            android:alpha="0.60"
+            android:layout_marginBottom="20dp"/>
+        <Button
+            android:layout_margin="4dp"
+            android:id="@+id/playground_toggleLevel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Level 1"
+            android:alpha="0.60"
+            android:layout_marginBottom="20dp"/>
+        <Button
+            android:layout_margin="4dp"
+            android:id="@+id/playground_destroyBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Clear Level"
+            android:alpha="0.60"
+            android:layout_marginBottom="20dp"/>
+
+        <Button
+            android:id="@+id/playground_exitBtn"
+            android:layout_width="39dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="3dp"
+            android:alpha="0.60"
+            android:text="x"
+            app:cornerRadius="50dp" />
+
+        <fragment
+            android:id="@+id/playground_sceneform_fragment"
+            android:name="com.example.argame.Fragments.CustomArFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/playground_ultimateBar"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_gravity="bottom"
+        android:visibility="gone"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="30dp"
+
+        android:gravity="bottom|center">
+        <ImageButton
+            android:id="@+id/playground_killallBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:alpha="0.8"
+            android:background="@drawable/icon_killall"/>
+        <ImageButton
+            android:id="@+id/playground_serenityBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:background="@drawable/icon_serenity"
+            android:alpha="0.8" />
+    </LinearLayout>
+
+
+
+    <LinearLayout
+        android:id="@+id/attackLayout"
+        android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center|right"
+    android:layout_marginTop="320dp"
+    android:layout_marginRight="20dp">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+    <ImageButton
+        android:id="@+id/playground_attackDuckBtn"
+        android:layout_width="62dp"
+        android:layout_height="62dp"
+        android:alpha="0.80"
+        android:background="@drawable/icon_attack"
+       />
+
+        <TextView
+            android:id="@+id/playground_attackDuckBtn_cd"
+            android:layout_alignParentTop="true"
+            android:layout_width="62dp"
+            android:layout_height="62dp"
+            android:background="#BF202421"
+            android:visibility="invisible"
+            android:text="10"
+            android:textSize="30dp"
+            android:textStyle="bold"
+            android:textColor="#FFF"
+            android:gravity="center"
+            />
+
+        </RelativeLayout>
+
+</LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/beamLayout"
+        android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="320dp"
+    android:layout_marginLeft="20dp"
+    android:gravity="center|left">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageButton
+            android:id="@+id/playground_beamDuckBtn"
+            android:layout_width="62dp"
+            android:layout_height="62dp"
+            android:background="@drawable/icon_beam"
+            android:alpha="0.80"
+            />
+
+        <TextView
+            android:id="@+id/playground_beamDuckBtn_cd"
+            android:visibility="invisible"
+            android:layout_alignParentTop="true"
+            android:layout_width="62dp"
+            android:layout_height="62dp"
+            android:background="#BF202421"
+            android:text="10"
+            android:textSize="30dp"
+            android:textStyle="bold"
+            android:textColor="#FFF"
+            android:gravity="center"
+            />
+
+    </RelativeLayout>
+
+</LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/teleportLayout"
+        android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="150dp"
+    android:layout_marginLeft="20dp"
+    android:gravity="center|left">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageButton
+            android:id="@+id/playground_teleportDuckBtn"
+            android:layout_width="62dp"
+            android:layout_height="62dp"
+            android:background="@drawable/icon_teleport"
+            android:alpha="0.80"
+            />
+
+        <TextView
+            android:id="@+id/playground_teleportDuckBtn_cd"
+            android:visibility="invisible"
+            android:layout_alignParentTop="true"
+            android:layout_width="62dp"
+            android:layout_height="62dp"
+            android:background="#BF202421"
+            android:text="10"
+            android:textSize="30dp"
+            android:textStyle="bold"
+            android:textColor="#FFF"
+            android:gravity="center"
+            />
+
+    </RelativeLayout>
+
+</LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/shieldLayout"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="150dp"
+        android:layout_marginRight="20dp"
+        android:gravity="center|right">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageButton
+                android:id="@+id/playground_shieldDuckBtn"
+                android:layout_width="62dp"
+                android:layout_height="62dp"
+                android:alpha="0.80"
+                android:background="@drawable/icon_shield" />
+
+            <TextView
+                android:id="@+id/playground_shieldDuckBtn_cd"
+                android:visibility="invisible"
+                android:layout_alignParentTop="true"
+                android:layout_width="62dp"
+                android:layout_height="62dp"
+                android:background="#BF202421"
+                android:text="10"
+                android:textSize="30dp"
+                android:textStyle="bold"
+                android:textColor="#FFF"
+                android:gravity="center"
+                />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center|top">
+
+        <TextView
+            android:id="@+id/playground_targetTxt"
+            android:textSize="30sp"
+            android:textColor="#ffffff"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="100dp"
+        android:gravity="center|bottom">
+
+        <TextView
+            android:id="@+id/playground_remaining"
+            android:textSize="30sp"
+            android:textColor="#ffffff"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"/>
+
+    </LinearLayout>
+
+
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:id="@+id/playground_main_menu_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center" />
+
+
+
+
+</FrameLayout>
+
+

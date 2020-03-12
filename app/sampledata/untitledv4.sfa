@@ -1,0 +1,75 @@
+{
+  animations: [
+    {
+      clips: [
+        {
+          name: 'Sphere|SphereAction.001',
+        },
+      ],
+      path: 'sampledata/untitledv4.fbx',
+    },
+  ],
+  materials: [
+    {
+      name: 'Material.002',
+      parameters: [
+        {
+          baseColor: [
+            1,
+            1,
+            1,
+            1,
+          ],
+        },
+        {
+          baseColorMap: 'maxresdefault',
+        },
+        {
+          normalMap: null,
+        },
+        {
+          interpolatedColor: null,
+        },
+        {
+          metallic: 0,
+        },
+        {
+          metallicMap: null,
+        },
+        {
+          roughness: 1,
+        },
+        {
+          roughnessMap: null,
+        },
+        {
+          opacity: null,
+        },
+      ],
+      source: 'build/sceneform_sdk/default_materials/fbx_material.sfm',
+    },
+  ],
+  model: {
+    attributes: [
+      'Position',
+      'Color',
+      'TexCoord',
+      'Orientation',
+      'BoneIndices',
+      'BoneWeights',
+    ],
+    collision: {},
+    file: 'sampledata/untitledv4.fbx',
+    name: 'untitledv4',
+    recenter: 'root',
+    scale: 1.495215,
+  },
+  samplers: [
+    {
+      file: 'sampledata/maxresdefault.jpg',
+      name: 'maxresdefault',
+      pipeline_name: 'sampledata/maxresdefault.jpg',
+    },
+  ],
+  version: '0.54:2',
+}

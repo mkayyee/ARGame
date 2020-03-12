@@ -1,0 +1,1232 @@
+{
+  animations: [
+    {
+      clips: [
+        {
+          name: 'Sphere.002|Sphere.001Action.002',
+        },
+        {
+          name: 'Sphere.002|Sphere.002Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.002Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.003Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.003Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.004Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.004Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.005Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.005Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.006Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.006Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.007Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.007Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.008Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.008Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.009Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.009Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.010Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.010Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.011Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.011Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.012Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.012Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.013Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.013Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.014Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.014Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.015Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.015Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.016Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.016Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.017Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.017Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.018Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.018Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.019Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.019Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.020Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.020Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.021Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.021Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.022Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.022Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.023Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.023Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.024Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.024Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.025Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.025Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.026Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.026Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.027Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.027Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.028Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.028Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.029Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.029Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.030Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.030Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.031Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.031Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.032Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.032Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.033Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.033Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.034Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.034Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.035Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.035Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.036Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.036Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.037Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.037Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.038Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.038Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.039Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.039Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.040Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.040Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.041Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.041Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.042Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.042Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.043Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.043Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.044Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.044Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.045Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.045Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.046Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.046Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.047Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.047Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.048Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.048Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.049Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.049Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.050Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.050Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.051Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.051Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.052Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.052Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.053Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.053Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.054Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.054Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.055Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.055Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.056Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.056Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.057Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.057Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.058Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.058Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.059Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.059Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.060Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.060Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.061Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.061Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.062Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.062Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.063Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.063Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.064Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.064Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.065Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.065Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.066Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.066Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.067Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.067Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.068Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.068Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.069Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.069Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.070Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.070Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.071Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.071Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.072Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.072Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.073Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.073Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.074Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.074Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.075Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.075Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.076Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.076Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.077Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.077Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.078Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.078Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.079Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.079Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.080Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.080Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.081Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.081Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.082Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.082Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.083Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.083Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.084Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.084Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.085Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.085Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.086Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.086Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.087Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.087Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.088Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.088Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.089Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.089Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.090Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.090Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.091Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.091Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.092Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.092Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.093Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.093Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.094Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.094Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.095Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.095Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.096Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.096Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.097Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.097Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.098Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.098Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.099Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.099Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.100Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.100Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.101Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.101Action.001',
+        },
+        {
+          name: 'Sphere.002|Sphere.102Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.103Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.104Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.105Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.106Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.107Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.108Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.109Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.110Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.111Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.112Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.113Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.114Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.115Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.116Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.117Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.118Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.119Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.120Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.121Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.122Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.123Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.124Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.125Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.126Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.127Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.128Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.129Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.130Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.131Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.132Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.133Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.134Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.135Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.136Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.137Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.138Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.139Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.140Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.141Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.142Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.143Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.144Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.145Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.146Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.147Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.148Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.149Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.150Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.151Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.152Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.153Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.154Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.155Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.156Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.157Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.158Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.159Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.160Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.161Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.162Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.163Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.164Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.165Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.166Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.167Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.168Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.169Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.170Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.171Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.172Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.173Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.174Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.175Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.176Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.177Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.178Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.179Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.180Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.181Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.182Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.183Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.184Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.185Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.186Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.187Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.188Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.189Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.190Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.191Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.192Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.193Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.194Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.195Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.196Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.197Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.198Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.199Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.200Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.201Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.202Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.203Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.204Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.205Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.206Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.207Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.208Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.209Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.210Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.211Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.212Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.213Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.214Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.215Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.216Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.217Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.218Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.219Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.220Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.221Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.222Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.223Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.224Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.225Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.226Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.227Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.228Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.229Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.230Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.231Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.232Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.233Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.234Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.235Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.236Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.237Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.238Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.239Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.240Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.241Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.242Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.243Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.244Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.245Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.246Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.247Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.248Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.249Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.250Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.251Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.252Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.253Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.254Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.255Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.256Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.257Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.258Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.259Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.260Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.261Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.262Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.263Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.264Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.265Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.266Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.267Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.268Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.269Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.270Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.271Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.272Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.273Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.274Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.275Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.276Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.277Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.278Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.279Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.280Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.281Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.282Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.283Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.284Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.285Action',
+        },
+        {
+          name: 'Sphere.002|Sphere.286Action',
+        },
+        {
+          name: 'Sphere.002|SphereAction.001',
+        },
+      ],
+      path: 'sampledata/blenderlovestocrash2.fbx',
+    },
+  ],
+  materials: [
+    {
+      name: 'Material.002',
+      parameters: [
+        {
+          baseColor: [
+            1,
+            1,
+            1,
+            1,
+          ],
+        },
+        {
+          baseColorMap: 'maxresdefault',
+        },
+        {
+          normalMap: null,
+        },
+        {
+          interpolatedColor: null,
+        },
+        {
+          metallic: 0,
+        },
+        {
+          metallicMap: null,
+        },
+        {
+          roughness: 1,
+        },
+        {
+          roughnessMap: null,
+        },
+        {
+          opacity: null,
+        },
+      ],
+      source: 'build/sceneform_sdk/default_materials/fbx_material.sfm',
+    },
+  ],
+  model: {
+    attributes: [
+      'Position',
+      'Color',
+      'TexCoord',
+      'Orientation',
+      'BoneIndices',
+      'BoneWeights',
+    ],
+    collision: {},
+    file: 'sampledata/blenderlovestocrash2.fbx',
+    name: 'blenderlovestocrash2',
+    recenter: 'root',
+  },
+  samplers: [
+    {
+      file: 'sampledata/maxresdefault.jpg',
+      name: 'maxresdefault',
+      pipeline_name: 'sampledata/maxresdefault.jpg',
+    },
+  ],
+  version: '0.54:2',
+}

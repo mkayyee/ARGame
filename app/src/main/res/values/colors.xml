@@ -1,10 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
-    <color name="colorButtonBackground">#12005e</color>
-    <color name="colorButtonText">#ffffff</color>
-    <color name="colorThemeGradientStart">#ffff00</color>
-    <color name="colorThemeGradientEnd">#ffffff</color>
+    <color name="colorPrimary">#6000c7</color>
+    <color name="colorPrimaryDark">#1e0095</color>
+    <color name="colorAccent">#9742fb</color>
+    <color name="colorButtonBackground">#ffffff</color>
+    <color name="colorButtonText">#261419</color>
+    <color name="colorThemeGradientStart">#2263ac</color>
+    <color name="colorThemeGradientEnd">#2263ac</color>
+    <color name="colorHpbar">#a81d23</color>
+    <color name="colorPlayerHpbar">#21c5b4</color>
+    <color name="colorPlayerHpbarDark">#009484</color>
+    <color name="colorPlayerHpbarLight">#68f9e6</color>
+    <color name="colorHpbg">#261419</color>
+    <color name="colorHpbgDark">#000000</color>
+    <color name="colorHpbgLight">#4f3a3f</color>
+    <color name="colorAbilitybg">#1cdafe</color>
+    <color name="colorAbilitybgLight">#72ffff</color>
+    <color name="colorAbilitybgDark">#00a8cb</color>
 </resources>

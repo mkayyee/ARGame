@@ -10,12 +10,16 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_disable_tips"
+            android:textSize="30sp"
+            android:textAllCaps="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/disable_tips"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/settings_button_back"
+            android:textSize="30sp"
+            android:textAllCaps="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/back_button"/>

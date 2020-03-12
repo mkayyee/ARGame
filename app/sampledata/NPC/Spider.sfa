@@ -1,0 +1,136 @@
+{
+  animations: [
+    {
+      clips: [
+        {
+          name: 'SpiderArmature|Spider_Attack',
+        },
+        {
+          name: 'SpiderArmature|Spider_Death',
+        },
+        {
+          name: 'SpiderArmature|Spider_Idle',
+        },
+        {
+          name: 'SpiderArmature|Spider_Jump',
+        },
+        {
+          name: 'SpiderArmature|Spider_Walk',
+        },
+      ],
+      path: 'sampledata/NPC/Spider.fbx',
+    },
+    {
+      clips: [
+        {
+          name: 'SpiderArmature|Spider_Attack',
+        },
+        {
+          name: 'SpiderArmature|Spider_Death',
+        },
+        {
+          name: 'SpiderArmature|Spider_Idle',
+        },
+        {
+          name: 'SpiderArmature|Spider_Jump',
+        },
+        {
+          name: 'SpiderArmature|Spider_Walk',
+        },
+      ],
+      path: 'sampledata/NPC/Spider.fbx',
+    },
+  ],
+  materials: [
+    {
+      name: 'Material',
+      parameters: [
+        {
+          baseColor: [
+            0.052217,
+            0.052217,
+            0.052217,
+            1,
+          ],
+        },
+        {
+          baseColorMap: null,
+        },
+        {
+          normalMap: null,
+        },
+        {
+          interpolatedColor: null,
+        },
+        {
+          metallic: 0,
+        },
+        {
+          metallicMap: null,
+        },
+        {
+          roughness: 1,
+        },
+        {
+          roughnessMap: null,
+        },
+        {
+          opacity: null,
+        },
+      ],
+      source: 'build/sceneform_sdk/default_materials/fbx_material.sfm',
+    },
+    {
+      name: 'Material.001',
+      parameters: [
+        {
+          baseColor: [
+            0.36723499999999998,
+            0.024688000000000002,
+            0.024688000000000002,
+            1,
+          ],
+        },
+        {
+          baseColorMap: null,
+        },
+        {
+          normalMap: null,
+        },
+        {
+          interpolatedColor: null,
+        },
+        {
+          metallic: 0,
+        },
+        {
+          metallicMap: null,
+        },
+        {
+          roughness: 1,
+        },
+        {
+          roughnessMap: null,
+        },
+        {
+          opacity: null,
+        },
+      ],
+      source: 'build/sceneform_sdk/default_materials/fbx_material.sfm',
+    },
+  ],
+  model: {
+    attributes: [
+      'Position',
+      'Orientation',
+      'BoneIndices',
+      'BoneWeights',
+    ],
+    collision: {},
+    file: 'sampledata/NPC/Spider.fbx',
+    name: 'Spider',
+    recenter: 'root',
+    scale: 0.513019,
+  },
+  version: '0.54:2',
+}

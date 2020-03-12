@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main_menu_button_container"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/hpmaterial"
+    android:gravity="center">
+
+    <TextView
+        android:id="@+id/tv_game_over"
+        android:layout_marginBottom="80dp"
+        android:textStyle="bold"
+        android:textSize="40sp"
+        android:textColor="#FFF"
+        android:background="#F000"
+        android:padding="16dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/game_over"
+        />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_new_game"
+        android:layout_gravity="center"
+        android:layout_width="300dp"
+        android:padding="16sp"
+        android:elevation="8dp"
+        android:textSize="28sp"
+        android:textAllCaps="false"
+        android:layout_margin="5dp"
+        android:layout_height="wrap_content"
+        android:text="@string/new_game"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_select_abilities"
+        android:layout_gravity="center"
+        android:padding="16sp"
+        android:elevation="8dp"
+        android:layout_width="300dp"
+        android:textSize="28sp"
+        android:textAllCaps="false"
+        android:layout_margin="5dp"
+        android:layout_height="wrap_content"
+        android:text="@string/change_abilities"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_exit"
+        android:layout_gravity="center"
+        android:layout_width="300dp"
+        android:elevation="8dp"
+        android:padding="16sp"
+        android:textSize="28sp"
+        android:textAllCaps="false"
+        android:layout_margin="5dp"
+        android:layout_height="wrap_content"
+        android:text="@string/exit"/>
+
+</LinearLayout>

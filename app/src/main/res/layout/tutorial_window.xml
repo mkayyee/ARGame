@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_margin="8dp"
+    android:weightSum="5"
+    android:clipToPadding="false"
+    android:elevation="24dp"
+    android:outlineProvider="bounds"
+    android:layout_width="match_parent"
+    android:background="@drawable/healthbar_background"
+    android:layout_height="wrap_content">
+
+    <ScrollView
+        android:layout_weight="4.9"
+        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:maxHeight="200dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+            <TextView
+                android:id="@+id/textView_tutorialText"
+                style="@style/AppTheme.Text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="@string/tutorial_start_level"
+                android:textSize="25sp" />
+        </LinearLayout>
+    </ScrollView>
+    <ImageButton
+        android:layout_weight="0.1"
+        android:id="@+id/btn_closeTutorialWindow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        app:srcCompat="@android:drawable/checkbox_on_background" />
+
+</LinearLayout>

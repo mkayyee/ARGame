@@ -6,11 +6,16 @@ apply plugin: 'kotlin-android-extensions'
 
 apply plugin: 'com.google.ar.sceneform.plugin'
 
+apply plugin: "kotlin-kapt"
+
 android {
     compileSdkVersion 29
     compileOptions {
         sourceCompatibility 1.8
         targetCompatibility 1.8
+    }
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
     testOptions {
         unitTests.returnDefaultValues = true
@@ -23,6 +28,8 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -32,10 +39,17 @@ android {
     }
 }
 
+def room_version = "2.2.3"
+def lifecycle_version = "2.1.0"
+
 dependencies {
+    implementation "org.jetbrains.anko:anko:$anko_version"
+    implementation "androidx.preference:preference-ktx:1.1.0"
+    implementation 'com.android.support:multidex:1.0.1'
+    implementation 'androidx.preference:preference:1.1.0'
     implementation "com.google.android.material:material:1.2.0-alpha04"
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.core:core-ktx:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
@@ -46,7 +60,31 @@ dependencies {
     implementation 'com.google.ar.sceneform.ux:sceneform-ux:1.15.0'
     implementation "com.google.ar.sceneform:animation:1.15.0"
     implementation "org.jetbrains.anko:anko:0.10.8"
+
+    implementation "android.arch.persistence.room:runtime:1.1.1"
+    implementation "android.arch.lifecycle:extensions:1.1.1"
+    kapt "android.arch.persistence.room:compiler:1.1.1"
+    kapt "android.arch.lifecycle:compiler:1.1.1"
+    implementation "androidx.room:room-runtime:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
+    implementation 'androidx.room:room-runtime:2.2.4'
+    annotationProcessor 'androidx.room:room-compiler:2.2.4'
+    implementation "android.arch.lifecycle:extensions:$lifecycle_version"
+    implementation "android.arch.lifecycle:runtime:$lifecycle_version"
+    implementation 'androidx.room:room-runtime:2.2.4'
+    annotationProcessor 'androidx.room:room-compiler:2.2.4'
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.17'
+
+    final retrofit_version = '2.6.1'
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
 }
+
+sceneform.asset('sampledata/Crystal/Crystal.FBX',
+        'default',
+        'sampledata/Crystal/Crystal.sfa',
+        'src/main/assets/Crystal',
+        ['sampledata/Crystal/Crystal.FBX'])
 
 
 sceneform.asset('sampledata/Duck/duck.obj',
@@ -58,3 +96,72 @@ sceneform.asset('sampledata/Tposeman/Character.obj',
         'default',
         'sampledata/Tposeman/Character.sfa',
         'src/main/assets/Character')
+
+sceneform.asset('sampledata/untitledv4.fbx',
+        'default',
+        'sampledata/untitledv4.sfa',
+        'src/main/assets/untitledv4')
+
+sceneform.asset('sampledata/blenderlovestocrash2.fbx',
+        'default',
+        'sampledata/blenderlovestocrash2.sfa',
+        'src/main/assets/blenderlovestocrash2')
+
+sceneform.asset('sampledata/Abilities/beam.fbx',
+        'default',
+        'sampledata/Abilities/beam.sfa',
+        'src/main/assets/beam')
+
+
+sceneform.asset('sampledata/Player/playermodelthreeworked.fbx',
+        'default',
+        'sampledata/Player/playermodelthreeworked.sfa',
+        'src/main/assets/playermodelthreeworked')
+
+
+sceneform.asset('sampledata/Player/playermodeltwithend.fbx',
+        'default',
+        'sampledata/Player/playermodeltwithend.sfa',
+        'src/main/assets/playermodeltwithend')
+
+sceneform.asset('sampledata/Player/Alien.fbx',
+        'default',
+        'sampledata/Player/Alien.sfa',
+        'src/main/assets/Alien',
+        ['sampledata/Player/Alien.fbx'])
+
+sceneform.asset('sampledata/NPC/Skeleton.fbx',
+        'default',
+        'sampledata/NPC/Skeleton.sfa',
+        'src/main/assets/Skeleton',
+        ['sampledata/NPC/Skeleton.fbx'])
+
+sceneform.asset('sampledata/NPC/Slime.fbx',
+        'default',
+        'sampledata/NPC/Slime.sfa',
+        'src/main/assets/Slime',
+        ['sampledata/NPC/Slime.fbx'])
+
+sceneform.asset('sampledata/NPC/Dragon.fbx',
+        'default',
+        'sampledata/NPC/Dragon.sfa',
+        'src/main/assets/Dragon',
+        ['sampledata/NPC/Dragon.fbx'])
+
+sceneform.asset('sampledata/NPC/ZombieSmooth.fbx',
+        'default',
+        'sampledata/NPC/ZombieSmooth.sfa',
+        'src/main/assets/ZombieSmooth',
+        ['sampledata/NPC/ZombieSmooth.fbx'])
+
+sceneform.asset('sampledata/NPC/Spider.fbx',
+        'default',
+        'sampledata/NPC/Spider.sfa',
+        'src/main/assets/Spider',
+        ['sampledata/NPC/Spider.fbx'])
+
+sceneform.asset('sampledata/NPC/Bat.fbx',
+        'default',
+        'sampledata/NPC/Bat.sfa',
+        'src/main/assets/Bat',
+        ['sampledata/NPC/Bat.fbx'])

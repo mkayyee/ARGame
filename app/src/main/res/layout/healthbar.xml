@@ -1,13 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/textView_healthbar_container"
+    android:background="@drawable/healthbarbg"
     android:orientation="vertical" android:layout_width="100dp"
     android:layout_height="20dp">
-
     <TextView
+        android:layout_margin="2dp"
         android:id="@+id/textView_healthbar"
         android:textAlignment="center"
-        android:background="@drawable/gradient_healthbar"
+        android:textColor="#ffffff"
+        android:background="@drawable/healthbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="100" />
-</LinearLayout>
+        android:layout_height="match_parent" />
+
+    <pl.droidsonroids.gif.GifImageView
+        android:id="@+id/textView_barrier"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:rotation="0"
+        android:alpha="0.7"
+        android:scaleX="1.65"
+        android:scaleY="50"
+        android:visibility="invisible"
+        android:src="@drawable/ultimabarv2"
+        />
+
+</FrameLayout>
