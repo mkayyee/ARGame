@@ -1351,10 +1351,12 @@ class GameActivity : AppCompatActivity(), FragmentCallbackListener,
                             .show()
                     }
                     Handler().postDelayed ({
+                        saver.edit().putInt("skillLevel", 0).apply()
+                        curLevel = 1
                         uiThread {
                             callFragment("GameOver")
                         }
-                    }, 5000)
+                    }, 3000)
                 }
             }
         } else {
