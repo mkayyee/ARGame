@@ -952,6 +952,8 @@ class GameActivity : AppCompatActivity(), FragmentCallbackListener,
                                                     hpRenderable.view.textView_healthbar
                                                 )
                                             playerTarget = newTarget
+                                            player.dealDamage(5.0,spawnable)
+                                            //doAsync { effectPlayerNPC.playSound(R.raw.gothit) }
                                             updateNewTargetHPBar(newTarget)
                                             updatePlayerRotation()
                                         }
