@@ -624,7 +624,7 @@ class GameActivity : AppCompatActivity(), FragmentCallbackListener,
                     Ability.BEAM -> beamTarget(playerTarget, cdData = cdData)
                     Ability.FBALL -> attackTarget(cdData)
                     Ability.ATK -> attackTarget(cdData)
-                    Ability.DOT -> attackTarget(cdData)
+                    Ability.DOT -> gasTarget(cdData)
                     else -> Log.d("NEWTAR", "New target found")
                 }
             }

@@ -48,7 +48,7 @@ interface AbilityUser {
                     doAsync {
                         var loopsToGo = 2
                         var loopDone = true
-                        while (loopsToGo > 0) {
+                        while (loopsToGo > 0 && targetStatus.isAlive) {
                             if (loopDone) {
                                 loopDone = false
                                 loopsToGo--
@@ -58,7 +58,7 @@ interface AbilityUser {
                                         target
                                     )
                                     loopDone = true
-                                }, 1000)
+                                }, 2000)
                             }
                         }
                     }
