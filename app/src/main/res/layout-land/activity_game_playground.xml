@@ -33,14 +33,14 @@
             android:text="Level 1"
             android:alpha="0.60"
             android:layout_marginBottom="20dp"/>
-        <Button
-            android:layout_margin="4dp"
-            android:id="@+id/playground_destroyBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Clear Level"
-            android:alpha="0.60"
-            android:layout_marginBottom="20dp"/>
+<!--        <Button-->
+<!--            android:layout_margin="4dp"-->
+<!--            android:id="@+id/playground_destroyBtn"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Clear Level"-->
+<!--            android:alpha="0.60"-->
+<!--            android:layout_marginBottom="20dp"/>-->
 
         <Button
             android:id="@+id/playground_exitBtn"

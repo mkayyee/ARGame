@@ -43,6 +43,7 @@ abstract class CombatControllable(
     private var xpRequiredForLevel = 1000.0
     private val callback: CombatControllableListener
     private var modelAnimator: ModelAnimator? = null
+    private var died = false
 
     interface CombatControllableListener {
         fun onCCDamaged(cc: CombatControllable)
@@ -221,7 +222,10 @@ abstract class CombatControllable(
                 health - damage <= 0 -> {
                     health = 0.0
                     isAlive = false
-                    callback.onCCDeath(this)
+                    if (!died) {
+                        died = true
+                        callback.onCCDeath(this)
+                    }
                 }
                 else -> {
                     wtf("CCERROR", "Negative value as takeDamage() input")

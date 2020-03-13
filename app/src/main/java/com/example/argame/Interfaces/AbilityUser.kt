@@ -1,6 +1,7 @@
 package com.example.argame.Interfaces
 
 import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import com.example.argame.Model.ABILITY_PROJECTILE_SPEED
 import com.example.argame.Model.Ability.Ability
@@ -8,6 +9,7 @@ import com.example.argame.Model.Ability.AbilityModifier
 import com.example.argame.Model.CombatControllable.CombatControllable
 import com.example.argame.Model.Ability.ProjectileAnimationData
 import com.google.ar.sceneform.rendering.ModelRenderable
+import org.jetbrains.anko.doAsync
 
 /**
  *  An Interface for casting abilities, that both, the NPC and the Player implement.
@@ -42,6 +44,25 @@ interface AbilityUser {
                     Log.d("DAMAGE", "Dealing damage with multiplier:  " + damageMultiplier.toString())
                  }
                 caster.dealDamage(ability.getDamage(casterStatus) * damageMultiplier, target)
+                if (ability == Ability.DOT) {
+                    doAsync {
+                        var loopsToGo = 2
+                        var loopDone = true
+                        while (loopsToGo > 0 && targetStatus.isAlive) {
+                            if (loopDone) {
+                                loopDone = false
+                                loopsToGo--
+                                Handler(Looper.getMainLooper()).postDelayed({
+                                    caster.dealDamage(
+                                        ability.getDamage(casterStatus) * damageMultiplier,
+                                        target
+                                    )
+                                    loopDone = true
+                                }, 2000)
+                            }
+                        }
+                    }
+                }
                 animator?.end()
                 cb()
             }

@@ -109,6 +109,7 @@ class GameActivity : AppCompatActivity(), FragmentCallbackListener,
     private lateinit var ultimateHandler: UltimateHandler
     private lateinit var beamRenderable: ModelRenderable
     private lateinit var fireBallRenderable: ViewRenderable
+    private lateinit var dotRenderable: ViewRenderable
     var ducksInScene = false
     var playerInScene = false
     val cdHandler = Handler(Looper.getMainLooper())
@@ -309,6 +310,12 @@ class GameActivity : AppCompatActivity(), FragmentCallbackListener,
         renderableFutureAbility.thenAccept {
             fireBallRenderable = it
         }
+        val renderableFutureDot = ViewRenderable.builder()
+            .setView(this, R.layout.ability_animation_dot)
+            .build()
+        renderableFutureDot.thenAccept {
+            dotRenderable = it
+        }
     }
 
     private fun initUltimateHandler() {
@@ -360,8 +367,58 @@ class GameActivity : AppCompatActivity(), FragmentCallbackListener,
         }
     }
 
-    private fun initButtons() {
+    private fun getAbilityButtonFunction(cdData: ButtonCooldownData) {
+        when (cdData.ability) {
+            Ability.FBALL -> attackTarget(cdData)
+            Ability.BEAM -> beamTarget(playerTarget, cdData = cdData)
+            Ability.SHIELD -> useBarrier(null, player, cdData)
+            Ability.TELEPORT -> teleportPlayer(cdData)
+            Ability.DOT -> gasTarget(cdData)
+            Ability.ATK -> attackTarget(cdData)
+        }
+    }
 
+    private fun initAbilityButtons() {
+        doAsyncResult {
+            val abilities = AppDatabase.get(this@GameActivity).abilitiesDao().getSelectedAbilities()
+            val first = AbilityConverter.toAbility(abilities[0].abilityID)
+            val second = AbilityConverter.toAbility(abilities[1].abilityID)
+            val third = AbilityConverter.toAbility(abilities[2].abilityID)
+            val fourth = AbilityConverter.toAbility(abilities[3].abilityID)
+            onComplete {
+                uiThread {
+                    playground_attackDuckBtn.setImageDrawable(first.getImage(this@GameActivity))
+                    playground_beamDuckBtn.setImageDrawable(second.getImage(this@GameActivity))
+                    playground_shieldDuckBtn.setImageDrawable(third.getImage(this@GameActivity))
+                    playground_teleportDuckBtn.setImageDrawable(fourth.getImage(this@GameActivity))
+
+                    // TODO IF PLAYER IN SCENE!!!!!
+                    playground_attackDuckBtn.setOnClickListener {
+                        getAbilityButtonFunction(ButtonCooldownData(playground_attackDuckBtn_cd, playground_attackDuckBtn, first))
+                        Log.d("BUTTONPRESS", "attack btn pressed")
+                        Log.d("BUTTONPRESS", "attack btn pressed. Ability: ${first.name}")
+                    }
+                    playground_beamDuckBtn.setOnClickListener {
+                        Log.d("BUTTONPRESS", "beam btn pressed")
+                        Log.d("BUTTONPRESS", "beam btn pressed. Ability: ${second.name}")
+                        getAbilityButtonFunction(ButtonCooldownData(playground_beamDuckBtn_cd, playground_beamDuckBtn, second))
+                    }
+                    playground_shieldDuckBtn.setOnClickListener {
+                        Log.d("BUTTONPRESS", "shield btn pressed")
+                        Log.d("BUTTONPRESS", "shield btn pressed. Ability: ${third.name}")
+                        getAbilityButtonFunction(ButtonCooldownData(playground_shieldDuckBtn_cd, playground_shieldDuckBtn, third))
+                    }
+                    playground_teleportDuckBtn.setOnClickListener {
+                        Log.d("BUTTONPRESS", "teleport btn pressed")
+                        Log.d("BUTTONPRESS", "teleport btn pressed. Ability: ${fourth.name}")
+                        getAbilityButtonFunction(ButtonCooldownData(playground_teleportDuckBtn_cd, playground_teleportDuckBtn, fourth))
+                    }
+                }
+            }
+        }
+    }
+
+    private fun initButtons() {
         playground_spawnBtn.setOnClickListener {
             if (curLevel != null && !playerInScene) {
                 spawnObjects()
@@ -372,22 +429,10 @@ class GameActivity : AppCompatActivity(), FragmentCallbackListener,
             threadStop = true
             callFragment("GameOver")
         }
-        // MARK: Testing-abilities-related stuff
-        playground_attackDuckBtn.setOnClickListener {
-            attackTarget()
-        }
-        playground_beamDuckBtn.setOnClickListener {
-            beamTarget(playerTarget)
-        }
-        playground_shieldDuckBtn.setOnClickListener {
-            useBarrier(hpRenderablePlayer, player)
-        }
-        playground_destroyBtn.setOnClickListener {
-            clearModels()
-        }
-        playground_teleportDuckBtn.setOnClickListener {
-            doAsync { teleportPlayer() }
-        }
+        initAbilityButtons()
+//        playground_destroyBtn.setOnClickListener {
+//            clearModels()
+//        }
         playground_killallBtn.setOnClickListener {
             cancelUltBtnAnimations()
             ultimateHandler.beginMeasuring(PlayerUltimate.KILLALL)
@@ -467,15 +512,16 @@ class GameActivity : AppCompatActivity(), FragmentCallbackListener,
     }
 
     // MARK: Testing-abilities-related stuff
-    private fun attackTarget() {
+    private fun attackTarget(cdData: ButtonCooldownData) {
         // disable attack button for the animation duration
         if (playerTarget != null) {
             if (!playerTarget!!.model.getStatus().isAlive) {
                 clearPlayerTarget()
             } else {
                 updatePlayerRotation()
-                playground_attackDuckBtn.isEnabled = false
-                playground_attackDuckBtn_cd.isEnabled = true
+                cdData.button.isEnabled = false
+//                playground_attackDuckBtn.isEnabled = false
+//                playground_attackDuckBtn_cd.isEnabled = true
                 val ability = Ability.FBALL
                 val animData =
                     ProjectileAnimationData(
@@ -487,11 +533,7 @@ class GameActivity : AppCompatActivity(), FragmentCallbackListener,
                         casterNode = playerNode
                     )
                 doAsync {
-                    doCooldown(
-                        playground_attackDuckBtn_cd,
-                        Ability.FBALL.getCooldown(),
-                        playground_attackDuckBtn
-                    )
+                    doCooldown(cdData)
                 }
                 doAsync {
                     effectPlayerPlayer.playSound(R.raw.fireball)
@@ -506,7 +548,44 @@ class GameActivity : AppCompatActivity(), FragmentCallbackListener,
                 }
             }
         } else {
-            lookForNewTarget(Ability.FBALL)
+            lookForNewTarget(cdData)
+        }
+    }
+
+    private fun gasTarget(cdData: ButtonCooldownData) {
+        if (playerTarget != null) {
+            if (!playerTarget!!.model.getStatus().isAlive) {
+                clearPlayerTarget()
+            } else {
+                updatePlayerRotation()
+                cdData.button.isEnabled = false
+                val ability = Ability.DOT
+                val animData =
+                    ProjectileAnimationData(
+                        this,
+                        fragment,
+                        ability.uri(),
+                        gifRenderable = dotRenderable,
+                        targetNode = playerTarget!!.node,
+                        casterNode = playerNode
+                    )
+                doAsync {
+                    doCooldown(cdData)
+                }
+                doAsync {
+                    effectPlayerPlayer.playSound(R.raw.poison)
+                }
+
+                cancelAnimator(player)
+                animateCast(Ability.DOT.getCastAnimationString()!!, renderedPlayer!!, player)
+                player.useAbility(ability, playerTarget!!.model, animData) {
+                    player.incrementAbilitiesUsed()
+                    player.increaseUltProgress(ability.getDamage(player.getStatus()).toInt())
+                    updateUltBar(player.getUltBar()?.view?.textView_ultbar, player)
+                }
+            }
+        } else {
+            lookForNewTarget(cdData)
         }
     }
 
@@ -534,17 +613,19 @@ class GameActivity : AppCompatActivity(), FragmentCallbackListener,
         return closest
     }
 
-    private fun lookForNewTarget(ability: Ability) {
+    private fun lookForNewTarget(cdData: ButtonCooldownData) {
         if (npcsAlive.isNotEmpty()) {
             val closest = getClosestNpc()
             if (closest?.getHPBar() != null) {
                 playerTarget = PlayerTargetData(
                     closest.getNode(),
                     closest, closest.getHPBar()!!.view.textView_healthbar)
-                if (ability == Ability.FBALL) {
-                    attackTarget()
-                } else {
-                    beamTarget(playerTarget)
+                when (cdData.ability) {
+                    Ability.BEAM -> beamTarget(playerTarget, cdData = cdData)
+                    Ability.FBALL -> attackTarget(cdData)
+                    Ability.ATK -> attackTarget(cdData)
+                    Ability.DOT -> gasTarget(cdData)
+                    else -> Log.d("NEWTAR", "New target found")
                 }
             }
         } else {
@@ -552,7 +633,7 @@ class GameActivity : AppCompatActivity(), FragmentCallbackListener,
         }
     }
 
-    private fun doCooldown(cdView: TextView, cdTime: Long, skillBtn : ImageButton) {
+    private fun doCooldown(cdData: ButtonCooldownData) {
         Log.d("cooldown", "yes")
         var timePassed = 0.toLong()
         var cycle = 0.toLong()
@@ -560,13 +641,13 @@ class GameActivity : AppCompatActivity(), FragmentCallbackListener,
         var cooldown = true
         while (cooldown) {
             if (update) {
-            if (cdTime - timePassed >= cycle) {
+            if (cdData.ability.getCooldown() - timePassed >= cycle) {
                     update = false
                     cdHandler.postDelayed({
                       runOnUiThread {
-                            cdView.visibility = View.VISIBLE
-                            cdView.text =
-                                (((cdTime - timePassed).toInt())/1000).toString()
+                          cdData.cdText.visibility = View.VISIBLE
+                          cdData.cdText.text =
+                                (((cdData.ability.getCooldown() - timePassed).toInt())/1000).toString()
                         }
                         if (cycle == 0.toLong()) {
                             cycle = 1000.toLong()
@@ -583,9 +664,9 @@ class GameActivity : AppCompatActivity(), FragmentCallbackListener,
         }
         cdHandler.postDelayed({
         runOnUiThread {
-            cdView.visibility = View.INVISIBLE
-            cdView.text = ""
-            skillBtn.isEnabled = true
+            cdData.cdText.visibility = View.INVISIBLE
+            cdData.cdText.text = ""
+            cdData.button.isEnabled = true
         }
         }, cycle)
         }
@@ -616,26 +697,27 @@ class GameActivity : AppCompatActivity(), FragmentCallbackListener,
         }
     }
 
-    private fun useBarrier(renderable: ViewRenderable?, cc: CombatControllable) {
+    private fun useBarrier(renderable: ViewRenderable? = null, cc: CombatControllable, cdData: ButtonCooldownData) {
         cancelAnimator(player)
         animateCast(Ability.SHIELD.getCastAnimationString()!!, renderedPlayer!!, player)
         player.incrementAbilitiesUsed()
-        playground_shieldDuckBtn.isEnabled = false
+        cdData.button.isEnabled = false
         doAsync { effectPlayerPlayer.playSound(R.raw.shield) }
-        doAsync { doCooldown(playground_shieldDuckBtn_cd, Ability.SHIELD.getCooldown(), playground_shieldDuckBtn) }
-        renderable?.view?.textView_barrier?.visibility = View.VISIBLE
+        doAsync { doCooldown(cdData) }
+        // TODO: Set renderable not nullable
+        hpRenderablePlayer?.view?.textView_barrier?.visibility = View.VISIBLE
         cc.useShield()
     }
 
     // Beams a target npc and will call itself from that npc position if another npc nearby.
     // Caster node is player by default -- will be an npc node when called recursively.
     private fun beamTarget(npcData: PlayerTargetData?, subStartIdx: Int? = null,
-        isRecursive : Boolean = false, caster: Node = playerNode) {
+        isRecursive : Boolean = false, caster: Node = playerNode, cdData: ButtonCooldownData) {
         if (npcData != null && npcData.model.getStatus().isAlive) {
             // Prevent indexOutOfBoundsException when calling recursively
             if (subStartIdx != null && subStartIdx + 1 > npcAnchors.size) return
             updatePlayerRotation()
-            playground_beamDuckBtn.isEnabled = false
+            cdData.button.isEnabled = false
             val beam = Ability.BEAM
 //            val attackAnimationData =
 //                player.model?.getAnimationData(Ability.BEAM.getCastAnimationString())
@@ -650,13 +732,7 @@ class GameActivity : AppCompatActivity(), FragmentCallbackListener,
             if (!isRecursive) {
                 animateCast(Ability.BEAM.getCastAnimationString()!!, renderedPlayer!!, player)
                 doAsync { effectPlayerPlayer.playSound(R.raw.beam) }
-                doAsync {
-                    doCooldown(
-                        playground_beamDuckBtn_cd,
-                        Ability.BEAM.getCooldown(),
-                        playground_beamDuckBtn
-                    )
-                }
+                doAsync { doCooldown(cdData) }
             }
             player.useAbility(beam, npcData.model, data) {
                 player.incrementAbilitiesUsed()
@@ -676,14 +752,14 @@ class GameActivity : AppCompatActivity(), FragmentCallbackListener,
                             it.npc.getNode(),
                             it.npc,
                             it.npc.getHPBar()?.view?.textView_healthbar),
-                        npcAnchors.indexOf(it) + 1, isRecursive = true, caster = npcData.node)
+                        npcAnchors.indexOf(it) + 1, isRecursive = true, caster = npcData.node, cdData = cdData)
                     Log.d("BEAM", "HIT NPC  " + npcAnchors.indexOf(it))
                     //it.anchorNode.localScale = Vector3(0.4f, 0.4f, 0.4f)
                 }
             }
         } else {
             if (!isRecursive) {
-                lookForNewTarget(Ability.BEAM)
+                lookForNewTarget(cdData)
             }
         }
     }
@@ -702,8 +778,8 @@ class GameActivity : AppCompatActivity(), FragmentCallbackListener,
         animator.start()
     }
 
-    private fun teleportPlayer() {
-        playground_teleportDuckBtn.isEnabled = false
+    private fun teleportPlayer(cdData: ButtonCooldownData) {
+        cdData.button.isEnabled = false
         player.incrementAbilitiesUsed()
         fragment.setOnTapArPlaneListener{ hitResult, _, _ ->
             player.restoreHealth(player.getMaxHealth() * AbilityModifier.getPwrModifier(Ability.TELEPORT))
@@ -723,7 +799,7 @@ class GameActivity : AppCompatActivity(), FragmentCallbackListener,
                 objectAnimation.duration = 0
                 objectAnimation.start()
             }, CAST_TIME)
-            doAsync { doCooldown(playground_teleportDuckBtn_cd, Ability.TELEPORT.getCooldown(), playground_teleportDuckBtn) }
+            doAsync { doCooldown(cdData) }
             forceStop = true
             fragment.setOnTapArPlaneListener(null)
             npcAnchors.forEach {
@@ -889,12 +965,12 @@ class GameActivity : AppCompatActivity(), FragmentCallbackListener,
                                 playerAnchorNode = anchorNode
                                 createHPBar(node, hpRenderable)
                                 createUltBarPlayer(node, ultRenderablePlayer)
-                                playground_shieldDuckBtn.isEnabled = false
-                                playground_teleportDuckBtn.isEnabled = false
-                                playground_beamDuckBtn.isEnabled = false
-                                doAsync { doCooldown(playground_teleportDuckBtn_cd, Ability.TELEPORT.getCooldown(), playground_teleportDuckBtn) }
-                                doAsync { doCooldown(playground_beamDuckBtn_cd, Ability.BEAM.getCooldown(), playground_beamDuckBtn) }
-                                doAsync { doCooldown(playground_shieldDuckBtn_cd, Ability.SHIELD.getCooldown(), playground_shieldDuckBtn) }
+//                                playground_shieldDuckBtn.isEnabled = false
+//                                playground_teleportDuckBtn.isEnabled = false
+//                                playground_beamDuckBtn.isEnabled = false
+//                                doAsync { doCooldown(playground_teleportDuckBtn_cd, Ability.TELEPORT.getCooldown(), playground_teleportDuckBtn) }
+//                                doAsync { doCooldown(playground_beamDuckBtn_cd, Ability.BEAM.getCooldown(), playground_beamDuckBtn) }
+//                                doAsync { doCooldown(playground_shieldDuckBtn_cd, Ability.SHIELD.getCooldown(), playground_shieldDuckBtn) }
                                 node.setOnTouchListener { _, _ ->
                                     val oldPosition = playerNode.worldPosition
                                     Handler().postDelayed({
@@ -1445,7 +1521,13 @@ class GameActivity : AppCompatActivity(), FragmentCallbackListener,
             } else {
                 // Serenity heals player to full health and gives shield?
                 player.restoreFullHealth()
-                useBarrier(hpRenderablePlayer, player)
+                cancelAnimator(player)
+                animateCast(Ability.SHIELD.getCastAnimationString()!!, renderedPlayer!!, player)
+                player.incrementAbilitiesUsed()
+                playground_shieldDuckBtn.isEnabled = false
+                doAsync { effectPlayerPlayer.playSound(R.raw.shield) }
+                hpRenderablePlayer?.view?.textView_barrier?.visibility = View.VISIBLE
+                player.useShield()
                 updateShieldBar(hpRenderablePlayer?.view?.textView_barrier, player)
                 updateHPBar(hpRenderablePlayer?.view?.textView_healthbar, player)
             }

@@ -55,4 +55,17 @@
         android:layout_height="wrap_content"
         android:text="@string/exit"/>
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_close_game_over"
+        android:layout_gravity="center"
+        android:layout_width="300dp"
+        android:elevation="8dp"
+        android:padding="16sp"
+        android:textSize="28sp"
+        android:visibility="invisible"
+        android:textAllCaps="false"
+        android:layout_margin="5dp"
+        android:layout_height="wrap_content"
+        android:text="@string/close"/>
+
 </LinearLayout>

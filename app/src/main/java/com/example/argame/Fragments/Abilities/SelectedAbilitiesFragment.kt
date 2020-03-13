@@ -2,6 +2,7 @@ package com.example.argame.Fragments.Abilities
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -104,7 +105,7 @@ class SelectedAbilitiesAdapter(
 
     override fun onBindViewHolder(holder: SelectedViewHolder, position: Int) {
         var name = "Empty"
-        val skillsToLevel = saver.getInt("skillLevel", 0)
+        var skillsToLevel = saver.getInt("skillLevel", 0)
         if (skillsToLevel > 0) {
             holder.itemView.button_pwrplus.visibility = View.VISIBLE
             holder.itemView.button_cdminus.visibility = View.VISIBLE
@@ -131,8 +132,11 @@ class SelectedAbilitiesAdapter(
                 holder.itemView.button_pwrplus.setOnClickListener {
                     AbilityModifier.setModifier(ability, true)
                     if (skillsToLevel > 0) {
-                       saver.edit().putInt("skillLevel", (skillsToLevel-1)).apply()
-                        if (skillsToLevel-1 == 0) {
+                        skillsToLevel--
+                        saver.edit().putInt("skillLevel", (skillsToLevel)).apply()
+                    }
+                    Log.d("SKILLEVEL", saver.getInt("skillLevel", 0).toString())
+                        if (saver.getInt("skillLevel", 0) < 1 ) {
                             mRecyclerView.forEach {
                                 it.findViewById<MaterialButton>(R.id.button_pwrplus).visibility =
                                     View.GONE
@@ -140,19 +144,20 @@ class SelectedAbilitiesAdapter(
                                     View.GONE
                             }
                         }
-                    }
                 }
                 holder.itemView.button_cdminus.setOnClickListener {
-                    AbilityModifier.setModifier(ability, false)
+                    AbilityModifier.setModifier(ability, true)
                     if (skillsToLevel > 0) {
-                        saver.edit().putInt("skillLevel", (skillsToLevel-1)).apply()
-                        if (skillsToLevel-1 == 0) {
-                            mRecyclerView.forEach {
-                                it.findViewById<MaterialButton>(R.id.button_pwrplus).visibility =
-                                    View.GONE
-                                it.findViewById<MaterialButton>(R.id.button_cdminus).visibility =
-                                    View.GONE
-                            }
+                        skillsToLevel--
+                        saver.edit().putInt("skillLevel", (skillsToLevel)).apply()
+                    }
+                    Log.d("SKILLEVEL", saver.getInt("skillLevel", 0).toString())
+                    if (saver.getInt("skillLevel", 0) < 1 ) {
+                        mRecyclerView.forEach {
+                            it.findViewById<MaterialButton>(R.id.button_pwrplus).visibility =
+                                View.GONE
+                            it.findViewById<MaterialButton>(R.id.button_cdminus).visibility =
+                                View.GONE
                         }
                     }
                 }
