@@ -2,6 +2,7 @@ package com.example.argame.Networking
 
 import android.content.Context
 import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.util.Log
 import android.view.Gravity
 import android.widget.Toast
@@ -9,6 +10,7 @@ import androidx.core.content.ContextCompat.getSystemService
 import com.example.argame.Activities.MainActivity
 import com.example.argame.Model.Persistence.User
 import okhttp3.ResponseBody
+import org.jetbrains.anko.connectivityManager
 import org.jetbrains.anko.networkStatsManager
 import retrofit2.Call
 import retrofit2.Retrofit
@@ -24,19 +26,28 @@ object NetworkAPI {
     // Run the provided block if connected -- if not -- notify the user
     // (if called from a context where they should be notified), and execute nothing.
     fun executeIfConnected(context: Context, shouldNotify: Boolean = false, runBlock: () -> Unit) {
-        val service = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        if (service.isDefaultNetworkActive) {
-            Log.d("NETWORK", "isDefaultNetworkActive: true")
+        val service = context.getSystemService(
+            Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+        if (service.isDefaultNetworkActive && checkIfConnected(context, service)) {
             runBlock()
         } else {
-            Log.d("NETWORK", "isDefaultNetworkActive: false -- called from context: $context")
+            Log.d("NETWORKAPI",
+                "isDefaultNetworkActive: false -- called from context: $context")
+
             // Only make a toast in activities that absolutely require a network connection
             if (shouldNotify) {
-                val t= Toast.makeText(context, "Check your network connection", Toast.LENGTH_SHORT)
+                val t= Toast.makeText(context, "Check your network connection",
+                    Toast.LENGTH_SHORT)
                 t.setGravity(Gravity.CENTER, 0, 0)
                 t.show()
             }
         }
+    }
+
+    private fun checkIfConnected(context: Context, manager: ConnectivityManager) : Boolean {
+        val capability = context.connectivityManager.getNetworkCapabilities(manager.activeNetwork)
+        return capability?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) ?: false
     }
 
     object HighScoreModel {
