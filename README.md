@@ -1,1 +1,1 @@
-[Download the .apk here](https://survivar.games "Download the game")
+[Download the APK here](https://survivar.games "Download the game")
